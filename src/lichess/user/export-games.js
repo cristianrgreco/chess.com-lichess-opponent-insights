@@ -29,8 +29,7 @@ async function fetchUserGames(username, perf, colour) {
   let iterationCount = 0;
 
   for await (const record of ndjsonParser) {
-    iterationCount++;
-    if (iterationCount === numberOfGames) {
+    if (++iterationCount === numberOfGames) {
       break;
     }
 
