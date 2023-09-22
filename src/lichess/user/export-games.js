@@ -33,6 +33,10 @@ async function fetchUserGames(username, perf, colour) {
       break;
     }
 
+    if (!record.winner) {
+      continue;
+    }
+
     const opening = record.opening.name;
     const openingFamily = record.opening.name.split(':')[0];
     
