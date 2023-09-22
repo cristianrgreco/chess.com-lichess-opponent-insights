@@ -27,32 +27,48 @@ async function fetchUserGames(username, perf, colour) {
 
   const openingsStats = {};
   let iterationCount = 0;
-
+  
   for await (const record of ndjsonParser) {
     if (++iterationCount === numberOfGames) {
       break;
     }
 
     const opening = record.opening.name;
-
+    const openingFamily = record.opening.name.split(':')[0];
+    
+  
     if (!openingsStats[opening]) {
       openingsStats[opening] = {
         accuracies: [],
         wins: [],
+        isOpeningFamily: false,
+      };
+    }
+
+    if (openingFamily !== undefined && !openingsStats[openingFamily]) {
+      openingsStats[openingFamily] = {
+        accuracies: [],
+        wins: [],
+        isOpeningFamily: true,
       };
     }
 
     const accuracy = record.players[colour].analysis?.accuracy;
     if (accuracy) {
       openingsStats[opening].accuracies.push(accuracy);
+      if (openingFamily)
+        openingsStats[openingFamily].accuracies.push(accuracy);
     }
 
     const win = colour === record.winner;
     openingsStats[opening].wins.push(win);
+
+    if (openingFamily)
+    openingsStats[openingFamily].wins.push(win);
   }
 
   const openings = Object.entries(openingsStats).reduce((result, record) => {
-    const [opening, { accuracies, wins }] = record;
+    const [opening, { accuracies, wins, isOpeningFamily }] = record;
     const winRate = wins.filter(Boolean).length / wins.length;
     const numberOfGames = wins.length;
     const accuracy = accuracies.length === 0 ? undefined : accuracies.reduce((prev, next) => prev + next, 0) / accuracies.length;
@@ -62,7 +78,8 @@ async function fetchUserGames(username, perf, colour) {
       [opening]: {
         winRate,
         numberOfGames,
-        accuracy
+        accuracy,
+        isOpeningFamily
       }
     };
   }, {});
