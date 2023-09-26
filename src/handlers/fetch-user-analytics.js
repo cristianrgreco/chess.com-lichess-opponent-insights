@@ -8,14 +8,14 @@ async function fetchUserAnalytics(event) {
     return {statusCode: 501};
   }
 
-  const [games, userPerformanceStatistics] = await Promise.all([
+  const [games, performance] = await Promise.all([
     fetchLichessUserGames(username, gameType, colour),
     fetchLichessUserPerformanceStatistics(username, gameType)
   ]);
 
   return {
     statusCode: 200,
-    body: JSON.stringify({ games, userPerformanceStatistics })
+    body: JSON.stringify({ games, performance })
   };
 }
 
