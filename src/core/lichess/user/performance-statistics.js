@@ -1,7 +1,7 @@
 const fetch = require("node-fetch");
 
-async function fetchLichessUserPerformanceStatistics(username, perf) {
-  const response = await fetch(`https://lichess.org/api/user/${username}/perf/${perf}`);
+async function fetchLichessUserPerformanceStatistics(username, gameType) {
+  const response = await fetch(`https://lichess.org/api/user/${username}/perf/${gameType}`);
   const responseJson = await response.json();
 
   const customStats = {

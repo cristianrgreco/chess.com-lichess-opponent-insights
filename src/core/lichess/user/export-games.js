@@ -2,13 +2,13 @@ const fetch = require("node-fetch");
 const ndjson = require('ndjson')
 const {PAT} = require("../../../conf");
 
-async function fetchLichessUserGames(username, perf, colour) {
+async function fetchLichessUserGames(username, gameType, colour) {
   const numberOfGames = 60;
 
   const params = new URLSearchParams({
     max: numberOfGames,
     rated: true,
-    perfType: perf,
+    perfType: gameType,
     color: colour,
     tags: true,
     clocks: true,
