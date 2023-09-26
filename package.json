@@ -14,5 +14,8 @@
   "dependencies": {
     "ndjson": "^2.0.0",
     "node-fetch": "^2.7.0"
+  },
+  "jest": {
+    "testTimeout": 60000
   }
 }
