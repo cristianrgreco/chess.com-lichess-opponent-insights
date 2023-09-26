@@ -1,0 +1,31 @@
+service: chess-analytics
+
+variablesResolutionMode: 20210326
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  lambdaHashingVersion: 20201221
+  stage: prod
+  region: eu-west-2
+
+  apiGateway:
+    usagePlan:
+      quota:
+        limit: 10000
+        period: MONTH
+      throttle:
+        burstLimit: 100
+        rateLimit: 100
+
+  memorySize: 512
+  timeout: 15
+  logRetentionInDays: 14
+
+functions:
+  fetchUserAnalytics:
+    handler: src/handlers/fetch-user-analytics.handler
+    events:
+      - http:
+          path: /user-analytics
+          method: get

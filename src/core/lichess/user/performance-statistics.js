@@ -1,6 +1,6 @@
 const fetch = require("node-fetch");
 
-async function fetchUserPerformanceStatistics(username, perf) {
+async function fetchLichessUserPerformanceStatistics(username, perf) {
   const response = await fetch(`https://lichess.org/api/user/${username}/perf/${perf}`);
   const responseJson = await response.json();
 
@@ -12,5 +12,5 @@ async function fetchUserPerformanceStatistics(username, perf) {
 }
 
 module.exports = {
-  fetchUserPerformanceStatistics
+  fetchLichessUserPerformanceStatistics
 };

@@ -1,8 +1,8 @@
-const { fetchUserGames } = require("./export-games");
+const { fetchLichessUserGames } = require("./export-games");
 
-describe("Export games", () => {
+describe("Lichess export games", () => {
   it("should return opening win rates and accuracies", async () => {
-    const games = await fetchUserGames("Spaghetti_Spoghotti", "blitz", "white");
+    const games = await fetchLichessUserGames("Spaghetti_Spoghotti", "blitz", "white");
 
     const opening = games.openings["Queen's Pawn Game: Accelerated London System"];
     expect(opening.winRate).toBeGreaterThanOrEqual(0);
@@ -11,7 +11,7 @@ describe("Export games", () => {
   });
 
   it("should return opening win rates and accuracies for opening families", async () => {
-    const games = await fetchUserGames("Spaghetti_Spoghotti", "blitz", "white");
+    const games = await fetchLichessUserGames("Spaghetti_Spoghotti", "blitz", "white");
 
     const [,queensPawnOpeningFamilyInsights] = Object.entries(games.openings).filter(([key, value]) => value.isOpeningFamily === true && key === "Queen's Pawn Game")[0];
     expect(queensPawnOpeningFamilyInsights.winRate).toBeGreaterThanOrEqual(0);

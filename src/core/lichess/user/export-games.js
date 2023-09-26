@@ -1,8 +1,8 @@
 const fetch = require("node-fetch");
 const ndjson = require('ndjson')
-const {PAT} = require("../conf");
+const {PAT} = require("../../../conf");
 
-async function fetchUserGames(username, perf, colour) {
+async function fetchLichessUserGames(username, perf, colour) {
   const numberOfGames = 60;
 
   const params = new URLSearchParams({
@@ -92,5 +92,5 @@ async function fetchUserGames(username, perf, colour) {
 }
 
 module.exports = {
-  fetchUserGames
+  fetchLichessUserGames
 };
