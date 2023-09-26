@@ -4,19 +4,33 @@ describe("Lichess export games", () => {
   it("should return opening win rates and accuracies", async () => {
     const games = await fetchLichessUserGames("Spaghetti_Spoghotti", "blitz", "white");
 
-    const opening = games.openings["Queen's Pawn Game: Accelerated London System"];
-    expect(opening.winRate).toBeGreaterThanOrEqual(0);
-    expect(opening.numberOfGames).toBeGreaterThanOrEqual(0);
-    expect(opening.accuracy).toBeGreaterThanOrEqual(0);
+    const { insights } = games.find(game => game.opening === "Queen's Pawn Game: Accelerated London System");
+    expect(insights.isOpeningFamily).toEqual(false);
+    expect(insights.winRate).toBeGreaterThanOrEqual(0);
+    expect(insights.numberOfGames).toBeGreaterThanOrEqual(0);
+    expect(insights.accuracy).toBeGreaterThanOrEqual(0);
   });
 
   it("should return opening win rates and accuracies for opening families", async () => {
     const games = await fetchLichessUserGames("Spaghetti_Spoghotti", "blitz", "white");
 
-    const [,queensPawnOpeningFamilyInsights] = Object.entries(games.openings).filter(([key, value]) => value.isOpeningFamily === true && key === "Queen's Pawn Game")[0];
-    expect(queensPawnOpeningFamilyInsights.winRate).toBeGreaterThanOrEqual(0);
-    expect(queensPawnOpeningFamilyInsights.numberOfGames).toBeGreaterThanOrEqual(0);
-    expect(queensPawnOpeningFamilyInsights.accuracy).toBeGreaterThanOrEqual(0);
-    console.log(Object.entries(games.openings).filter(([key, value]) => value.isOpeningFamily === true)[0])
+    const { insights } = games.find(game => game.opening === "Queen's Pawn Game");
+    expect(insights.isOpeningFamily).toEqual(true);
+    expect(insights.winRate).toBeGreaterThanOrEqual(0);
+    expect(insights.numberOfGames).toBeGreaterThanOrEqual(0);
+    expect(insights.accuracy).toBeGreaterThanOrEqual(0);
+  });
+
+  it("should return sorted by number of games descending", async () => {
+    const games = await fetchLichessUserGames("Spaghetti_Spoghotti", "blitz", "white");
+
+    const numberOfGamesList = games.map(game => game.insights.numberOfGames);
+    expect(numberOfGamesList).toEqual([...numberOfGamesList].sort((a, b) => b - a));
+  });
+
+  it("should exclude games where the opening has only been played once", async () => {
+    const games = await fetchLichessUserGames("Spaghetti_Spoghotti", "blitz", "white");
+
+    expect(games.map(game => game.insights.numberOfGames)).not.toContain(1);
   });
 });

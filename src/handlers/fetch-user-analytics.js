@@ -15,7 +15,7 @@ async function fetchUserAnalytics(event) {
 
   return {
     statusCode: 200,
-    body: JSON.stringify({ games, performance })
+    body: JSON.stringify({ performance, games })
   };
 }
 

@@ -27,7 +27,7 @@ async function fetchLichessUserGames(username, gameType, colour) {
 
   const openingsStats = {};
   let iterationCount = 0;
-  
+
   for await (const record of ndjsonParser) {
     if (++iterationCount === numberOfGames) {
       break;
@@ -39,8 +39,8 @@ async function fetchLichessUserGames(username, gameType, colour) {
 
     const opening = record.opening.name;
     const openingFamily = record.opening.name.split(':')[0];
-    
-  
+
+
     if (!openingsStats[opening]) {
       openingsStats[opening] = {
         accuracies: [],
@@ -71,24 +71,33 @@ async function fetchLichessUserGames(username, gameType, colour) {
     openingsStats[openingFamily].wins.push(win);
   }
 
-  const openings = Object.entries(openingsStats).reduce((result, record) => {
-    const [opening, { accuracies, wins, isOpeningFamily }] = record;
+  return Object.entries(openingsStats).reduce((result, record) => {
+    const [opening, {accuracies, wins, isOpeningFamily}] = record;
     const winRate = wins.filter(Boolean).length / wins.length;
     const numberOfGames = wins.length;
     const accuracy = accuracies.length === 0 ? undefined : accuracies.reduce((prev, next) => prev + next, 0) / accuracies.length;
 
-    return {
-      ...result,
-      [opening]: {
-        winRate,
-        numberOfGames,
-        accuracy,
-        isOpeningFamily
-      }
-    };
-  }, {});
+    if (numberOfGames === 1) {
+      return result;
+    }
 
-  return { openings };
+    const games = [
+      ...result,
+      {
+        opening,
+        insights: {
+          winRate,
+          numberOfGames,
+          accuracy,
+          isOpeningFamily
+        }
+      }
+    ];
+
+    games.sort((a, b) => b.insights.numberOfGames - a.insights.numberOfGames);
+
+    return games;
+  }, []);
 }
 
 module.exports = {
