@@ -18,7 +18,7 @@ provider:
         burstLimit: 100
         rateLimit: 100
 
-  memorySize: 512
+  memorySize: 256
   timeout: 15
   logRetentionInDays: 14
 
