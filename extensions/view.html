@@ -1,0 +1,118 @@
+<style>
+  .ca_container {
+    padding: 20px;
+    font-family: sans-serif;
+    background-color: #111;
+    color: #eee;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .ca_section {
+    margin: 10px 0;
+  }
+  .ca_opponent_name {
+    font-size: 1.5em;
+    font-weight: bold;
+  }
+  .ca_game_type {}
+  .ca_win_streak {
+    padding: 6px 18px;
+    color: white;
+    margin-left: 4px;
+  }
+  .ca_win_streak.ca_negative {
+    background-color: #3F2221;
+    border: 2px solid #AB615E;
+  }
+  .ca_tabs {
+    margin: 40px 0 20px 0;
+    border-bottom: 1px solid #222;
+    display: flex;
+    width: 400px;
+    justify-content: center;
+  }
+  .ca_tab {
+    background-color: #1a1a1a;
+    padding: 6px 18px;
+    text-align: center;
+    margin: 0 1px;
+    width: 80px;
+  }
+  .ca_tab:hover {
+    cursor: pointer;
+    background-color: #444;
+  }
+  .ca_tab.ca_active:hover {
+    cursor: default;
+  }
+  .ca_tab:active, .ca_tab.ca_active {
+    background-color: #333;
+  }
+  .ca_tab_section {}
+</style>
+
+<div class="ca_container">
+  <div class="ca_section">
+    <span class="ca_opponent_name">tmevans</span>
+  </div>
+  <div class="ca_section">
+    <span class="ca_game_type">Bullet</span>
+  </div>
+  <div class="ca_section">
+    <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
+  </div>
+  <div class="ca_section">
+    <span>Win streak</span>
+    <span class="ca_win_streak ca_negative">-3</span>
+  </div>
+  <div class="ca_section ca_tabs">
+    <span class="ca_tab ca_active">Stats</span>
+    <span class="ca_tab">Openings</span>
+  </div>
+  <div class="ca_section ca_tab_section" style="width: 300px;">
+    <canvas id="ca_results_breakdown"></canvas>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.2.0/chart.umd.js"></script>
+<script type="text/javascript">
+  new Chart(
+    document.querySelector("#ca_results_breakdown"),
+    {
+      type: 'doughnut',
+      data: {
+        labels: [
+          'Win by mate',
+          'Win by time',
+          'Draw by stalemate',
+          'Draw',
+          'Loss',
+          'Disconnect',
+        ],
+        datasets: [{
+          // label: 'My First Dataset',
+          data: [30, 20, 5, 5, 30, 10],
+          // backgroundColor: [
+          //   'rgb(255, 99, 132)',
+          //   'rgb(54, 162, 235)',
+          //   'rgb(255, 205, 86)'
+          // ],
+          hoverOffset: 4
+        }]
+      },
+      options: {
+        plugins: {
+          legend: {
+            display: false,
+            position: "bottom",
+            align: "center",
+            labels: {
+              color: '#eee'
+            }
+          }
+        }
+      }
+    },
+  );
+</script>
