@@ -12,5 +12,8 @@
         "script.js"
       ]
     }
+  ],
+  "permissions": [
+    "<all_urls>"
   ]
 }
