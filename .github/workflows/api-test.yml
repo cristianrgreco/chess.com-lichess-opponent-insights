@@ -17,7 +17,7 @@ jobs:
     steps:
       - name: Code checkout
         uses: actions/checkout@v3
-      - name: Install NodeJS 14.x
+      - name: Install NodeJS
         uses: actions/setup-node@v3
         with:
           node-version: 18.x
