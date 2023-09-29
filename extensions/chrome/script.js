@@ -14,7 +14,8 @@ if (document.title.indexOf("Play ") !== -1) {
   console.log("Opponent colour: " + opponentColour);
   console.log("Game type: " + gameType);
 
-  const htmlUrl = browser.runtime.getURL(`./view.html`);
+  const htmlUrl = chrome.runtime.getURL(`./view.html`);
+  console.log(htmlUrl);
   fetch(htmlUrl)
     .then(response => response.text())
     .then(response => { 
@@ -49,13 +50,10 @@ function renderAnalytics(response, opponent) {
 
 function renderChart(response) {
   const openingFamilies = response.games.filter(game => game.insights.isOpeningFamily === true);
-  console.log(openingFamilies);
 
   const openingLabels = openingFamilies.map(g => { return g.opening; });
   const openingWinRates = openingFamilies.map(g => {return g.insights.winRate * 100});
-  const openingNumberOfGames = openingFamilies.map(g => {return "Games: g.insights.numberOfGames" });
-
-  console.log(openingNumberOfGames);
+  const openingNumberOfGames = openingFamilies.map(g => {return g.insights.numberOfGames });
   
   new Chart(document.querySelector("#ca_results_breakdown"),
     {
@@ -66,16 +64,21 @@ function renderChart(response) {
         datasets: [{
           label: "Win Rate",
           data: openingWinRates
-      }]
+        }, {
+          data: openingNumberOfGames,
+          hidden: true
+        }]
       },
       options: {
-        tooltip: {
-          enabled: true,
-          callbacks: {
-            footer: function(tooltipItem, data) {
-              var title = "Games: " + data.tooltipText[tooltipItem[0].index];
-              return title;
-          }
+        plugins: {
+          tooltip: {
+            callbacks: {
+              footer: function(ctx) {
+                var hiddenDataset = ctx[0].chart.config._config.data.datasets[1].data;
+                var value = hiddenDataset[ctx[0].dataIndex];
+                return "Games: " + value;
+              },
+            }
           }
         }
       }

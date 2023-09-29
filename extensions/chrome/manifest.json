@@ -3,15 +3,22 @@
   "description": "Get good",
   "version": "1",
   "manifest_version": 2,
+  "content_security_policy": "default-src 'self'",
   "content_scripts": [
     {
       "matches": [
         "https://lichess.org/*"
       ],
       "js": [
-        "script.js", "./scripts/chart.min.js"
+        "script.js", "./scripts/chart.umd.js"
+      ],
+      "web_accessible_resources": [
+        "./scripts/chart.umd.js", "./scripts/chart.umd.js.map", "view.html"
       ]
     }
+  ],
+  "web_accessible_resources": [
+    "./scripts/chart.umd.js", "./scripts/chart.umd.js.map", "view.html"
   ],
   "permissions": [
     "<all_urls>"
