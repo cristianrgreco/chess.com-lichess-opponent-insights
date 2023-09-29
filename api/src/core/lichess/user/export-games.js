@@ -40,7 +40,6 @@ async function fetchLichessUserGames(username, gameType, colour) {
     const opening = record.opening.name;
     const openingFamily = record.opening.name.split(':')[0];
 
-
     if (!openingsStats[opening]) {
       openingsStats[opening] = {
         accuracies: [],
