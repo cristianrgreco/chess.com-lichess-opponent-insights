@@ -1,0 +1,30 @@
+name: API deploy
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "api/**"
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-22.04
+    defaults:
+      run:
+        working-directory: api
+    steps:
+      - name: Code checkout
+        uses: actions/checkout@v3
+      - name: Install NodeJS 14.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: 14.x
+      - name: Install dependencies
+        run: npm ci
+      - name: Deploy
+        run: npx serverless deploy
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
