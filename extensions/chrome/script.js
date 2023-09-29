@@ -15,25 +15,26 @@ if (document.title.indexOf("Play ") !== -1) {
   console.log("Game type: " + gameType);
 
   const htmlUrl = chrome.runtime.getURL(`./view.html`);
+  let viewHtml = "";
   console.log(htmlUrl);
   fetch(htmlUrl)
     .then(response => response.text())
     .then(response => { 
       console.log("fetched html");
-      document.querySelector(".round__side").innerHTML = response; })
+      viewHtml = response; })
 
   console.log("Fetching user analytics...");
   fetch(`https://rlabb3msg0.execute-api.eu-west-2.amazonaws.com/prod/user-analytics?platform=lichess&username=${opponent}&gameType=${gameType}&colour=${opponentColour}`)
     .then(response => response.json())
     .then(response => {
+      document.querySelector(".mchat").innerHTML = viewHtml
       renderAnalytics(response, opponent);
-      console.log(response);
-      
     })
 }
 
 function renderAnalytics(response, opponent) {
   document.querySelector(".ca_opponent_name").innerText = opponent;
+
   document.querySelector(".ca_performance_lowest").innerText = response.performance.lowestRating;
   document.querySelector(".ca_performance_highest").innerText = response.performance.highestRating;
   
