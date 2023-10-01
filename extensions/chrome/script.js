@@ -70,14 +70,28 @@ function renderAnalytics(response, opponent) {
 }
 
 function renderStatsChart(response) {
-  const capitaliseFirstLetter = string => string.charAt(0).toUpperCase() + string.slice(1);
-  const labels = Object.keys(response.games.stats).map(stat => stat.replace("Rate", "")).map(capitaliseFirstLetter)
+  const labels = Object.keys(response.games.stats).map(stat => {
+    switch (stat) {
+      case "mateRate":
+        return "Mate";
+      case "resignRate":
+        return "Resign";
+      case "drawRate":
+        return "Draw";
+      case "stalemateRate":
+        return "Stalemate";
+      case "outOfTimeRate":
+        return "Out of Time";
+      default:
+        return "Unknown label";
+    }
+  });
   const data = Object.values(response.games.stats).map(stat => stat * 100);
 
   new Chart(
     document.querySelector("#ca_stats_chart"),
     {
-      type: 'doughnut',
+      type: 'pie',
       data: {
         labels,
         datasets: [{
