@@ -29,6 +29,24 @@ if (document.title.indexOf("Play ") !== -1) {
     .then(response => response.json())
     .then(response => {
       document.querySelector(".mchat").innerHTML = viewHtml // todo viewHtml may not be resolved, chain the promise
+
+      const statsTabTrigger = document.querySelector(".ca_stats_tab_trigger");
+      const openingsTabTrigger = document.querySelector(".ca_openings_tab_trigger");
+      const statsEl = document.querySelector(".ca_stats");
+      const openingsEl = document.querySelector(".ca_openings");
+      statsTabTrigger.addEventListener("click", e => {
+        statsTabTrigger.classList.add("ca_active");
+        statsEl.classList.remove("ca_hidden");
+        openingsTabTrigger.classList.remove("ca_active");
+        openingsEl.classList.add("ca_hidden");
+      });
+      openingsTabTrigger.addEventListener("click", e => {
+        statsTabTrigger.classList.remove("ca_active");
+        statsEl.classList.add("ca_hidden");
+        openingsTabTrigger.classList.add("ca_active");
+        openingsEl.classList.remove("ca_hidden");
+      });
+
       renderAnalytics(response, opponent);
     })
 }
@@ -39,37 +57,86 @@ function renderAnalytics(response, opponent) {
   document.querySelector(".ca_performance_lowest").innerText = response.performance.lowestRating;
   document.querySelector(".ca_performance_highest").innerText = response.performance.highestRating;
   
-  if(response.performance.currentWinningStreak <= 0) {
+  if (response.performance.currentWinningStreak <= 0) {
     document.querySelector(".ca_win_streak_value").innerHTML = `-${response.performance.currentLosingStreak}`;
-
+    document.querySelector(".ca_win_streak_value").classList.add("ca_negative");
   } else {
     document.querySelector(".ca_win_streak_value").innerHTML = `+${response.performance.currentWinningStreak}`;
+    document.querySelector(".ca_win_streak_value").classList.add("ca_positive");
   }
 
-  renderChart(response);
-  
+  renderStatsChart(response);
+  renderOpeningsChart(response);
 }
 
-function renderChart(response) {
-  const openingLabels = response.games.map(g => { return g.name; });
-  const openingWinRates = response.games.map(g => {return g.insights.winRate * 100});
-  const openingNumberOfGames = response.games.map(g => {return g.insights.numberOfGames });
-  
-  new Chart(document.querySelector("#ca_results_breakdown"),
+function renderStatsChart(response) {
+  const capitaliseFirstLetter = string => string.charAt(0).toUpperCase() + string.slice(1);
+  const labels = Object.keys(response.games.stats).map(stat => stat.replace("Rate", "")).map(capitaliseFirstLetter)
+  const data = Object.values(response.games.stats).map(stat => stat * 100);
+
+  new Chart(
+    document.querySelector("#ca_stats_chart"),
+    {
+      type: 'doughnut',
+      data: {
+        labels,
+        datasets: [{
+          data,
+          hoverOffset: 4
+        }]
+      },
+      options: {
+        borderWidth: 0,
+      }
+    },
+  );
+}
+
+function renderOpeningsChart(response) {
+  const openingLabels = response.games.openings.map(g => g.name);
+  const openingMateRate = response.games.openings.map(g => ((g.insights.results.mate ?? 0) / g.insights.numberOfGames) * 100);
+  const openingResignRate = response.games.openings.map(g => ((g.insights.results.resign ?? 0) / g.insights.numberOfGames) * 100);
+  const openingDrawRate = response.games.openings.map(g => ((g.insights.results.draw ?? 0) / g.insights.numberOfGames) * 100);
+  const openingStalemateRate = response.games.openings.map(g => ((g.insights.results.stalemate ?? 0) / g.insights.numberOfGames) * 100);
+  const openingOutOfTimeRate = response.games.openings.map(g => ((g.insights.results.outoftime ?? 0) / g.insights.numberOfGames) * 100);
+  const openingNumberOfGames = response.games.openings.map(g => g.insights.numberOfGames);
+
+  new Chart(document.querySelector("#ca_openings_chart"),
     {
       type: 'bar',
       data: {
         labels: openingLabels,
         tooltipText: openingNumberOfGames,
         datasets: [{
-          label: "Win Rate",
-          data: openingWinRates
+          label: "Mate",
+          data: openingMateRate
         }, {
-          data: openingNumberOfGames,
-          hidden: true
+          label: "Resign",
+          data: openingResignRate
+        }, {
+          label: "Draw",
+          data: openingDrawRate
+        }, {
+          label: "Stalemate",
+          data: openingStalemateRate
+        }, {
+          label: "Out of Time",
+          data: openingOutOfTimeRate
+        // }, {
+        //   data: openingNumberOfGames,
+        //   hidden: true
         }]
       },
       options: {
+        maintainAspectRatio: false,
+        scales: {
+          x: {
+            stacked: true,
+          },
+          y: {
+            stacked: true
+          }
+        },
         plugins: {
           tooltip: {
             callbacks: {
