@@ -3,21 +3,25 @@ const ndjson = require('ndjson')
 const {PAT} = require("../../../conf");
 
 async function fetchLichessUserGames(username, gameType, colour) {
-  const numberOfGames = 60; // maximum number of games Lichess will return if a PAT is provided
-  const games = await fetchGames(numberOfGames, username, gameType, colour);
-
-  const ndjsonParser = ndjson.parse();
-  ndjsonParser.write(games);
-
+  const params = new URLSearchParams({
+    max: 60, // maximum number of games Lichess will return if a PAT is provided
+    rated: true,
+    perfType: gameType,
+    color: colour,
+    tags: true,
+    clocks: true,
+    accuracy: true,
+    opening: true
+  });
+  const headers = {
+    "Authorization": `Bearer ${PAT}`,
+    "Accept": "application/x-ndjson",
+  };
+  const response = await fetch(`https://lichess.org/api/games/user/${username}?${params}`, {headers})
+  const ndjsonParserResponseStream = response.body.pipe(ndjson.parse());
   const openingsStats = [];
-  let iterationCount = 0;
 
-  for await (const record of ndjsonParser) {
-    // ndjson stream does not close automatically, so we must break when we know we have processed the last record else the loop never exits
-    if (++iterationCount === numberOfGames) {
-      break;
-    }
-
+  for await (const record of ndjsonParserResponseStream) {
     // temporarily skip games where there is no winner (stalemate, draw, abort, etc) so we calculate accuracies/win rate correctly
     if (!record.winner) {
       continue;
@@ -90,25 +94,6 @@ async function fetchLichessUserGames(username, gameType, colour) {
         .sort(sortOpeningsByNumberOfGamesDesc)
     }))
     .sort(sortOpeningsByNumberOfGamesDesc)
-}
-
-async function fetchGames(numberOfGames, username, gameType, colour) {
-  const params = new URLSearchParams({
-    max: numberOfGames,
-    rated: true,
-    perfType: gameType,
-    color: colour,
-    tags: true,
-    clocks: true,
-    accuracy: true,
-    opening: true
-  });
-  const headers = {
-    "Authorization": `Bearer ${PAT}`,
-    "Accept": "application/x-ndjson",
-  };
-  const response = await fetch(`https://lichess.org/api/games/user/${username}?${params}`, {headers})
-  return await response.text();
 }
 
 function parseOpeningName(openingName) {
