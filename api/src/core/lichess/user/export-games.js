@@ -25,7 +25,7 @@ async function fetchLichessUserGames(username, gameType, colour) {
 
     const opening = parseOpeningName(record.opening.name);
 
-    let openingStats = openingsStats.find(opening => opening.name);
+    let openingStats = openingsStats.find(anOpening => anOpening.name === opening.name);
     if (openingStats === undefined) {
       openingStats = {
         name: opening.name,
