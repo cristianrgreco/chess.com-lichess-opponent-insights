@@ -63,12 +63,13 @@ async function fetchLichessUserGames(username, gameType, colour) {
     }
   }
 
+  const sortOpeningsByNumberOfGamesDesc = (a, b) => b.insights.numberOfGames - a.insights.numberOfGames;
   const calculateWinRate = wins => wins.filter(Boolean).length / wins.length;
   const calculateAccuracy = accuracies => accuracies.length === 0
       ? undefined
       : accuracies.reduce((prev, next) => prev + next, 0) / accuracies.length
 
-  const results = openingsStats
+  return openingsStats
     .filter(openingStats => openingStats.wins.length > 1) // showing a game which has only been played once does not provide useful insights
     .map(openingStats => ({
       name: openingStats.name,
@@ -77,22 +78,18 @@ async function fetchLichessUserGames(username, gameType, colour) {
         winRate: calculateWinRate(openingStats.wins),
         accuracy: calculateAccuracy(openingStats.accuracies)
       },
-      variations: openingStats.variations.map(variation => ({
-        name: variation.name,
-        insights: {
-          numberOfGames: variation.wins.length,
-          winRate: calculateWinRate(variation.wins),
-          accuracy: calculateAccuracy(variation.accuracies)
-        }
-      }))
-    }));
-
-  const sortOpeningsNumberOfGamesDesc = (a, b) => b.insights.numberOfGames - a.insights.numberOfGames;
-
-  results.sort(sortOpeningsNumberOfGamesDesc);
-  results.forEach(result => result.variations.sort(sortOpeningsNumberOfGamesDesc));
-
-  return results;
+      variations: openingStats.variations
+        .map(variation => ({
+          name: variation.name,
+          insights: {
+            numberOfGames: variation.wins.length,
+            winRate: calculateWinRate(variation.wins),
+            accuracy: calculateAccuracy(variation.accuracies)
+          }
+        }))
+        .sort(sortOpeningsByNumberOfGamesDesc)
+    }))
+    .sort(sortOpeningsByNumberOfGamesDesc)
 }
 
 async function fetchGames(numberOfGames, username, gameType, colour) {
@@ -115,7 +112,7 @@ async function fetchGames(numberOfGames, username, gameType, colour) {
 }
 
 function parseOpeningName(openingName) {
-  const [opening, variation] = openingName.split(":");
+  const [opening, variation] = openingName.split(": ");
 
   if (opening === undefined) {
     return {name};

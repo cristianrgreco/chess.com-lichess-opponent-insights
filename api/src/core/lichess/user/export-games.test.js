@@ -30,6 +30,6 @@ describe("Lichess export games", () => {
   it("should exclude games where the opening has only been played once", async () => {
     const games = await fetchLichessUserGames("Spaghetti_Spoghotti", "blitz", "white");
 
-    expect(games.map(game => game.insights.numberOfGames)).toBeGreaterThan(1);
+    games.forEach(game => expect(game.insights.numberOfGames).toBeGreaterThan(1))
   });
 });
