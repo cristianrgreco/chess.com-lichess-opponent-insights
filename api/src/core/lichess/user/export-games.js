@@ -22,11 +22,6 @@ async function fetchLichessUserGames(username, gameType, colour) {
   const openingsStats = [];
 
   for await (const record of ndjsonParserResponseStream) {
-    // temporarily skip games where there is no winner (stalemate, draw, abort, etc) so we calculate accuracies/win rate correctly
-    if (!record.winner) {
-      continue;
-    }
-
     const opening = parseOpeningName(record.opening.name);
 
     let openingStats = openingsStats.find(anOpening => anOpening.name === opening.name);
@@ -34,7 +29,7 @@ async function fetchLichessUserGames(username, gameType, colour) {
       openingStats = {
         name: opening.name,
         accuracies: [],
-        wins: [],
+        results: [],
         variations: []
       }
       openingsStats.push(openingStats);
@@ -45,7 +40,7 @@ async function fetchLichessUserGames(username, gameType, colour) {
       variationStats = {
         name: opening.variationName,
         accuracies: [],
-        wins: []
+        results: []
       }
       if (opening.variationName) {
         openingsStats.find(opening => opening.name).variations.push(variationStats);
@@ -60,40 +55,63 @@ async function fetchLichessUserGames(username, gameType, colour) {
       }
     }
 
-    const win = colour === record.winner;
-    openingStats.wins.push(win);
+    openingStats.results.push(record.status);
     if (opening.variationName) {
-      variationStats.wins.push(win);
+      variationStats.results.push(record.status);
     }
   }
 
-  const sortOpeningsByNumberOfGamesDesc = (a, b) => b.insights.numberOfGames - a.insights.numberOfGames;
-  const calculateWinRate = wins => wins.filter(Boolean).length / wins.length;
+  const sortOpeningsByNumberOfGamesDesc = (a, b) =>
+      b.insights.numberOfGames - a.insights.numberOfGames;
+  const calculateResultRates = results =>
+      results.reduce((prev, next) => ({...prev, [next]: (prev[next] ?? 0) + 1}), {});
   const calculateAccuracy = accuracies => accuracies.length === 0
       ? undefined
       : accuracies.reduce((prev, next) => prev + next, 0) / accuracies.length
 
-  return openingsStats
-    .filter(openingStats => openingStats.wins.length > 1) // showing a game which has only been played once does not provide useful insights
+  const openings = openingsStats
+    .filter(openingStats => openingStats.results.length > 1) // showing a game which has only been played once does not provide useful insights
     .map(openingStats => ({
       name: openingStats.name,
       insights: {
-        numberOfGames: openingStats.wins.length,
-        winRate: calculateWinRate(openingStats.wins),
+        numberOfGames: openingStats.results.length,
+        results: calculateResultRates(openingStats.results),
         accuracy: calculateAccuracy(openingStats.accuracies)
       },
       variations: openingStats.variations
         .map(variation => ({
           name: variation.name,
           insights: {
-            numberOfGames: variation.wins.length,
-            winRate: calculateWinRate(variation.wins),
+            numberOfGames: variation.results.length,
+            results: calculateResultRates(variation.results),
             accuracy: calculateAccuracy(variation.accuracies)
           }
         }))
         .sort(sortOpeningsByNumberOfGamesDesc)
     }))
     .sort(sortOpeningsByNumberOfGamesDesc)
+
+  const rawStats = openings.reduce((prev, next) => ({
+    numberOfGames: (prev.numberOfGames ?? 0) + next.insights.numberOfGames,
+    mateCount: (prev.mateCount ?? 0) + (next.insights.results.mate ?? 0),
+    resignCount: (prev.resignCount ?? 0) + (next.insights.results.resign ?? 0),
+    drawCount: (prev.drawCount ?? 0) + (next.insights.results.draw ?? 0),
+    stalemateCount: (prev.stalemateCount ?? 0) + (next.insights.results.stalemate ?? 0),
+    outOfTimeCount: (prev.outOfTimeCount ?? 0) + (next.insights.results.outoftime ?? 0),
+  }), {});
+
+  const stats = {
+    mateRate: rawStats.mateCount / rawStats.numberOfGames,
+    resignRate: rawStats.resignCount / rawStats.numberOfGames,
+    drawRate: rawStats.drawCount / rawStats.numberOfGames,
+    stalemateRate: rawStats.stalemateCount / rawStats.numberOfGames,
+    outOfTimeRate: rawStats.outOfTimeCount / rawStats.numberOfGames,
+  };
+
+  return {
+    stats,
+    openings
+  };
 }
 
 function parseOpeningName(openingName) {
