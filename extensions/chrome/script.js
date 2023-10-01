@@ -16,18 +16,19 @@ if (document.title.indexOf("Play ") !== -1) {
 
   const htmlUrl = chrome.runtime.getURL(`./view.html`);
   let viewHtml = "";
-  console.log(htmlUrl);
+  console.log("HTML URL: " + htmlUrl);
   fetch(htmlUrl)
     .then(response => response.text())
-    .then(response => { 
-      console.log("fetched html");
-      viewHtml = response; })
+    .then(response => {
+      console.log("Fetched html");
+      viewHtml = response;
+    })
 
   console.log("Fetching user analytics...");
   fetch(`https://rlabb3msg0.execute-api.eu-west-2.amazonaws.com/prod/user-analytics?platform=lichess&username=${opponent}&gameType=${gameType}&colour=${opponentColour}`)
     .then(response => response.json())
     .then(response => {
-      document.querySelector(".mchat").innerHTML = viewHtml
+      document.querySelector(".mchat").innerHTML = viewHtml // todo viewHtml may not be resolved, chain the promise
       renderAnalytics(response, opponent);
     })
 }
@@ -50,11 +51,9 @@ function renderAnalytics(response, opponent) {
 }
 
 function renderChart(response) {
-  const openingFamilies = response.games.filter(game => game.insights.isOpeningFamily === true);
-
-  const openingLabels = openingFamilies.map(g => { return g.opening; });
-  const openingWinRates = openingFamilies.map(g => {return g.insights.winRate * 100});
-  const openingNumberOfGames = openingFamilies.map(g => {return g.insights.numberOfGames });
+  const openingLabels = response.games.map(g => { return g.name; });
+  const openingWinRates = response.games.map(g => {return g.insights.winRate * 100});
+  const openingNumberOfGames = response.games.map(g => {return g.insights.numberOfGames });
   
   new Chart(document.querySelector("#ca_results_breakdown"),
     {

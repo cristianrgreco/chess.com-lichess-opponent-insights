@@ -3,10 +3,8 @@ const ndjson = require('ndjson')
 const {PAT} = require("../../../conf");
 
 async function fetchLichessUserGames(username, gameType, colour) {
-  const numberOfGames = 60;
-
   const params = new URLSearchParams({
-    max: numberOfGames,
+    max: 60, // maximum number of games Lichess will return if a PAT is provided
     rated: true,
     perfType: gameType,
     color: colour,
@@ -20,83 +18,94 @@ async function fetchLichessUserGames(username, gameType, colour) {
     "Accept": "application/x-ndjson",
   };
   const response = await fetch(`https://lichess.org/api/games/user/${username}?${params}`, {headers})
-  const responseText = await response.text();
+  const ndjsonParserResponseStream = response.body.pipe(ndjson.parse());
+  const openingsStats = [];
 
-  const ndjsonParser = ndjson.parse();
-  ndjsonParser.write(responseText);
-
-  const openingsStats = {};
-  let iterationCount = 0;
-
-  for await (const record of ndjsonParser) {
-    if (++iterationCount === numberOfGames) {
-      break;
-    }
-
+  for await (const record of ndjsonParserResponseStream) {
+    // temporarily skip games where there is no winner (stalemate, draw, abort, etc) so we calculate accuracies/win rate correctly
     if (!record.winner) {
       continue;
     }
 
-    const opening = record.opening.name;
-    const openingFamily = record.opening.name.split(':')[0];
+    const opening = parseOpeningName(record.opening.name);
 
-    if (!openingsStats[opening]) {
-      openingsStats[opening] = {
+    let openingStats = openingsStats.find(anOpening => anOpening.name === opening.name);
+    if (openingStats === undefined) {
+      openingStats = {
+        name: opening.name,
         accuracies: [],
         wins: [],
-        isOpeningFamily: false,
-      };
+        variations: []
+      }
+      openingsStats.push(openingStats);
     }
 
-    if (openingFamily !== undefined && !openingsStats[openingFamily]) {
-      openingsStats[openingFamily] = {
+    let variationStats = openingsStats.find(opening => opening.name).variations.find(variation => variation.name === opening.variationName);
+    if (variationStats === undefined) {
+      variationStats = {
+        name: opening.variationName,
         accuracies: [],
-        wins: [],
-        isOpeningFamily: true,
-      };
+        wins: []
+      }
+      if (opening.variationName) {
+        openingsStats.find(opening => opening.name).variations.push(variationStats);
+      }
     }
 
     const accuracy = record.players[colour].analysis?.accuracy;
     if (accuracy) {
-      openingsStats[opening].accuracies.push(accuracy);
-      if (openingFamily)
-        openingsStats[openingFamily].accuracies.push(accuracy);
+      openingStats.accuracies.push(accuracy);
+      if (opening.variationName) {
+        variationStats.accuracies.push(accuracy);
+      }
     }
 
     const win = colour === record.winner;
-    openingsStats[opening].wins.push(win);
-
-    if (openingFamily)
-    openingsStats[openingFamily].wins.push(win);
+    openingStats.wins.push(win);
+    if (opening.variationName) {
+      variationStats.wins.push(win);
+    }
   }
 
-  return Object.entries(openingsStats).reduce((result, record) => {
-    const [opening, {accuracies, wins, isOpeningFamily}] = record;
-    const winRate = wins.filter(Boolean).length / wins.length;
-    const numberOfGames = wins.length;
-    const accuracy = accuracies.length === 0 ? undefined : accuracies.reduce((prev, next) => prev + next, 0) / accuracies.length;
+  const sortOpeningsByNumberOfGamesDesc = (a, b) => b.insights.numberOfGames - a.insights.numberOfGames;
+  const calculateWinRate = wins => wins.filter(Boolean).length / wins.length;
+  const calculateAccuracy = accuracies => accuracies.length === 0
+      ? undefined
+      : accuracies.reduce((prev, next) => prev + next, 0) / accuracies.length
 
-    if (numberOfGames === 1) {
-      return result;
-    }
+  return openingsStats
+    .filter(openingStats => openingStats.wins.length > 1) // showing a game which has only been played once does not provide useful insights
+    .map(openingStats => ({
+      name: openingStats.name,
+      insights: {
+        numberOfGames: openingStats.wins.length,
+        winRate: calculateWinRate(openingStats.wins),
+        accuracy: calculateAccuracy(openingStats.accuracies)
+      },
+      variations: openingStats.variations
+        .map(variation => ({
+          name: variation.name,
+          insights: {
+            numberOfGames: variation.wins.length,
+            winRate: calculateWinRate(variation.wins),
+            accuracy: calculateAccuracy(variation.accuracies)
+          }
+        }))
+        .sort(sortOpeningsByNumberOfGamesDesc)
+    }))
+    .sort(sortOpeningsByNumberOfGamesDesc)
+}
 
-    const games = [
-      ...result,
-      {
-        opening,
-        insights: {
-          winRate,
-          numberOfGames,
-          accuracy,
-          isOpeningFamily
-        }
-      }
-    ];
+function parseOpeningName(openingName) {
+  const [opening, variation] = openingName.split(": ");
 
-    games.sort((a, b) => b.insights.numberOfGames - a.insights.numberOfGames);
-
-    return games;
-  }, []);
+  if (opening === undefined) {
+    return {name};
+  }
+  return {
+    name: opening,
+    variationName: variation
+  };
 }
 
 module.exports = {
