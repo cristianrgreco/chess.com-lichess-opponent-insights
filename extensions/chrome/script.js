@@ -126,6 +126,7 @@ function renderOpeningsChart(response) {
   const openingDrawRate = response.games.openings.map(g => ((g.insights.results.draw ?? 0) / g.insights.numberOfGames) * 100);
   const openingStalemateRate = response.games.openings.map(g => ((g.insights.results.stalemate ?? 0) / g.insights.numberOfGames) * 100);
   const openingOutOfTimeRate = response.games.openings.map(g => ((g.insights.results.outoftime ?? 0) / g.insights.numberOfGames) * 100);
+  const openingTimeoutRate = response.games.openings.map(g => ((g.insights.results.timeout ?? 0) / g.insights.numberOfGames) * 100);
   const openingNumberOfGames = response.games.openings.map(g => g.insights.numberOfGames);
 
   new Chart(document.querySelector("#ca_openings_chart"),
@@ -148,6 +149,9 @@ function renderOpeningsChart(response) {
         }, {
           label: "Out of Time",
           data: openingOutOfTimeRate
+        }, {
+          label: "Timeout",
+          data: openingTimeoutRate
         }]
       },
       options: {
