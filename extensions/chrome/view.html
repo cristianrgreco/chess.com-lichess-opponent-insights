@@ -59,7 +59,7 @@
     display: none;
   }
   .ca_elo_range {
-    margin: 20px 0;
+    margin: 30px 0 20px 0;
     position: relative;
     height: 1px;
     width: 200px;
@@ -108,9 +108,7 @@
 <div class="ca_container">
   <div class="ca_section">
     <span class="ca_opponent_name">Loading...</span>
-  </div>
-  <div class="ca_section">
-    <span class="ca_game_type">Bullet</span>
+      <span class="ca_win_streak_value" title="Win/Lose Streak">??</span>
   </div>
   <div class="ca_section">
     <div class="ca_elo_range">
@@ -125,18 +123,14 @@
       </div>
     </div>
   </div>
-  <div class="ca_section">
-    <span class="ca_win_streak_label">Streak</span>
-    <span class="ca_win_streak_value">??</span>
-  </div>
   <div class="ca_section ca_tabs">
     <span class="ca_tab ca_active ca_stats_tab_trigger">Stats</span>
     <span class="ca_tab ca_openings_tab_trigger">Openings</span>
   </div>
-  <div class="ca_section ca_tab_section ca_stats" style="width: 300px;">
+  <div class="ca_section ca_tab_section ca_stats" style="width: 100%; height: 100%;">
     <canvas id="ca_stats_chart"></canvas>
   </div>
-  <div class="ca_section ca_tab_section ca_openings ca_hidden" style="width: 300px; height: 600px;">
+  <div class="ca_section ca_tab_section ca_openings ca_hidden" style="width: 100%; height: 100%;">
     <canvas id="ca_openings_chart"></canvas>
   </div>
 </div>

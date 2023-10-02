@@ -28,7 +28,7 @@ if (document.title.indexOf("Play ") !== -1) {
   fetch(`https://rlabb3msg0.execute-api.eu-west-2.amazonaws.com/prod/user-analytics?platform=lichess&username=${opponent}&gameType=${gameType}&colour=${opponentColour}`)
     .then(response => response.json())
     .then(response => {
-      document.querySelector(".mchat").innerHTML = viewHtml // todo viewHtml may not be resolved, chain the promise
+      document.querySelector(".round__side").innerHTML = viewHtml // todo viewHtml may not be resolved, chain the promise
 
       const statsTabTrigger = document.querySelector(".ca_stats_tab_trigger");
       const openingsTabTrigger = document.querySelector(".ca_openings_tab_trigger");
