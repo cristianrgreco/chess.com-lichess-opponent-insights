@@ -2,6 +2,11 @@ const fetch = require("node-fetch");
 
 async function fetchLichessUserPerformanceStatistics(username, gameType) {
   const response = await fetch(`https://lichess.org/api/user/${username}/perf/${gameType}`);
+
+  if (response.status !== 200) {
+    return;
+  }
+
   const responseJson = await response.json();
 
   return {

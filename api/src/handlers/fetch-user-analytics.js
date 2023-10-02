@@ -1,7 +1,10 @@
 const {fetchLichessUserGames} = require("../core/lichess/user/export-games");
 const {fetchLichessUserPerformanceStatistics} = require("../core/lichess/user/performance-statistics");
+const corsHeaders = require("./cors-headers");
 
 async function fetchUserAnalytics(event) {
+  console.log(`Request received: ${JSON.stringify(event.queryStringParameters)}`);
+
   const {platform, username, colour, gameType} = event.queryStringParameters;
 
   if (platform !== "lichess") {
@@ -13,14 +16,17 @@ async function fetchUserAnalytics(event) {
     fetchLichessUserPerformanceStatistics(username, gameType)
   ]);
 
+  if (!games || !performance) {
+    return {
+      statusCode: 404,
+      headers: corsHeaders
+    }
+  }
+
   return {
     statusCode: 200,
     body: JSON.stringify({ performance, games }),
-    headers: {
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Credentials": true,
-      "Access-Control-Expose-Headers": "Location",
-    }
+    headers: corsHeaders
   };
 }
 
