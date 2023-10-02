@@ -156,6 +156,7 @@ function renderOpeningsChart(response) {
       },
       options: {
         maintainAspectRatio: false,
+        indexAxis: 'y',
         scales: {
           x: {
             stacked: true,
