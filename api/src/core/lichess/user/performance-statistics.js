@@ -7,6 +7,7 @@ async function fetchLichessUserPerformanceStatistics(username, gameType) {
   return {
     lowestRating: responseJson.stat.lowest?.int,
     highestRating: responseJson.stat.highest?.int,
+    currentRating: responseJson.perf.glicko.rating,
     totalNumberOfGames: responseJson.stat.count.all,
     totalNumberOfDisconnects: responseJson.stat.count.disconnects,
     currentLosingStreak: responseJson.stat.resultStreak.loss.cur.v,

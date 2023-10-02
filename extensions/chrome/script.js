@@ -54,9 +54,15 @@ if (document.title.indexOf("Play ") !== -1) {
 function renderAnalytics(response, opponent) {
   document.querySelector(".ca_opponent_name").innerText = opponent;
 
-  document.querySelector(".ca_performance_lowest").innerText = response.performance.lowestRating;
-  document.querySelector(".ca_performance_highest").innerText = response.performance.highestRating;
-  
+  document.querySelector(".ca_elo_range_lowest_value").innerText = response.performance.lowestRating;
+  document.querySelector(".ca_elo_range_highest_value").innerText = response.performance.highestRating;
+  document.querySelector(".ca_elo_range_current_value").innerText = Math.floor(response.performance.currentRating);
+
+  const range = response.performance.highestRating - response.performance.lowestRating;
+  const diff = response.performance.currentRating - response.performance.lowestRating;
+  const percentageIncrease = (diff / range) * 100;
+  document.querySelector(".ca_elo_range_current").style.left = `${percentageIncrease}%`;
+
   if (response.performance.currentWinningStreak <= 0) {
     document.querySelector(".ca_win_streak_value").innerHTML = `-${response.performance.currentLosingStreak}`;
     document.querySelector(".ca_win_streak_value").classList.add("ca_negative");
@@ -101,6 +107,13 @@ function renderStatsChart(response) {
       },
       options: {
         borderWidth: 0,
+        plugins: {
+          legend: {
+            labels: {
+              color: 'rgb(186, 186, 186)',
+            },
+          }
+        }
       }
     },
   );
@@ -120,7 +133,6 @@ function renderOpeningsChart(response) {
       type: 'bar',
       data: {
         labels: openingLabels,
-        tooltipText: openingNumberOfGames,
         datasets: [{
           label: "Mate",
           data: openingMateRate
@@ -136,9 +148,6 @@ function renderOpeningsChart(response) {
         }, {
           label: "Out of Time",
           data: openingOutOfTimeRate
-        // }, {
-        //   data: openingNumberOfGames,
-        //   hidden: true
         }]
       },
       options: {
@@ -146,18 +155,28 @@ function renderOpeningsChart(response) {
         scales: {
           x: {
             stacked: true,
+            ticks: {
+              color: "rgb(186, 186, 186)"
+            }
           },
           y: {
-            stacked: true
+            stacked: true,
+            ticks: {
+              color: "rgb(186, 186, 186)"
+            }
           }
         },
         plugins: {
+          legend: {
+            labels: {
+              color: 'rgb(186, 186, 186)',
+            },
+          },
           tooltip: {
             callbacks: {
               footer: function(ctx) {
-                var hiddenDataset = ctx[0].chart.config._config.data.datasets[1].data;
-                var value = hiddenDataset[ctx[0].dataIndex];
-                return "Games: " + value;
+                const value = openingNumberOfGames[ctx[0].dataIndex];
+                return `Games: ${value}`;
               },
             }
           }

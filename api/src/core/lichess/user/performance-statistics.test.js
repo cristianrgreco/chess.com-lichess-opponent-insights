@@ -16,6 +16,11 @@ describe("Lichess performance statistics", () => {
     expect(stats.highestRating).toBeGreaterThan(1400);
   });
 
+  it("should return a user's current rating", async () => {
+    const stats = await fetchLichessUserPerformanceStatistics("tmevans", "blitz");
+    expect(stats.currentRating).toBeGreaterThan(1400);
+  });
+
   it("should return a user's current losing streak", async () => {
     const stats = await fetchLichessUserPerformanceStatistics("tmevans", "blitz");
     expect(stats.currentLosingStreak).toBeGreaterThanOrEqual(0);
