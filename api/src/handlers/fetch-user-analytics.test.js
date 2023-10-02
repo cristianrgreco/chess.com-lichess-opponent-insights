@@ -16,4 +16,19 @@ describe("Fetch user analytics handler", () => {
     expect(response.statusCode).toEqual(200);
     expect(JSON.parse(response.body)).toBeDefined();
   });
+
+  it("should return a 404 when user does not exist", async () => {
+    const event = {
+      queryStringParameters: {
+        platform: "lichess",
+        username: "freenwil",
+        gameType: "blitz",
+        colour: "white"
+      }
+    };
+
+    const response = await handler(event);
+
+    expect(response.statusCode).toEqual(404);
+  });
 });

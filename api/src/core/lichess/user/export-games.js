@@ -18,6 +18,11 @@ async function fetchLichessUserGames(username, gameType, colour) {
     "Accept": "application/x-ndjson",
   };
   const response = await fetch(`https://lichess.org/api/games/user/${username}?${params}`, {headers})
+
+  if (response.status !== 200) {
+    return;
+  }
+
   const ndjsonParserResponseStream = response.body.pipe(ndjson.parse());
   const openingsStats = [];
 

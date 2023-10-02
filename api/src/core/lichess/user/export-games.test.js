@@ -2,7 +2,7 @@ const { fetchLichessUserGames } = require("./export-games");
 
 describe("Lichess export games", () => {
   it("should return result statistics", async () => {
-    const games = await fetchLichessUserGames("Spaghetti_Spoghotti", "blitz", "white");
+    const games = await fetchLichessUserGames("freienwil", "blitz", "white");
 
     expect(games.stats.mateRate).toBeGreaterThan(0);
     expect(games.stats.resignRate).toBeGreaterThan(0);
