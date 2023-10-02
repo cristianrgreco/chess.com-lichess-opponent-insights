@@ -19,7 +19,7 @@ provider:
         rateLimit: 100
 
   memorySize: 256
-  timeout: 15
+  timeout: 30
   logRetentionInDays: 14
 
 functions:
