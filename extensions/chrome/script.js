@@ -120,14 +120,15 @@ function renderStatsChart(response) {
 }
 
 function renderOpeningsChart(response) {
+  const calcResultRate = (opening, rateName) => ((opening.insights.results[rateName] ?? 0) / opening.insights.numberOfGames) * 100
   const openingLabels = response.games.openings.map(g => g.name);
-  const openingMateRate = response.games.openings.map(g => ((g.insights.results.mate ?? 0) / g.insights.numberOfGames) * 100);
-  const openingResignRate = response.games.openings.map(g => ((g.insights.results.resign ?? 0) / g.insights.numberOfGames) * 100);
-  const openingDrawRate = response.games.openings.map(g => ((g.insights.results.draw ?? 0) / g.insights.numberOfGames) * 100);
-  const openingStalemateRate = response.games.openings.map(g => ((g.insights.results.stalemate ?? 0) / g.insights.numberOfGames) * 100);
-  const openingOutOfTimeRate = response.games.openings.map(g => ((g.insights.results.outoftime ?? 0) / g.insights.numberOfGames) * 100);
-  const openingTimeoutRate = response.games.openings.map(g => ((g.insights.results.timeout ?? 0) / g.insights.numberOfGames) * 100);
-  const openingNumberOfGames = response.games.openings.map(g => g.insights.numberOfGames);
+  const openingMateRate = response.games.openings.map(g => calcResultRate(g, "mate")).slice(0, 10);
+  const openingResignRate = response.games.openings.map(g => calcResultRate(g, "resign")).slice(0, 10);
+  const openingDrawRate = response.games.openings.map(g => calcResultRate(g, "draw")).slice(0, 10);
+  const openingStalemateRate = response.games.openings.map(g => calcResultRate(g, "stalemate")).slice(0, 10);
+  const openingOutOfTimeRate = response.games.openings.map(g => calcResultRate(g, "outoftime")).slice(0, 10);
+  const openingTimeoutRate = response.games.openings.map(g => calcResultRate(g, "timeout")).slice(0, 10);
+  const openingNumberOfGames = response.games.openings.map(g => g.insights.numberOfGames).slice(0, 10);
 
   new Chart(document.querySelector("#ca_openings_chart"),
     {
