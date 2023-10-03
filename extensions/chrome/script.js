@@ -131,6 +131,10 @@ function renderOpeningsChart(response) {
   const openingOutOfTimeRate = response.games.openings.map(g => calcResultRate(g, "outoftime")).slice(0, 10);
   const openingTimeoutRate = response.games.openings.map(g => calcResultRate(g, "timeout")).slice(0, 10);
   const openingNumberOfGames = response.games.openings.map(g => g.insights.numberOfGames).slice(0, 10);
+  console.log(response.games.openings);
+  const totalWins = response.games.openings.map(g => g.insights.totals.win);
+  const totalDraws = response.games.openings.map(g => g.insights.totals.draw);
+  const totalLosses = response.games.openings.map(g => g.insights.totals.lose);
 
   new Chart(document.querySelector("#ca_openings_chart"),
     {
@@ -138,23 +142,14 @@ function renderOpeningsChart(response) {
       data: {
         labels: openingLabels,
         datasets: [{
-          label: "Mate",
-          data: openingMateRate
+          label: 'Wins',
+          data: totalWins,
         }, {
-          label: "Resign",
-          data: openingResignRate
+          label: 'Draws',
+          data: totalDraws,
         }, {
-          label: "Draw",
-          data: openingDrawRate
-        }, {
-          label: "Stalemate",
-          data: openingStalemateRate
-        }, {
-          label: "Out of Time",
-          data: openingOutOfTimeRate
-        }, {
-          label: "Timeout",
-          data: openingTimeoutRate
+          label: 'Losses',
+          data: totalLosses,
         }]
       },
       options: {
