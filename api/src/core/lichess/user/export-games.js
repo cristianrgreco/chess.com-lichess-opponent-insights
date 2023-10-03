@@ -68,8 +68,6 @@ async function fetchLichessUserGames(username, gameType, colour) {
 
   const sortOpeningsByNumberOfGamesDesc = (a, b) =>
       b.insights.numberOfGames - a.insights.numberOfGames;
-  const calculateResultRates = results =>
-      Object.entries(results).forEach(([key, val]) =>(val.reduce((prev, next) => ({...prev, [next]: (prev[next] ?? 0) + 1}), {})));
   const calculateAccuracy = accuracies => accuracies.length === 0
       ? undefined
       : accuracies.reduce((prev, next) => prev + next, 0) / accuracies.length
@@ -78,8 +76,8 @@ async function fetchLichessUserGames(username, gameType, colour) {
     .map(openingStats => ({
       name: openingStats.name,
       insights: {
-        numberOfGames: openingStats.results.length,
-        results: calcResults(openingStats.results),
+        numberOfGames: Object.values(Object.values(openingStats.results)).reduce((prev, next) => prev + next.length, 0),
+        results: calculateGameResultStatusCounts(openingStats.results),
         accuracy: calculateAccuracy(openingStats.accuracies)
       },
       variations: openingStats.variations
@@ -87,7 +85,7 @@ async function fetchLichessUserGames(username, gameType, colour) {
           name: variation.name,
           insights: {
             numberOfGames: variation.results.length,
-            results: calcResults(variation.results),
+            results: calculateGameResultStatusCounts(variation.results),
             accuracy: calculateAccuracy(variation.accuracies)
           }
         }))
@@ -95,6 +93,7 @@ async function fetchLichessUserGames(username, gameType, colour) {
     }))
     .sort(sortOpeningsByNumberOfGamesDesc)
 
+  // @tom todo these stats are now for wins only. Do we want overall/wins/loses/draws?
   const rawStats = openings.reduce((prev, next) => ({
     numberOfGames: (prev.numberOfGames ?? 0) + next.insights.numberOfGames,
     mateCount: (prev.mateCount ?? 0) + (next.insights.results["win"].mate ?? 0),
@@ -117,16 +116,19 @@ async function fetchLichessUserGames(username, gameType, colour) {
     openings
   };
 }
-function calcResults(results) {
-  Object.entries(results).reduce((prev, [key, value]) => {
-    let current = prev[key];
-    return prev
-  }, {"win": [], "lose": [], "draw":[]} );
-  for(let r in Object.entries(results))
-  {
-    r = r.reduce((prev, next) => ({...prev, [next]: (prev[next] ?? 0) + 1}), {});
-  }
-  return res;
+
+/*
+ * Input: { win: ["mate", "resign"], lose: ["mate", "resign"] }
+ * Output: { win: { mate: 1, resign: 1 }, lose: { mate: 1, resign: 1 } }
+ */
+function calculateGameResultStatusCounts(gameResultStatuses) {
+  return Object.entries(gameResultStatuses).reduce(
+      (gameResultStatusCounts, [resultStatus, resultTypes]) => ({
+        ...gameResultStatusCounts,
+        [resultStatus]: resultTypes.reduce(
+            (resultStatuses, resultType) => ({...resultStatuses, [resultType]: (resultStatuses[resultType] ?? 0) + 1}),
+            {})
+      }), {"win": {}, "lose": {}, "draw": {}});
 }
 
 function parseOpeningName(openingName) {
