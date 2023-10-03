@@ -131,7 +131,7 @@ function renderOpeningsChart(response) {
   const openingOutOfTimeRate = response.games.openings.map(g => calcResultRate(g, "outoftime")).slice(0, 10);
   const openingTimeoutRate = response.games.openings.map(g => calcResultRate(g, "timeout")).slice(0, 10);
   const openingNumberOfGames = response.games.openings.map(g => g.insights.numberOfGames).slice(0, 10);
-  console.log(response.games.openings);
+
   const totalWins = response.games.openings.map(g => g.insights.totals.win);
   const totalDraws = response.games.openings.map(g => g.insights.totals.draw);
   const totalLosses = response.games.openings.map(g => g.insights.totals.lose);
@@ -144,12 +144,15 @@ function renderOpeningsChart(response) {
         datasets: [{
           label: 'Wins',
           data: totalWins,
+          backgroundColor: "#68ab5e"
         }, {
           label: 'Draws',
           data: totalDraws,
+          backgroundColor: "grey"
         }, {
           label: 'Losses',
           data: totalLosses,
+          backgroundColor: "#AB615E"
         }]
       },
       options: {
@@ -179,7 +182,8 @@ function renderOpeningsChart(response) {
             callbacks: {
               footer: function(ctx) {
                 const value = openingNumberOfGames[ctx[0].dataIndex];
-                return `Games: ${value}`;
+                const timeout = openingOutOfTimeRate[ctx[0].dataIndex];
+                return `Games: ${value}\nTimeouts: ${timeout}`;
               },
             }
           }
