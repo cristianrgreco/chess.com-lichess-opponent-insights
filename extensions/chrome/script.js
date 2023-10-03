@@ -163,6 +163,13 @@ function renderOpeningsChart(response) {
             stacked: true,
             ticks: {
               color: "rgb(186, 186, 186)"
+            },
+            title: {
+              display: true,
+              text: "Number of games",
+              font: {
+                size: 15
+              }
             }
           },
           y: {
