@@ -34,7 +34,7 @@ async function fetchLichessUserGames(username, gameType, colour) {
       openingStats = {
         name: opening.name,
         accuracies: [],
-        results: [],
+        results: {"win": [], "lose": [], "draw": []},
         variations: []
       }
       openingsStats.push(openingStats);
@@ -45,7 +45,7 @@ async function fetchLichessUserGames(username, gameType, colour) {
       variationStats = {
         name: opening.variationName,
         accuracies: [],
-        results: []
+        results: {"win": [], "lose": [], "draw": []}
       }
       if (opening.variationName) {
         openingsStats.find(opening => opening.name).variations.push(variationStats);
@@ -59,28 +59,27 @@ async function fetchLichessUserGames(username, gameType, colour) {
         variationStats.accuracies.push(accuracy);
       }
     }
-
-    openingStats.results.push(record.status);
+    let gameResult = calculateGameResult(record.winner, colour);
+    openingStats.results[gameResult].push(record.status);
     if (opening.variationName) {
-      variationStats.results.push(record.status);
+      variationStats.results[gameResult].push(record.status);
     }
   }
 
   const sortOpeningsByNumberOfGamesDesc = (a, b) =>
       b.insights.numberOfGames - a.insights.numberOfGames;
   const calculateResultRates = results =>
-      results.reduce((prev, next) => ({...prev, [next]: (prev[next] ?? 0) + 1}), {});
+      Object.entries(results).forEach(([key, val]) =>(val.reduce((prev, next) => ({...prev, [next]: (prev[next] ?? 0) + 1}), {})));
   const calculateAccuracy = accuracies => accuracies.length === 0
       ? undefined
       : accuracies.reduce((prev, next) => prev + next, 0) / accuracies.length
 
-  const openings = openingsStats
-    .filter(openingStats => openingStats.results.length > 1) // showing a game which has only been played once does not provide useful insights
+  const openings = openingsStats// showing a game which has only been played once does not provide useful insights
     .map(openingStats => ({
       name: openingStats.name,
       insights: {
         numberOfGames: openingStats.results.length,
-        results: calculateResultRates(openingStats.results),
+        results: calcResults(openingStats.results),
         accuracy: calculateAccuracy(openingStats.accuracies)
       },
       variations: openingStats.variations
@@ -88,7 +87,7 @@ async function fetchLichessUserGames(username, gameType, colour) {
           name: variation.name,
           insights: {
             numberOfGames: variation.results.length,
-            results: calculateResultRates(variation.results),
+            results: calcResults(variation.results),
             accuracy: calculateAccuracy(variation.accuracies)
           }
         }))
@@ -98,11 +97,11 @@ async function fetchLichessUserGames(username, gameType, colour) {
 
   const rawStats = openings.reduce((prev, next) => ({
     numberOfGames: (prev.numberOfGames ?? 0) + next.insights.numberOfGames,
-    mateCount: (prev.mateCount ?? 0) + (next.insights.results.mate ?? 0),
-    resignCount: (prev.resignCount ?? 0) + (next.insights.results.resign ?? 0),
-    drawCount: (prev.drawCount ?? 0) + (next.insights.results.draw ?? 0),
-    stalemateCount: (prev.stalemateCount ?? 0) + (next.insights.results.stalemate ?? 0),
-    outOfTimeCount: (prev.outOfTimeCount ?? 0) + (next.insights.results.outoftime ?? 0),
+    mateCount: (prev.mateCount ?? 0) + (next.insights.results["win"].mate ?? 0),
+    resignCount: (prev.resignCount ?? 0) + (next.insights.results["win"].resign ?? 0),
+    drawCount: (prev.drawCount ?? 0) + (next.insights.results["win"].draw ?? 0),
+    stalemateCount: (prev.stalemateCount ?? 0) + (next.insights.results["win"].stalemate ?? 0),
+    outOfTimeCount: (prev.outOfTimeCount ?? 0) + (next.insights.results["win"].outoftime ?? 0),
   }), {});
 
   const stats = {
@@ -118,6 +117,17 @@ async function fetchLichessUserGames(username, gameType, colour) {
     openings
   };
 }
+function calcResults(results) {
+  Object.entries(results).reduce((prev, [key, value]) => {
+    let current = prev[key];
+    return prev
+  }, {"win": [], "lose": [], "draw":[]} );
+  for(let r in Object.entries(results))
+  {
+    r = r.reduce((prev, next) => ({...prev, [next]: (prev[next] ?? 0) + 1}), {});
+  }
+  return res;
+}
 
 function parseOpeningName(openingName) {
   const [opening, variation] = openingName.split(": ");
@@ -129,6 +139,13 @@ function parseOpeningName(openingName) {
     name: opening,
     variationName: variation
   };
+}
+
+function calculateGameResult(winner, colour) {
+  if(winner === undefined) {
+    return "draw";
+  }
+  return winner === colour ? "win" : "lose";
 }
 
 module.exports = {
