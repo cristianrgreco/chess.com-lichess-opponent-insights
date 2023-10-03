@@ -35,6 +35,7 @@ async function fetchLichessUserGames(username, gameType, colour) {
         name: opening.name,
         accuracies: [],
         results: {"win": [], "lose": [], "draw": []},
+        totals: {},
         variations: []
       }
       openingsStats.push(openingStats);
@@ -45,7 +46,8 @@ async function fetchLichessUserGames(username, gameType, colour) {
       variationStats = {
         name: opening.variationName,
         accuracies: [],
-        results: {"win": [], "lose": [], "draw": []}
+        results: {"win": [], "lose": [], "draw": []},
+        totals: {}
       }
       if (opening.variationName) {
         openingsStats.find(opening => opening.name).variations.push(variationStats);
@@ -78,6 +80,7 @@ async function fetchLichessUserGames(username, gameType, colour) {
       insights: {
         numberOfGames: Object.values(Object.values(openingStats.results)).reduce((prev, next) => prev + next.length, 0),
         results: calculateGameResultStatusCounts(openingStats.results),
+        totals: calculateTotalGameStatusesCount(openingStats.results),
         accuracy: calculateAccuracy(openingStats.accuracies)
       },
       variations: openingStats.variations
@@ -86,6 +89,7 @@ async function fetchLichessUserGames(username, gameType, colour) {
           insights: {
             numberOfGames: variation.results.length,
             results: calculateGameResultStatusCounts(variation.results),
+            totals: calculateTotalGameStatusesCount(openingStats.results),
             accuracy: calculateAccuracy(variation.accuracies)
           }
         }))
@@ -129,6 +133,15 @@ function calculateGameResultStatusCounts(gameResultStatuses) {
             (resultStatuses, resultType) => ({...resultStatuses, [resultType]: (resultStatuses[resultType] ?? 0) + 1}),
             {})
       }), {"win": {}, "lose": {}, "draw": {}});
+}
+
+function calculateTotalGameStatusesCount(gameResultStatuses) {
+  return Object.entries(gameResultStatuses).reduce(
+      (gameResultTotalCounts, [resultStatus, resultTypes]) => ({
+        ...gameResultTotalCounts,
+        [resultStatus]: resultTypes.length
+      }), {"win": 0, "lose": 0, "draw": 0}
+  );
 }
 
 function parseOpeningName(openingName) {
