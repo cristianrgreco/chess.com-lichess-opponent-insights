@@ -134,18 +134,14 @@ function calculateGameResultStatusCounts(gameResultStatuses) {
             {})
       }), {"win": {}, "lose": {}, "draw": {}});
 }
-/*
-input: { win: { mate: 1, resign: 2, abort: 1} }, "win"
-output: { win: 3, draw: 1, lose: 1 }
 
- */
 function calculateTotalGameStatusesCount(gameResultStatuses) {
- return Object.entries(gameResultStatuses).reduce(
-     (gameResultTotalCounts, [resultStatus, resultTypes]) => ({
-       ...gameResultTotalCounts,
-       [resultStatus]: resultTypes.length
-     }), {"win": 0, "lose": 0, "draw": 0}
- );
+  return Object.entries(gameResultStatuses).reduce(
+      (gameResultTotalCounts, [resultStatus, resultTypes]) => ({
+        ...gameResultTotalCounts,
+        [resultStatus]: resultTypes.length
+      }), {"win": 0, "lose": 0, "draw": 0}
+  );
 }
 
 function parseOpeningName(openingName) {
