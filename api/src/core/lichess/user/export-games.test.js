@@ -15,7 +15,7 @@ describe("Lichess export games", () => {
     const games = await fetchLichessUserGames("Spaghetti_Spoghotti", "blitz", "white");
 
     const { insights } = games.openings.find(game => game.name === "Queen's Pawn Game");
-    expect(insights.results.mate).toBeGreaterThanOrEqual(0);
+    expect(insights.results["win"]?.mate).toBeGreaterThanOrEqual(0);
     expect(insights.numberOfGames).toBeGreaterThanOrEqual(0);
     expect(insights.accuracy).toBeGreaterThanOrEqual(0);
   });
