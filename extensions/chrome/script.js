@@ -55,7 +55,9 @@ function renderAnalytics(response, opponent) {
   document.querySelector(".ca_opponent_name").innerText = opponent;
 
   document.querySelector(".ca_elo_range_lowest_value").innerText = response.performance.lowestRating;
+  document.querySelector(".ca_elo_range_lowest_value").title = response.performance.lowestRatingDateTime;
   document.querySelector(".ca_elo_range_highest_value").innerText = response.performance.highestRating;
+  document.querySelector(".ca_elo_range_highest_value").title = response.performance.highestRatingDateTime;
   document.querySelector(".ca_elo_range_current_value").innerText = Math.floor(response.performance.currentRating);
 
   const range = response.performance.highestRating - response.performance.lowestRating;
