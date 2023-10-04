@@ -113,7 +113,6 @@ async function fetchLichessUserGames(username, gameType, colour) {
   }), {});
 
   const stats =
-      numberOfGames: (prev.numberOfGames ?? 0) + next.insights.numberOfGames,
       win = {
         mateCount: rawStats.winMateCount / rawStats.numberOfGames,
         resignCount: rawStats.winResignCount / rawStats.numberOfGames,

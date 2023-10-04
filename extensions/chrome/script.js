@@ -29,11 +29,9 @@ if (document.title.indexOf("Play ") !== -1) {
     .then(response => response.json())
     .then(response => {
       document.querySelector(".round__side").innerHTML = viewHtml // todo viewHtml may not be resolved, chain the promise
-
+      console.log(response);
       const statsTabTrigger = document.querySelector(".ca_stats_tab_trigger");
       const openingsTabTrigger = document.querySelector(".ca_openings_tab_trigger");
-      const statsChartWinTrigger = document.querySelector(".ca_stats_win_trigger");
-      const statsChartLoseTrigger = document.querySelector(".ca_stats_lose_trigger");
       const statsEl = document.querySelector(".ca_stats");
       const openingsEl = document.querySelector(".ca_openings");
       statsTabTrigger.addEventListener("click", e => {
@@ -47,10 +45,6 @@ if (document.title.indexOf("Play ") !== -1) {
         statsEl.classList.add("ca_hidden");
         openingsTabTrigger.classList.add("ca_active");
         openingsEl.classList.remove("ca_hidden");
-      });
-
-      statsChartWinTrigger.addEventListener("click", e => {
-
       });
 
       renderAnalytics(response, opponent);
@@ -110,7 +104,7 @@ function renderStatsChart(response) {
       data: {
         labels,
         datasets: [{
-          label: "Wins"
+          label: "Wins",
           data: winData,
           backgroundColor: 'rgba(54, 162, 235, 0.2)',
           borderColor: 'rgb(54, 162, 235)',
@@ -120,7 +114,7 @@ function renderStatsChart(response) {
           pointHoverBorderColor: 'rgb(54, 162, 235)'
         },
           {
-            label: "Losses"
+            label: "Losses",
             data: loseData,
             backgroundColor: 'rgba(255, 99, 132, 0.2)',
             borderColor: 'rgb(255, 99, 132)',
@@ -128,7 +122,6 @@ function renderStatsChart(response) {
             pointBorderColor: '#fff',
             pointHoverBackgroundColor: '#fff',
             pointHoverBorderColor: 'rgb(255, 99, 132)'
-
           }]
       },
       options: {
