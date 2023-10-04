@@ -29,7 +29,6 @@ if (document.title.indexOf("Play ") !== -1) {
     .then(response => response.json())
     .then(response => {
       document.querySelector(".round__side").innerHTML = viewHtml // todo viewHtml may not be resolved, chain the promise
-      console.log(response);
       const statsTabTrigger = document.querySelector(".ca_stats_tab_trigger");
       const openingsTabTrigger = document.querySelector(".ca_openings_tab_trigger");
       const statsEl = document.querySelector(".ca_stats");
@@ -97,35 +96,18 @@ function renderStatsChart(response) {
   const winData = Object.values(response.games.stats.win).map(stat => stat * 100);
   const loseData = Object.values(response.games.stats.lose).map(stat => stat * 100);
 
-  new Chart(
+  let statsChart = new Chart(
     document.querySelector("#ca_stats_chart"),
     {
-      type: 'radar',
+      type: 'pie',
       data: {
         labels,
         datasets: [{
-          label: "Wins",
           data: winData,
-          backgroundColor: 'rgba(54, 162, 235, 0.2)',
-          borderColor: 'rgb(54, 162, 235)',
-          pointBackgroundColor: 'rgb(54, 162, 235)',
-          pointBorderColor: '#fff',
-          pointHoverBackgroundColor: '#fff',
-          pointHoverBorderColor: 'rgb(54, 162, 235)'
-        },
-          {
-            label: "Losses",
-            data: loseData,
-            backgroundColor: 'rgba(255, 99, 132, 0.2)',
-            borderColor: 'rgb(255, 99, 132)',
-            pointBackgroundColor: 'rgb(255, 99, 132)',
-            pointBorderColor: '#fff',
-            pointHoverBackgroundColor: '#fff',
-            pointHoverBorderColor: 'rgb(255, 99, 132)'
-          }]
+          hoverOffset: 4
+        }]
       },
       options: {
-        borderWidth: 0,
         plugins: {
           legend: {
             labels: {
@@ -136,6 +118,17 @@ function renderStatsChart(response) {
       }
     },
   );
+
+  const statsWinTrigger = document.querySelector(".ca_stats_win_trigger");
+  statsWinTrigger.addEventListener("click", e => {
+    statsChart.config.data.datasets[0].data = winData;
+    statsChart.update();
+  });
+  const statsLossesTrigger = document.querySelector(".ca_stats_lose_trigger");
+  statsLossesTrigger.addEventListener("click", e => {
+    statsChart.config.data.datasets[0].data = loseData;
+    statsChart.update();
+  });
 }
 
 function renderOpeningsChart(response) {
