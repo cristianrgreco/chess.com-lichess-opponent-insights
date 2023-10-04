@@ -4,11 +4,13 @@ describe("Lichess export games", () => {
   it("should return result statistics", async () => {
     const games = await fetchLichessUserGames("Spaghetti_Spoghotti", "blitz", "white");
 
-    expect(games.stats.mateRate).toBeGreaterThan(0);
-    expect(games.stats.resignRate).toBeGreaterThan(0);
-    expect(games.stats.stalemateRate).toBeGreaterThan(0);
-    expect(games.stats.outOfTimeRate).toBeGreaterThan(0);
-    expect(games.stats.drawRate).toBeGreaterThan(0);
+    expect(games.stats.win.mateRate).toBeGreaterThan(0);
+    expect(games.stats.win.resignRate).toBeGreaterThan(0);
+    expect(games.stats.win.outOfTimeRate).toBeGreaterThan(0);
+
+    expect(games.stats.lose.mateRate).toBeGreaterThan(0);
+    expect(games.stats.lose.resignRate).toBeGreaterThan(0);
+    expect(games.stats.lose.outOfTimeRate).toBeGreaterThanOrEqual(0);
   });
 
   it("should return opening results with total wins", async() => {

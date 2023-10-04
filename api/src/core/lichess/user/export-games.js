@@ -113,20 +113,20 @@ async function fetchLichessUserGames(username, gameType, colour) {
   }), {});
 
   const stats = {
-    win = {
-      mateCount: rawStats.winMateCount / rawStats.numberOfGames,
-      resignCount: rawStats.winResignCount / rawStats.numberOfGames,
-      drawCount: rawStats.winDrawCount / rawStats.numberOfGames,
-      stalemateCount: rawStats.winStalemateCount / rawStats.numberOfGames,
-      outOfTimeCount: rawStats.winOutOfTimeCount / rawStats.numberOfGames,
+    win: {
+      mateRate: rawStats.winMateCount / rawStats.numberOfGames,
+      resignRate: rawStats.winResignCount / rawStats.numberOfGames,
+      drawRate: rawStats.winDrawCount / rawStats.numberOfGames,
+      stalemateRate: rawStats.winStalemateCount / rawStats.numberOfGames,
+      outOfTimeRate: rawStats.winOutOfTimeCount / rawStats.numberOfGames,
 
     },
-    lose = {
-      mateCount: rawStats.loseMateCount / rawStats.numberOfGames,
-      resignCount: rawStats.loseResignCount / rawStats.numberOfGames,
-      drawCount: rawStats.loseDrawCount / rawStats.numberOfGames,
-      stalemateCount: rawStats.loseStalemateCount / rawStats.numberOfGames,
-      outOfTimeCount: rawStats.loseOutOfTimeCount / rawStats.numberOfGames,
+    lose: {
+      mateRate: rawStats.loseMateCount / rawStats.numberOfGames,
+      resignRate: rawStats.loseResignCount / rawStats.numberOfGames,
+      drawRate: rawStats.loseDrawCount / rawStats.numberOfGames,
+      stalemateRate: rawStats.loseStalemateCount / rawStats.numberOfGames,
+      outOfTimeRate: rawStats.loseOutOfTimeCount / rawStats.numberOfGames,
     }
   };
 
