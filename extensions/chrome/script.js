@@ -104,6 +104,7 @@ function renderStatsChart(response) {
         labels,
         datasets: [{
           data: winData,
+          borderColour: "#FFFFFF",
           hoverOffset: 4
         }]
       },
@@ -123,12 +124,14 @@ function renderStatsChart(response) {
   const statsLossesTrigger = document.querySelector(".ca_stats_lose_trigger");
   statsWinTrigger.addEventListener("click", e => {
     statsChart.config.data.datasets[0].data = winData;
+    statsChart.config.data.datasets[0].borderColor = "#FFFFFF";
     statsChart.update();
     statsLossesTrigger.classList.remove("selected");
     statsWinTrigger.classList.add("selected");
   });
   statsLossesTrigger.addEventListener("click", e => {
     statsChart.config.data.datasets[0].data = loseData;
+    statsChart.config.data.datasets[0].borderColor = "#AB615E";
     statsChart.update();
     statsLossesTrigger.classList.add("selected");
     statsWinTrigger.classList.remove("selected");
