@@ -120,14 +120,18 @@ function renderStatsChart(response) {
   );
 
   const statsWinTrigger = document.querySelector(".ca_stats_win_trigger");
+  const statsLossesTrigger = document.querySelector(".ca_stats_lose_trigger");
   statsWinTrigger.addEventListener("click", e => {
     statsChart.config.data.datasets[0].data = winData;
     statsChart.update();
+    statsLossesTrigger.classList.remove("selected");
+    statsWinTrigger.classList.add("selected");
   });
-  const statsLossesTrigger = document.querySelector(".ca_stats_lose_trigger");
   statsLossesTrigger.addEventListener("click", e => {
     statsChart.config.data.datasets[0].data = loseData;
     statsChart.update();
+    statsLossesTrigger.classList.add("selected");
+    statsWinTrigger.classList.remove("selected");
   });
 }
 

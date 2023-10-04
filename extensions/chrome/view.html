@@ -103,6 +103,32 @@
   .ca_elo_range .ca_elo_range_highest {
     right: 0;
   }
+
+  .button {
+    border: none;
+    color: white;
+    padding: 4px 4px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 12px;
+  }
+
+  .button:hover {
+  }
+
+
+
+  .win {
+    background-color: #68ab5e;
+  }
+  .lose {
+    background-color: #AB615E;
+  }
+
+  .button.selected {
+    border: 2px solid gray;
+  }
 </style>
 
 <div class="ca_container">
@@ -128,10 +154,9 @@
     <span class="ca_tab ca_openings_tab_trigger">Openings</span>
   </div>
   <div class="ca_section ca_tab_section ca_stats" style="width: 100%; height: 100%;">
-
     <canvas id="ca_stats_chart"></canvas>
-    <button class="ca_stats_win_trigger">Wins</button>
-    <button class="ca_stats_lose_trigger">Losses</button>
+    <button class="button win selected ca_stats_win_trigger">Wins</button>
+    <button class="button lose ca_stats_lose_trigger">Losses</button>
   </div>
   <div class="ca_section ca_tab_section ca_openings ca_hidden" style="width: 100%; height: 100%;">
     <canvas id="ca_openings_chart"></canvas>
