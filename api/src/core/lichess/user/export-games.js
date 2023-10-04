@@ -20,6 +20,12 @@ async function fetchLichessUserGames(username, gameType, colour) {
   const response = await fetch(`https://lichess.org/api/games/user/${username}?${params}`, {headers})
 
   if (response.status !== 200) {
+    console.log(`Lichess response code: ${response.status}`);
+    try {
+      console.log(`Lichess response body: ${await response.text()}`);
+    } catch {
+      console.log("Could not log Lichess response body");
+    }
     return;
   }
 

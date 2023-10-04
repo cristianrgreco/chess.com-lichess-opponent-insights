@@ -4,6 +4,12 @@ async function fetchLichessUserPerformanceStatistics(username, gameType) {
   const response = await fetch(`https://lichess.org/api/user/${username}/perf/${gameType}`);
 
   if (response.status !== 200) {
+    console.log(`Lichess response code: ${response.status}`);
+    try {
+      console.log(`Lichess response body: ${await response.text()}`);
+    } catch {
+      console.log("Could not log Lichess response body");
+    }
     return;
   }
 
