@@ -39,8 +39,12 @@ if (document.title.indexOf("Play ") !== -1) {
         console.log("Error fetching user data");
         console.log(response.status, response.statusText);
         console.log(response);
+        renderError();
       });
 
+  function renderError() {
+    document.querySelector(".round__side").innerHTML = "No worky" + document.querySelector(".round__side").innerHTML;
+  }
   function render(response) {
     const site_html = document.querySelector(".round__side").innerHTML;
     document.querySelector(".round__side").innerHTML = viewHtml // todo viewHtml may not be resolved, chain the promise
@@ -117,6 +121,7 @@ function renderAnalytics(response, opponent) {
 }
 
 function renderStatsChart(response) {
+
   const labels = Object.keys(response.games.stats.win).map(stat => {
     switch (stat) {
       case "mateRate":
@@ -128,14 +133,16 @@ function renderStatsChart(response) {
       case "stalemateRate":
         return "Stalemate";
       case "outOfTimeRate":
-        return "Out of Time";
+        return "Time Out";
       default:
         return "Unknown label";
     }
   });
+
   const winData = Object.values(response.games.stats.win).map(stat => stat * 100);
   const loseData = Object.values(response.games.stats.lose).map(stat => stat * 100);
 
+  console.log(winData);
   let statsChart = new Chart(
     document.querySelector("#ca_stats_chart"),
     {
@@ -145,18 +152,24 @@ function renderStatsChart(response) {
         datasets: [{
           data: winData,
           borderColour: "#FFFFFF",
-          hoverOffset: 4
+          hoverOffset: 4,
         }]
       },
       options: {
         plugins: {
           legend: {
             labels: {
-              color: 'rgb(186, 186, 186)',
-            },
+              color: 'rgb(186, 186, 186)'
+            }
+          },
+          datalabels: {
+            formatter: function(value, context) {
+              return context.chart.data.labels[context.dataIndex] + ": " + context.chart.data.datasets[0].data[context.dataIndex];
+            }
           }
         }
-      }
+      },
+      plugins: [ChartDataLabels]
     },
   );
 
@@ -180,18 +193,19 @@ function renderStatsChart(response) {
 
 function renderOpeningsChart(response) {
   const calcResultRate = (opening, rateName) => ((opening.insights.results[rateName] ?? 0) / opening.insights.numberOfGames) * 100
-  const openingLabels = response.games.openings.map(g => g.name);
-  const openingMateRate = response.games.openings.map(g => calcResultRate(g, "mate")).slice(0, 10);
-  const openingResignRate = response.games.openings.map(g => calcResultRate(g, "resign")).slice(0, 10);
-  const openingDrawRate = response.games.openings.map(g => calcResultRate(g, "draw")).slice(0, 10);
-  const openingStalemateRate = response.games.openings.map(g => calcResultRate(g, "stalemate")).slice(0, 10);
-  const openingOutOfTimeRate = response.games.openings.map(g => calcResultRate(g, "outoftime")).slice(0, 10);
-  const openingTimeoutRate = response.games.openings.map(g => calcResultRate(g, "timeout")).slice(0, 10);
-  const openingNumberOfGames = response.games.openings.map(g => g.insights.numberOfGames).slice(0, 10);
+  const data = response.games.openings.filter(g => g.insights.numberOfGames > 1);
+  const openingLabels = data.map(g => g.name);
+  const openingMateRate = data.map(g => calcResultRate(g, "mate")).slice(0, 10);
+  const openingResignRate = data.map(g => calcResultRate(g, "resign")).slice(0, 10);
+  const openingDrawRate = data.map(g => calcResultRate(g, "draw")).slice(0, 10);
+  const openingStalemateRate = data.map(g => calcResultRate(g, "stalemate")).slice(0, 10);
+  const openingOutOfTimeRate = data.map(g => calcResultRate(g, "outoftime")).slice(0, 10);
+  const openingTimeoutRate = data.map(g => calcResultRate(g, "timeout")).slice(0, 10);
+  const openingNumberOfGames = data.map(g => g.insights.numberOfGames).slice(0, 10);
 
-  const totalWins = response.games.openings.map(g => g.insights.totals.win);
-  const totalDraws = response.games.openings.map(g => g.insights.totals.draw);
-  const totalLosses = response.games.openings.map(g => g.insights.totals.lose);
+  const totalWins = data.map(g => g.insights.totals.win);
+  const totalDraws = data.map(g => g.insights.totals.draw);
+  const totalLosses = data.map(g => g.insights.totals.lose);
 
   new Chart(document.querySelector("#ca_openings_chart"),
     {
@@ -201,7 +215,8 @@ function renderOpeningsChart(response) {
         datasets: [{
           label: 'Wins',
           data: totalWins,
-          backgroundColor: "#68ab5e"
+          backgroundColor: "#68ab5e",
+
         }, {
           label: 'Draws',
           data: totalDraws,
@@ -237,6 +252,23 @@ function renderOpeningsChart(response) {
           }
         },
         plugins: {
+          datalabels: {
+            formatter: function(value, context) {
+              const val = context.dataset.data[context.dataIndex];
+              if(val > 0) {
+                return val;
+              }
+              return "";
+            },
+            labels: {
+              value: {
+                color: 'white',
+                font: {
+                  size: 10
+                }
+              }
+            }
+          },
           legend: {
             labels: {
               color: 'rgb(186, 186, 186)',
@@ -252,7 +284,8 @@ function renderOpeningsChart(response) {
             }
           }
         }
-      }
+      },
+      plugins: [ChartDataLabels]
     }
   );
 }

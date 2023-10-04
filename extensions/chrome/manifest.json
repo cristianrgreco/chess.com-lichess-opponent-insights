@@ -10,15 +10,15 @@
         "https://lichess.org/*"
       ],
       "js": [
-        "script.js", "./scripts/chart.umd.js"
+        "script.js", "./scripts/chart.umd.js", "./scripts/chartjs-plugin-datalabels.min.js"
       ],
       "web_accessible_resources": [
-        "./scripts/chart.umd.js", "./scripts/chart.umd.js.map", "view.html"
+        "./scripts/chart.umd.js", "./scripts/chart.umd.js.map", "view.html", "./scripts/chartjs-plugin-datalabels.min.js"
       ]
     }
   ],
   "web_accessible_resources": [
-    "./scripts/chart.umd.js", "./scripts/chart.umd.js.map", "view.html"
+    "./scripts/chart.umd.js", "./scripts/chart.umd.js.map", "view.html", "./scripts/chartjs-plugin-datalabels.min.js"
   ],
   "permissions": [
     "<all_urls>"

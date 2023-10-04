@@ -93,7 +93,7 @@ async function fetchLichessUserGames(username, gameType, colour) {
         .map(variation => ({
           name: variation.name,
           insights: {
-            numberOfGames: variation.results.length,
+            numberOfGames: Object.values(Object.values(variation.results)).reduce((prev, next) => prev + next.length, 0),
             results: calculateGameResultStatusCounts(variation.results),
             totals: calculateTotalGameStatusesCount(openingStats.results),
             accuracy: calculateAccuracy(variation.accuracies)
@@ -122,16 +122,11 @@ async function fetchLichessUserGames(username, gameType, colour) {
     win: {
       mateRate: rawStats.winMateCount / rawStats.numberOfGames,
       resignRate: rawStats.winResignCount / rawStats.numberOfGames,
-      drawRate: rawStats.winDrawCount / rawStats.numberOfGames,
-      stalemateRate: rawStats.winStalemateCount / rawStats.numberOfGames,
       outOfTimeRate: rawStats.winOutOfTimeCount / rawStats.numberOfGames,
-
     },
     lose: {
       mateRate: rawStats.loseMateCount / rawStats.numberOfGames,
       resignRate: rawStats.loseResignCount / rawStats.numberOfGames,
-      drawRate: rawStats.loseDrawCount / rawStats.numberOfGames,
-      stalemateRate: rawStats.loseStalemateCount / rawStats.numberOfGames,
       outOfTimeRate: rawStats.loseOutOfTimeCount / rawStats.numberOfGames,
     }
   };
