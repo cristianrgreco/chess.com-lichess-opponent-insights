@@ -32,6 +32,8 @@ if (document.title.indexOf("Play ") !== -1) {
 
       const statsTabTrigger = document.querySelector(".ca_stats_tab_trigger");
       const openingsTabTrigger = document.querySelector(".ca_openings_tab_trigger");
+      const statsChartWinTrigger = document.querySelector(".ca_stats_win_trigger");
+      const statsChartLoseTrigger = document.querySelector(".ca_stats_lose_trigger");
       const statsEl = document.querySelector(".ca_stats");
       const openingsEl = document.querySelector(".ca_openings");
       statsTabTrigger.addEventListener("click", e => {
@@ -45,6 +47,10 @@ if (document.title.indexOf("Play ") !== -1) {
         statsEl.classList.add("ca_hidden");
         openingsTabTrigger.classList.add("ca_active");
         openingsEl.classList.remove("ca_hidden");
+      });
+
+      statsChartWinTrigger.addEventListener("click", e => {
+
       });
 
       renderAnalytics(response, opponent);
@@ -78,7 +84,7 @@ function renderAnalytics(response, opponent) {
 }
 
 function renderStatsChart(response) {
-  const labels = Object.keys(response.games.stats).map(stat => {
+  const labels = Object.keys(response.games.stats.win).map(stat => {
     switch (stat) {
       case "mateRate":
         return "Mate";
@@ -94,18 +100,36 @@ function renderStatsChart(response) {
         return "Unknown label";
     }
   });
-  const data = Object.values(response.games.stats).map(stat => stat * 100);
+  const winData = Object.values(response.games.stats.win).map(stat => stat * 100);
+  const loseData = Object.values(response.games.stats.lose).map(stat => stat * 100);
 
   new Chart(
     document.querySelector("#ca_stats_chart"),
     {
-      type: 'pie',
+      type: 'radar',
       data: {
         labels,
         datasets: [{
-          data,
-          hoverOffset: 4
-        }]
+          label: "Wins"
+          data: winData,
+          backgroundColor: 'rgba(54, 162, 235, 0.2)',
+          borderColor: 'rgb(54, 162, 235)',
+          pointBackgroundColor: 'rgb(54, 162, 235)',
+          pointBorderColor: '#fff',
+          pointHoverBackgroundColor: '#fff',
+          pointHoverBorderColor: 'rgb(54, 162, 235)'
+        },
+          {
+            label: "Losses"
+            data: loseData,
+            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+            borderColor: 'rgb(255, 99, 132)',
+            pointBackgroundColor: 'rgb(255, 99, 132)',
+            pointBorderColor: '#fff',
+            pointHoverBackgroundColor: '#fff',
+            pointHoverBorderColor: 'rgb(255, 99, 132)'
+
+          }]
       },
       options: {
         borderWidth: 0,

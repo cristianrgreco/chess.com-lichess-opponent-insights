@@ -100,20 +100,35 @@ async function fetchLichessUserGames(username, gameType, colour) {
   // @tom todo these stats are now for wins only. Do we want overall/wins/loses/draws?
   const rawStats = openings.reduce((prev, next) => ({
     numberOfGames: (prev.numberOfGames ?? 0) + next.insights.numberOfGames,
-    mateCount: (prev.mateCount ?? 0) + (next.insights.results["win"].mate ?? 0),
-    resignCount: (prev.resignCount ?? 0) + (next.insights.results["win"].resign ?? 0),
-    drawCount: (prev.drawCount ?? 0) + (next.insights.results["win"].draw ?? 0),
-    stalemateCount: (prev.stalemateCount ?? 0) + (next.insights.results["win"].stalemate ?? 0),
-    outOfTimeCount: (prev.outOfTimeCount ?? 0) + (next.insights.results["win"].outoftime ?? 0),
+    winMateCount: (prev.winMateCount ?? 0) + (next.insights.results["win"].mate ?? 0),
+    winResignCount: (prev.winResignCount ?? 0) + (next.insights.results["win"].resign ?? 0),
+    winDrawCount: (prev.winDrawCount ?? 0) + (next.insights.results["win"].draw ?? 0),
+    winStalemateCount: (prev.winStalemateCount ?? 0) + (next.insights.results["win"].stalemate ?? 0),
+    winOutOfTimeCount: (prev.winOutOfTimeCount ?? 0) + (next.insights.results["win"].outoftime ?? 0),
+    loseMateCount: (prev.loseMateCount ?? 0) + (next.insights.results["lose"].mate ?? 0),
+    loseResignCount: (prev.loseResignCount ?? 0) + (next.insights.results["lose"].resign ?? 0),
+    loseDrawCount: (prev.loseDrawCount ?? 0) + (next.insights.results["lose"].draw ?? 0),
+    loseStalemateCount: (prev.loseStalemateCount ?? 0) + (next.insights.results["lose"].stalemate ?? 0),
+    loseOutOfTimeCount: (prev.loseOutOfTimeCount ?? 0) + (next.insights.results["lose"].outoftime ?? 0),
   }), {});
 
-  const stats = {
-    mateRate: rawStats.mateCount / rawStats.numberOfGames,
-    resignRate: rawStats.resignCount / rawStats.numberOfGames,
-    drawRate: rawStats.drawCount / rawStats.numberOfGames,
-    stalemateRate: rawStats.stalemateCount / rawStats.numberOfGames,
-    outOfTimeRate: rawStats.outOfTimeCount / rawStats.numberOfGames,
-  };
+  const stats =
+      numberOfGames: (prev.numberOfGames ?? 0) + next.insights.numberOfGames,
+      win = {
+        mateCount: rawStats.winMateCount / rawStats.numberOfGames,
+        resignCount: rawStats.winResignCount / rawStats.numberOfGames,
+        drawCount: rawStats.winDrawCount / rawStats.numberOfGames,
+        stalemateCount: rawStats.winStalemateCount / rawStats.numberOfGames,
+        outOfTimeCount: rawStats.winOutOfTimeCount / rawStats.numberOfGames,
+
+      },
+    lose = {
+      mateCount: rawStats.loseMateCount / rawStats.numberOfGames,
+      resignCount: rawStats.loseResignCount / rawStats.numberOfGames,
+      drawCount: rawStats.loseDrawCount / rawStats.numberOfGames,
+      stalemateCount: rawStats.loseStalemateCount / rawStats.numberOfGames,
+      outOfTimeCount: rawStats.loseOutOfTimeCount / rawStats.numberOfGames,
+    };
 
   return {
     stats,
