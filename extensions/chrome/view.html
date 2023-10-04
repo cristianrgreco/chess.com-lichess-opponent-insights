@@ -55,7 +55,7 @@
     background-color: rgb(64, 64, 64);
   }
   .ca_tab_section {}
-  .ca_section.ca_hidden {
+  .ca_hidden {
     display: none;
   }
   .ca_elo_range {
@@ -119,19 +119,29 @@
 
 
 
-  .win {
+  .btn-win {
     background-color: #68ab5e;
   }
-  .lose {
+  .btn-lose {
     background-color: #AB615E;
   }
 
   .button.selected {
     border: 2px solid gray;
   }
+
+
 </style>
 
+<div class="ca_tabs">
+  <span class="ca_tab ca_tabs_site_trigger">Lichess</span>
+  <span class="ca_tab ca_tabs_ca_trigger">Analytics</span>
+</div>
+
+<div class="origin_site_container"></div>
 <div class="ca_container">
+
+
   <div class="ca_section">
     <span class="ca_opponent_name">Loading...</span>
       <span class="ca_win_streak_value" title="Win/Lose Streak">??</span>
@@ -155,8 +165,8 @@
   </div>
   <div class="ca_section ca_tab_section ca_stats" style="width: 100%; height: 100%;">
     <canvas id="ca_stats_chart"></canvas>
-    <button class="button win selected ca_stats_win_trigger">Wins</button>
-    <button class="button lose ca_stats_lose_trigger">Losses</button>
+    <button class="button btn-win selected ca_stats_win_trigger">Wins</button>
+    <button class="button btn-lose ca_stats_lose_trigger">Losses</button>
   </div>
   <div class="ca_section ca_tab_section ca_openings ca_hidden" style="width: 100%; height: 100%;">
     <canvas id="ca_openings_chart"></canvas>
