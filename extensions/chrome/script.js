@@ -192,15 +192,19 @@ function renderStatsChart(response) {
 }
 
 function renderOpeningsChart(response) {
-  const calcResultRate = (opening, rateName) => ((opening.insights.results[rateName] ?? 0) / opening.insights.numberOfGames) * 100
+  const calcResultWinRate = (opening, rateName) => ((opening.insights.results.win[rateName] ?? 0) / opening.insights.numberOfGames) * 100
+  const calcResultLoseRate = (opening, rateName) => ((opening.insights.results.lose[rateName] ?? 0) / opening.insights.numberOfGames) * 100
   const data = response.games.openings.filter(g => g.insights.numberOfGames > 1);
   const openingLabels = data.map(g => g.name);
-  const openingMateRate = data.map(g => calcResultRate(g, "mate")).slice(0, 10);
-  const openingResignRate = data.map(g => calcResultRate(g, "resign")).slice(0, 10);
-  const openingDrawRate = data.map(g => calcResultRate(g, "draw")).slice(0, 10);
-  const openingStalemateRate = data.map(g => calcResultRate(g, "stalemate")).slice(0, 10);
-  const openingOutOfTimeRate = data.map(g => calcResultRate(g, "outoftime")).slice(0, 10);
-  const openingTimeoutRate = data.map(g => calcResultRate(g, "timeout")).slice(0, 10);
+  const openingMateRate = data.map(g => calcResultWinRate(g, "mate")).slice(0, 10);
+  const openingResignRate = data.map(g => calcResultWinRate(g, "resign")).slice(0, 10);
+  const openingDrawRate = data.map(g => calcResultWinRate(g, "draw")).slice(0, 10);
+  const openingStalemateRate = data.map(g => calcResultWinRate(g, "stalemate")).slice(0, 10);
+  const openingWinOutOfTimeRate = data.map(g => calcResultWinRate(g, "outoftime")).slice(0, 10);
+  const openingLoseOutOfTimeRate = data.map(g => calcResultLoseRate(g, "outoftime")).slice(0, 10);
+  const openingWinTimeoutRate = data.map(g => calcResultWinRate(g, "timeout")).slice(0, 10);
+  const openingLoseTimeoutRate = data.map(g => calcResultLoseRate(g, "timeout")).slice(0, 10);
+
   const openingNumberOfGames = data.map(g => g.insights.numberOfGames).slice(0, 10);
 
   const totalWins = data.map(g => g.insights.totals.win);
@@ -277,9 +281,20 @@ function renderOpeningsChart(response) {
           tooltip: {
             callbacks: {
               footer: function(ctx) {
+                // todo I am not proud of this
                 const value = openingNumberOfGames[ctx[0].dataIndex];
-                const timeout = openingOutOfTimeRate[ctx[0].dataIndex];
-                return `Games: ${value}\nTimeouts: ${timeout}`;
+                let outofTime = 0;
+                let timeout = 0;
+                if(ctx[0].dataset.label === "Wins") {
+                  outofTime = openingWinOutOfTimeRate[ctx[0].dataIndex];
+                  timeout = openingWinTimeoutRate[ctx[0].dataIndex];
+                } else if(ctx[0].dataset.label === "Losses") {
+                  outofTime = openingLoseOutOfTimeRate[ctx[0].dataIndex];
+                  timeout = openingLoseTimeoutRate[ctx[0].dataIndex];
+                } else {
+                  return `Games: ${value}`;
+                }
+                return `Games: ${value}\nTimeouts: ${Math.round(outofTime + timeout)}`;
               },
             }
           }
