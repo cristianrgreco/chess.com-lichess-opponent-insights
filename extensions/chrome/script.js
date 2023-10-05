@@ -1,13 +1,13 @@
 if (document.title.indexOf("Play ") !== -1) {
-  const user = document.querySelector("#user_tag").innerText;
+  var user = document.querySelector("#user_tag").innerText;
 
-  const [opponent] = Array.from(document.querySelectorAll(".game__meta .player .user-link"))
+  var [opponent] = Array.from(document.querySelectorAll(".game__meta .player .user-link"))
       .map(playerElement => playerElement.getAttribute("href").split("/").pop())
       .filter(player => player !== user);
 
-  const opponentColour = document.querySelector(".game__meta .player.white").innerHTML.includes(opponent) ? "white" : "black";
+  var opponentColour = document.querySelector(".game__meta .player.white").innerHTML.includes(opponent) ? "white" : "black";
 
-  const gameType = document.querySelector(".game__meta .header .setup span[title]").innerText.toLowerCase();
+  var gameType = document.querySelector(".game__meta .header .setup span[title]").innerText.toLowerCase();
 
   console.log("Current user: " + user);
   console.log("Opponent: " + opponent);
@@ -16,12 +16,15 @@ if (document.title.indexOf("Play ") !== -1) {
 
   const htmlUrl = chrome.runtime.getURL(`./view.html`);
   let viewHtml = "";
-  console.log("HTML URL: " + htmlUrl);
   fetch(htmlUrl)
       .then(response => response.text())
       .then(response => {
         console.log("Fetched html");
         viewHtml = response;
+        const site_html = document.querySelector(".round__side").innerHTML;
+        document.querySelector(".round__side").innerHTML = viewHtml // todo viewHtml may not be resolved, chain the promise
+        document.querySelector(".origin_site_container").innerHTML = site_html;
+        initEventListeners();
       })
 
   console.log("Fetching user analytics...");
@@ -39,62 +42,68 @@ if (document.title.indexOf("Play ") !== -1) {
         console.log("Error fetching user data");
         console.log(response.status, response.statusText);
         console.log(response);
-        renderError();
+        renderError(response);
       });
 
-  function renderError() {
-    document.querySelector(".round__side").innerHTML = "No worky" + document.querySelector(".round__side").innerHTML;
+  function renderError(response) {
+    document.querySelector(".ca_error").classList.remove("ca_hidden");
+    document.querySelector(".ca_loader_container").classList.add("ca_hidden");
+    document.querySelector(".ca_error_message").innerHTML = (response.status, response.statusText);
   }
+
   function render(response) {
-    const site_html = document.querySelector(".round__side").innerHTML;
-    document.querySelector(".round__side").innerHTML = viewHtml // todo viewHtml may not be resolved, chain the promise
-    document.querySelector(".origin_site_container").innerHTML = site_html;
-    const caContainer = document.querySelector(".ca_container");
-    const originSiteContainer = document.querySelector(".origin_site_container");
-
-    const siteTabTrigger = document.querySelector(".ca_tabs_site_trigger");
-    const caTabTrigger = document.querySelector(".ca_tabs_ca_trigger");
-    originSiteContainer.classList.add("ca_hidden");
-    caTabTrigger.classList.add("ca_active");
-
-    caTabTrigger.addEventListener("click", e => {
-      caTabTrigger.classList.add("ca_active");
-      siteTabTrigger.classList.remove("ca_active");
-      caContainer.classList.remove("ca_hidden");
-      originSiteContainer.classList.add("ca_hidden");
-    });
-
-    siteTabTrigger.addEventListener("click", e => {
-      siteTabTrigger.classList.add("ca_active");
-      caTabTrigger.classList.remove("ca_active");
-
-      originSiteContainer.classList.remove("ca_hidden");
-      caContainer.classList.add("ca_hidden");
-    });
+    document.querySelector(".ca_container").classList.remove("ca_hidden");
+    document.querySelector(".ca_loader_container").classList.add("ca_hidden");
 
 
-    const statsTabTrigger = document.querySelector(".ca_stats_tab_trigger");
-    const openingsTabTrigger = document.querySelector(".ca_openings_tab_trigger");
-    const statsEl = document.querySelector(".ca_stats");
-    const openingsEl = document.querySelector(".ca_openings");
-    statsTabTrigger.addEventListener("click", e => {
-      statsTabTrigger.classList.add("ca_active");
-      statsEl.classList.remove("ca_hidden");
-      openingsTabTrigger.classList.remove("ca_active");
-      openingsEl.classList.add("ca_hidden");
-    });
-    openingsTabTrigger.addEventListener("click", e => {
-      statsTabTrigger.classList.remove("ca_active");
-      statsEl.classList.add("ca_hidden");
-      openingsTabTrigger.classList.add("ca_active");
-      openingsEl.classList.remove("ca_hidden");
-    });
-
-    renderAnalytics(response, opponent);
+    renderAnalytics(response);
   }
 }
 
-function renderAnalytics(response, opponent) {
+function initEventListeners() {
+  const caContainer = document.querySelector(".ca_container");
+  const originSiteContainer = document.querySelector(".origin_site_container");
+
+  const siteTabTrigger = document.querySelector(".ca_tabs_site_trigger");
+  const caTabTrigger = document.querySelector(".ca_tabs_ca_trigger");
+  originSiteContainer.classList.add("ca_hidden");
+  caTabTrigger.classList.add("ca_active");
+
+  caTabTrigger.addEventListener("click", e => {
+    caTabTrigger.classList.add("ca_active");
+    siteTabTrigger.classList.remove("ca_active");
+    caContainer.classList.remove("ca_hidden");
+    originSiteContainer.classList.add("ca_hidden");
+  });
+
+  siteTabTrigger.addEventListener("click", e => {
+    siteTabTrigger.classList.add("ca_active");
+    caTabTrigger.classList.remove("ca_active");
+
+    originSiteContainer.classList.remove("ca_hidden");
+    caContainer.classList.add("ca_hidden");
+  });
+
+
+  const statsTabTrigger = document.querySelector(".ca_stats_tab_trigger");
+  const openingsTabTrigger = document.querySelector(".ca_openings_tab_trigger");
+  const statsEl = document.querySelector(".ca_stats");
+  const openingsEl = document.querySelector(".ca_openings");
+  statsTabTrigger.addEventListener("click", e => {
+    statsTabTrigger.classList.add("ca_active");
+    statsEl.classList.remove("ca_hidden");
+    openingsTabTrigger.classList.remove("ca_active");
+    openingsEl.classList.add("ca_hidden");
+  });
+  openingsTabTrigger.addEventListener("click", e => {
+    statsTabTrigger.classList.remove("ca_active");
+    statsEl.classList.add("ca_hidden");
+    openingsTabTrigger.classList.add("ca_active");
+    openingsEl.classList.remove("ca_hidden");
+  });
+}
+
+function renderAnalytics(response) {
   document.querySelector(".ca_opponent_name").innerText = opponent;
 
   document.querySelector(".ca_elo_range_lowest_value").innerText = response.performance.lowestRating;
@@ -121,7 +130,6 @@ function renderAnalytics(response, opponent) {
 }
 
 function renderStatsChart(response) {
-
   const labels = Object.keys(response.games.stats.win).map(stat => {
     switch (stat) {
       case "mateRate":
@@ -164,7 +172,7 @@ function renderStatsChart(response) {
           },
           datalabels: {
             formatter: function(value, context) {
-              return context.chart.data.labels[context.dataIndex] + ": " + context.chart.data.datasets[0].data[context.dataIndex];
+              return context.chart.data.labels[context.dataIndex] + ": " + Math.round(context.chart.data.datasets[0].data[context.dataIndex]);
             }
           }
         }

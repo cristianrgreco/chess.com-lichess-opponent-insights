@@ -1,4 +1,14 @@
 <style>
+  .ca_container_root {
+    padding: 10px;
+    font-family: sans-serif;
+    background-color: #262421;
+    color: rgb(186, 186, 186);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+  }
   .ca_container {
     padding: 10px;
     font-family: sans-serif;
@@ -130,8 +140,28 @@
     border: 2px solid gray;
   }
 
+  .ca_loader {
+    width: 48px;
+    height: 48px;
+    border: 5px solid #FFF;
+    border-bottom-color: #FF3D00;
+    border-radius: 50%;
+    display: inline-block;
+    box-sizing: border-box;
+    animation: rotation 1s linear infinite;
+  }
 
+  @keyframes rotation {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
 </style>
+
+
 
 <div class="ca_tabs">
   <span class="ca_tab ca_tabs_site_trigger">Lichess</span>
@@ -139,36 +169,44 @@
 </div>
 
 <div class="origin_site_container"></div>
-<div class="ca_container">
-
-
-  <div class="ca_section">
-    <span class="ca_opponent_name">Loading...</span>
-      <span class="ca_win_streak_value" title="Win/Lose Streak">??</span>
+<div class="ca_container_root">
+  <div class="ca_loader_container">
+    <span class="ca_loader"></span>
   </div>
-  <div class="ca_section">
-    <div class="ca_elo_range">
-      <div class="ca_elo_range_lowest">
-        <div class="ca_elo_range_lowest_value"></div>
-      </div>
-      <div class="ca_elo_range_current">
-        <div class="ca_elo_range_current_value"></div>
-      </div>
-      <div class="ca_elo_range_highest">
-        <div class="ca_elo_range_highest_value"></div>
+
+  <div class="ca_error ca_hidden">
+    No worky
+    <span class="ca_error_message"></span>
+  </div>
+  <div class="ca_container ca_hidden">
+    <div class="ca_section">
+      <span class="ca_opponent_name">Loading...</span>
+        <span class="ca_win_streak_value" title="Win/Lose Streak">??</span>
+    </div>
+    <div class="ca_section">
+      <div class="ca_elo_range">
+        <div class="ca_elo_range_lowest">
+          <div class="ca_elo_range_lowest_value"></div>
+        </div>
+        <div class="ca_elo_range_current">
+          <div class="ca_elo_range_current_value"></div>
+        </div>
+        <div class="ca_elo_range_highest">
+          <div class="ca_elo_range_highest_value"></div>
+        </div>
       </div>
     </div>
-  </div>
-  <div class="ca_section ca_tabs">
-    <span class="ca_tab ca_active ca_stats_tab_trigger">Stats</span>
-    <span class="ca_tab ca_openings_tab_trigger">Openings</span>
-  </div>
-  <div class="ca_section ca_tab_section ca_stats" style="width: 100%; height: 100%;">
-    <canvas id="ca_stats_chart"></canvas>
-    <button class="button btn-win selected ca_stats_win_trigger">Wins</button>
-    <button class="button btn-lose ca_stats_lose_trigger">Losses</button>
-  </div>
-  <div class="ca_section ca_tab_section ca_openings ca_hidden" style="width: 100%; height: 100%;">
-    <canvas id="ca_openings_chart"></canvas>
+    <div class="ca_section ca_tabs">
+      <span class="ca_tab ca_active ca_stats_tab_trigger">Stats</span>
+      <span class="ca_tab ca_openings_tab_trigger">Openings</span>
+    </div>
+    <div class="ca_section ca_tab_section ca_stats" style="width: 100%; height: 100%;">
+      <canvas id="ca_stats_chart"></canvas>
+      <button class="button btn-win selected ca_stats_win_trigger">Wins</button>
+      <button class="button btn-lose ca_stats_lose_trigger">Losses</button>
+    </div>
+    <div class="ca_section ca_tab_section ca_openings ca_hidden" style="width: 100%; height: 100%;">
+      <canvas id="ca_openings_chart"></canvas>
+    </div>
   </div>
 </div>
