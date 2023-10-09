@@ -28,6 +28,10 @@ if (document.title.indexOf("Play ") !== -1) {
       })
 
   console.log("Fetching user analytics...");
+  fetchUserAnalytics();
+
+}
+function fetchUserAnalytics() {
   fetch(`https://rlabb3msg0.execute-api.eu-west-2.amazonaws.com/prod/user-analytics?platform=lichess&username=${opponent}&gameType=${gameType}&colour=${opponentColour}`)
       .then(response => {
         if (response.ok) {
@@ -44,20 +48,17 @@ if (document.title.indexOf("Play ") !== -1) {
         console.log(response);
         renderError(response);
       });
+}
+function renderError(response) {
+  document.querySelector(".ca_error").classList.remove("ca_hidden");
+  document.querySelector(".ca_loader_container").classList.add("ca_hidden");
+  document.querySelector(".ca_error_message").innerHTML = (response.status, response.statusText);
+}
 
-  function renderError(response) {
-    document.querySelector(".ca_error").classList.remove("ca_hidden");
-    document.querySelector(".ca_loader_container").classList.add("ca_hidden");
-    document.querySelector(".ca_error_message").innerHTML = (response.status, response.statusText);
-  }
-
-  function render(response) {
-    document.querySelector(".ca_container").classList.remove("ca_hidden");
-    document.querySelector(".ca_loader_container").classList.add("ca_hidden");
-
-
-    renderAnalytics(response);
-  }
+function render(response) {
+  document.querySelector(".ca_container").classList.remove("ca_hidden");
+  document.querySelector(".ca_loader_container").classList.add("ca_hidden");
+  renderAnalytics(response);
 }
 
 function initEventListeners() {
@@ -100,6 +101,13 @@ function initEventListeners() {
     statsEl.classList.add("ca_hidden");
     openingsTabTrigger.classList.add("ca_active");
     openingsEl.classList.remove("ca_hidden");
+  });
+
+  const errorReloadBtnTrigger = document.querySelector(".ca_error_reload_btn");
+  errorReloadBtnTrigger.addEventListener("click", e=> {
+    document.querySelector(".ca_error").classList.add("ca_hidden");
+    document.querySelector(".ca_loader_container").classList.remove("ca_hidden");
+    fetchUserAnalytics();
   });
 }
 
