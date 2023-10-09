@@ -125,6 +125,8 @@ function renderAnalytics(response) {
     document.querySelector(".ca_win_streak_value").classList.add("ca_positive");
   }
 
+  document.querySelector(".ca_puzzle_rating").innerHTML = response.latestPuzzleRating?.value
+
   renderStatsChart(response);
   renderOpeningsChart(response);
 }
