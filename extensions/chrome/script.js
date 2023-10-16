@@ -67,6 +67,8 @@ function initEventListeners() {
 
   const siteTabTrigger = document.querySelector(".ca_tabs_site_trigger");
   const caTabTrigger = document.querySelector(".ca_tabs_ca_trigger");
+
+
   originSiteContainer.classList.add("ca_hidden");
   caTabTrigger.classList.add("ca_active");
 
@@ -86,21 +88,36 @@ function initEventListeners() {
   });
 
 
+  const overviewTabTrigger = document.querySelector(".ca_overview_tab_trigger");
   const statsTabTrigger = document.querySelector(".ca_stats_tab_trigger");
   const openingsTabTrigger = document.querySelector(".ca_openings_tab_trigger");
   const statsEl = document.querySelector(".ca_stats");
+  const overviewEl = document.querySelector(".ca_overview");
   const openingsEl = document.querySelector(".ca_openings");
+
   statsTabTrigger.addEventListener("click", e => {
     statsTabTrigger.classList.add("ca_active");
     statsEl.classList.remove("ca_hidden");
     openingsTabTrigger.classList.remove("ca_active");
+    overviewTabTrigger.classList.remove("ca_active");
     openingsEl.classList.add("ca_hidden");
   });
   openingsTabTrigger.addEventListener("click", e => {
     statsTabTrigger.classList.remove("ca_active");
+    overviewTabTrigger.classList.remove("ca_active");
     statsEl.classList.add("ca_hidden");
+    overviewEl.classList.add("ca_hidden");
+
     openingsTabTrigger.classList.add("ca_active");
     openingsEl.classList.remove("ca_hidden");
+  });
+  overviewTabTrigger.addEventListener("click", e => {
+    statsTabTrigger.classList.remove("ca_active");
+    openingsTabTrigger.classList.remove("ca_active");
+    statsEl.classList.add("ca_hidden");
+    openingsTabTrigger.classList.add("ca_active");
+    openingsEl.classList.add("ca_hidden");
+    overviewEl.classList.remove("ca_hidden");
   });
 
   const errorReloadBtnTrigger = document.querySelector(".ca_error_reload_btn");
@@ -135,8 +152,17 @@ function renderAnalytics(response) {
 
   document.querySelector(".ca_puzzle_rating").innerHTML = response.latestPuzzleRating?.value
 
+  renderOverview(response);
   renderStatsChart(response);
   renderOpeningsChart(response);
+}
+
+function renderOverview(response) {
+  const winData = Object.values(response.games.stats.win).map(stat => stat * 100);
+  const loseData = Object.values(response.games.stats.lose).map(stat => stat * 100);
+  document.querySelector(".ca_win_flag_perc_value").innerHTML = Math.round(response.games.stats.win["outOfTimeRate"] * 100) + '%';
+  document.querySelector(".ca_lose_flag_perc_value").innerHTML = Math.round(response.games.stats.lose["outOfTimeRate"] * 100) + '%';
+
 }
 
 function renderStatsChart(response) {
@@ -229,7 +255,7 @@ function renderOpeningsChart(response) {
   const totalDraws = data.map(g => g.insights.totals.draw);
   const totalLosses = data.map(g => g.insights.totals.lose);
 
-  new Chart(document.querySelector("#ca_openings_chart"),
+  let openingsChart = new Chart(document.querySelector("#ca_openings_chart"),
     {
       type: 'bar',
       data: {
@@ -273,6 +299,14 @@ function renderOpeningsChart(response) {
             }
           }
         },
+        onClick: (e) => {
+          console.log(e);
+          const canvasPosition = Chart.helpers.getRelativePosition(e, chart);
+
+          // Substitute the appropriate scale IDs
+          const dataX = chart.scales.x.getValueForPixel(canvasPosition.x);
+          const dataY = chart.scales.y.getValueForPixel(canvasPosition.y);
+        },
         plugins: {
           datalabels: {
             formatter: function(value, context) {
@@ -314,8 +348,8 @@ function renderOpeningsChart(response) {
                 }
                 return `Games: ${value}\nTimeouts: ${Math.round(outofTime + timeout)}`;
               },
+            },
             }
-          }
         }
       },
       plugins: [ChartDataLabels]

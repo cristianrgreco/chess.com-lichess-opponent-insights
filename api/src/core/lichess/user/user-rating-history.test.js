@@ -6,4 +6,10 @@ describe("Lichess user rating history", () => {
         expect(stats.date).toBeDefined();
         expect(stats.value).toBeGreaterThan(0);
     });
+
+    it("should not break if a user doesn't have a puzzle rating", async () => {
+        const stats = await fetchLichessUserRatingHistory("iwishicouldcode", "Puzzles");
+        expect(stats.date).toBeUndefined();
+        expect(stats.value).toBeUndefined();
+    });
 });

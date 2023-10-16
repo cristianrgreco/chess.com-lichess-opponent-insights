@@ -106,6 +106,8 @@ async function fetchLichessUserGames(username, gameType, colour) {
   // @tom todo these stats are now for wins only. Do we want overall/wins/loses/draws?
   const rawStats = openings.reduce((prev, next) => ({
     numberOfGames: (prev.numberOfGames ?? 0) + next.insights.numberOfGames,
+    numberOfGamesWin: (prev.numberOfGamesWin ?? 0) + (next.insights.totals["win"] ?? 0),
+    numberOfGamesLose: (prev.numberOfGamesLose ?? 0) + (next.insights.totals["lose"] ?? 0),
     winMateCount: (prev.winMateCount ?? 0) + (next.insights.results["win"].mate ?? 0),
     winResignCount: (prev.winResignCount ?? 0) + (next.insights.results["win"].resign ?? 0),
     winDrawCount: (prev.winDrawCount ?? 0) + (next.insights.results["win"].draw ?? 0),
@@ -119,15 +121,16 @@ async function fetchLichessUserGames(username, gameType, colour) {
   }), {});
 
   const stats = {
+    numberOfGames: rawStats.numberOfGames,
     win: {
-      mateRate: rawStats.winMateCount / rawStats.numberOfGames,
-      resignRate: rawStats.winResignCount / rawStats.numberOfGames,
-      outOfTimeRate: rawStats.winOutOfTimeCount / rawStats.numberOfGames,
+      mateRate: rawStats.winMateCount / rawStats.numberOfGamesWin,
+      resignRate: rawStats.winResignCount / rawStats.numberOfGamesWin,
+      outOfTimeRate: rawStats.winOutOfTimeCount / rawStats.numberOfGamesWin,
     },
     lose: {
-      mateRate: rawStats.loseMateCount / rawStats.numberOfGames,
-      resignRate: rawStats.loseResignCount / rawStats.numberOfGames,
-      outOfTimeRate: rawStats.loseOutOfTimeCount / rawStats.numberOfGames,
+      mateRate: rawStats.loseMateCount / rawStats.numberOfGamesLose,
+      resignRate: rawStats.loseResignCount / rawStats.numberOfGamesLose,
+      outOfTimeRate: rawStats.loseOutOfTimeCount / rawStats.numberOfGamesLose,
     }
   };
 

@@ -202,10 +202,25 @@
       </div>
     </div>
     <div class="ca_section ca_tabs">
-      <span class="ca_tab ca_active ca_stats_tab_trigger">Stats</span>
+      <span class="ca_tab ca_active ca_overview_tab_trigger">Overview</span>
+      <span class="ca_tab ca_stats_tab_trigger">Stats</span>
       <span class="ca_tab ca_openings_tab_trigger">Openings</span>
     </div>
-    <div class="ca_section ca_tab_section ca_stats" style="width: 100%; height: 100%;">
+    <div class="ca_section ca_tab_section ca_overview">
+     <div>
+       <span class="ca_win_flag_perc_label">Win by flagging: </span>
+       <span class="ca_win_flag_perc_value"></span>
+     </div>
+      <div>
+        <span class="ca_lose_flag_perc_label">Lose by flagging: </span>
+        <span class="ca_lose_flag_perc_value"></span>
+      </div>
+      <div>
+        <span>Favourite Openings:</span>
+        <span class="ca_overview_openings"></span>
+      </div>
+    </div>
+    <div class="ca_section ca_tab_section ca_stats ca_hidden" style="width: 100%; height: 100%;">
       <canvas id="ca_stats_chart"></canvas>
       <button class="button btn-win selected ca_stats_win_trigger">Wins</button>
       <button class="button btn-lose ca_stats_lose_trigger">Losses</button>

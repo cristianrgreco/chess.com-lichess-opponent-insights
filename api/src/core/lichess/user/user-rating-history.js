@@ -11,14 +11,20 @@ async function fetchLichessUserRatingHistory(username, ratingType) {
         }
         return;
     }
+    try {
+        const responseJson = await response.json();
+        const ratingHistory = responseJson.find(r => r.name === ratingType);
+        if(ratingHistory) {
+            const latestRatingHistory = ratingHistory.points[ratingHistory.points.length - 1]
+            const historyDate = new Date(`${latestRatingHistory[0]}, ${latestRatingHistory[1]}, ${latestRatingHistory[2]}`);
+            const historyValue = latestRatingHistory[3];
 
-    const responseJson = await response.json();
-    const ratingHistory = responseJson.find(r => r.name === ratingType);
-    const latestRatingHistory = ratingHistory.points[ratingHistory.points.length - 1]
-    const historyDate = new Date(`${latestRatingHistory[0]}, ${latestRatingHistory[1]}, ${latestRatingHistory[2]}`);
-    const historyValue = latestRatingHistory[3];
-
-    return { date: historyDate, value: historyValue};
+            return {date: historyDate, value: historyValue};
+        }
+        return {};
+    } catch {
+        return {};
+    }
 
 }
 
