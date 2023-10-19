@@ -1,7 +1,9 @@
 const fetch = require("node-fetch");
+const {PAT} = require("../../../conf");
 
 async function fetchLichessUserPerformanceStatistics(username, gameType) {
-  const response = await fetch(`https://lichess.org/api/user/${username}/perf/${gameType}`);
+  const headers = {"Authorization": `Bearer ${PAT}`};
+  const response = await fetch(`https://lichess.org/api/user/${username}/perf/${gameType}`, {headers});
 
   if (response.status !== 200) {
     console.log(`Lichess response code: ${response.status}`);
