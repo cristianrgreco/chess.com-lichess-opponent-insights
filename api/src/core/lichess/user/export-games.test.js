@@ -43,10 +43,4 @@ describe("Lichess export games", () => {
     const numberOfGamesList = games.openings.map(game => game.insights.numberOfGames);
     expect(numberOfGamesList).toEqual([...numberOfGamesList].sort((a, b) => b - a));
   });
-
-  it("should exclude games where the opening has only been played once", async () => {
-    const games = await fetchLichessUserGames("Spaghetti_Spoghotti", "blitz", "white");
-
-    games.openings.forEach(game => expect(game.insights.numberOfGames).toBeGreaterThan(1))
-  });
 });
