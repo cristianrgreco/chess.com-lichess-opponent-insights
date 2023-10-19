@@ -95,7 +95,7 @@ async function fetchLichessUserGames(username, gameType, colour) {
           insights: {
             numberOfGames: Object.values(Object.values(variation.results)).reduce((prev, next) => prev + next.length, 0),
             results: calculateGameResultStatusCounts(variation.results),
-            totals: calculateTotalGameStatusesCount(openingStats.results),
+            totals: calculateTotalGameStatusesCount(variation.results),
             accuracy: calculateAccuracy(variation.accuracies)
           }
         }))

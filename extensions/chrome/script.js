@@ -8,6 +8,7 @@ if (document.title.indexOf("Play ") !== -1) {
   var opponentColour = document.querySelector(".game__meta .player.white").innerHTML.includes(opponent) ? "white" : "black";
 
   var gameType = document.querySelector(".game__meta .header .setup span[title]").innerText.toLowerCase();
+  var caResponse = {};
 
   console.log("Current user: " + user);
   console.log("Opponent: " + opponent);
@@ -32,6 +33,7 @@ if (document.title.indexOf("Play ") !== -1) {
 
 }
 function fetchUserAnalytics() {
+
   fetch(`https://rlabb3msg0.execute-api.eu-west-2.amazonaws.com/prod/user-analytics?platform=lichess&username=${opponent}&gameType=${gameType}&colour=${opponentColour}`)
       .then(response => {
         if (response.ok) {
@@ -40,6 +42,7 @@ function fetchUserAnalytics() {
         return Promise.reject(response);
       })
       .then(response => {
+        caResponse = response;
         render(response);
       })
       .catch((response) => {
@@ -125,6 +128,12 @@ function initEventListeners() {
     document.querySelector(".ca_error").classList.add("ca_hidden");
     document.querySelector(".ca_loader_container").classList.remove("ca_hidden");
     fetchUserAnalytics();
+  });
+
+  const openingChartResetBtnTriger = document.querySelector(".ca_openings_chart_reset_trigger");
+  openingChartResetBtnTriger.addEventListener("click", e=> {
+    openingChartResetBtnTriger.classList.add("ca_hidden");
+    renderOpeningsChart(caResponse);
   });
 }
 
@@ -255,6 +264,11 @@ function renderOpeningsChart(response) {
   const totalDraws = data.map(g => g.insights.totals.draw);
   const totalLosses = data.map(g => g.insights.totals.lose);
 
+  const oldChart = Chart.getChart("ca_openings_chart");
+  if(oldChart != undefined) {
+    oldChart.destroy();
+  }
+
   let openingsChart = new Chart(document.querySelector("#ca_openings_chart"),
     {
       type: 'bar',
@@ -299,13 +313,34 @@ function renderOpeningsChart(response) {
             }
           }
         },
-        onClick: (e) => {
-          console.log(e);
-          const canvasPosition = Chart.helpers.getRelativePosition(e, chart);
+        onClick: (evt) => {
+          const res = openingsChart.getElementsAtEventForMode(
+              evt,
+              'nearest',
+              { intersect: true },
+              true
+          );
+          if(res) {
+            const di = res[0].datasetIndex;
+            const openingLabelName = openingLabels[di];
+            const openingData = data.filter(d => d.name === openingLabelName)[0];
+            const openingVariations = openingData.variations;
 
-          // Substitute the appropriate scale IDs
-          const dataX = chart.scales.x.getValueForPixel(canvasPosition.x);
-          const dataY = chart.scales.y.getValueForPixel(canvasPosition.y);
+            // hide opening chart and display reset button
+            document.querySelector(".ca_openings_chart_reset_trigger").classList.remove("ca_hidden");
+
+            const openingVariationLabels = openingVariations.map(d => d.name);
+
+            const ovTotalWins = openingVariations.map(g => g.insights.totals.win);
+            const ovTotalDraws = openingVariations.map(g => g.insights.totals.draw);
+            const ovTotalLosses = openingVariations.map(g => g.insights.totals.lose);
+
+            openingsChart.data.labels = openingVariationLabels;
+            openingsChart.data.datasets[0].data = ovTotalWins;
+            openingsChart.data.datasets[1].data = ovTotalDraws;
+            openingsChart.data.datasets[2].data = ovTotalLosses;
+            openingsChart.update();
+          }
         },
         plugins: {
           datalabels: {
