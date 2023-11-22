@@ -130,11 +130,11 @@ function initEventListeners() {
     fetchUserAnalytics();
   });
 
-  const openingChartResetBtnTriger = document.querySelector(".ca_openings_chart_reset_trigger");
-  openingChartResetBtnTriger.addEventListener("click", e=> {
-    openingChartResetBtnTriger.classList.add("ca_hidden");
-    renderOpeningsChart(caResponse);
-  });
+  // const openingChartResetBtnTriger = document.querySelector(".ca_openings_chart_reset_trigger");
+  // openingChartResetBtnTriger.addEventListener("click", e=> {
+  //   openingChartResetBtnTriger.classList.add("ca_hidden");
+  //   renderOpeningsChart(caResponse);
+  // });
 }
 
 function renderAnalytics(response) {
@@ -195,7 +195,6 @@ function renderStatsChart(response) {
   const winData = Object.values(response.games.stats.win).map(stat => stat * 100);
   const loseData = Object.values(response.games.stats.lose).map(stat => stat * 100);
 
-  console.log(winData);
   let statsChart = new Chart(
     document.querySelector("#ca_stats_chart"),
     {
@@ -252,22 +251,17 @@ function renderOpeningsChart(response) {
   const openingMateRate = data.map(g => calcResultWinRate(g, "mate")).slice(0, 10);
   const openingResignRate = data.map(g => calcResultWinRate(g, "resign")).slice(0, 10);
   const openingDrawRate = data.map(g => calcResultWinRate(g, "draw")).slice(0, 10);
-  const openingStalemateRate = data.map(g => calcResultWinRate(g, "stalemate")).slice(0, 10);
-  const openingWinOutOfTimeRate = data.map(g => calcResultWinRate(g, "outoftime")).slice(0, 10);
-  const openingLoseOutOfTimeRate = data.map(g => calcResultLoseRate(g, "outoftime")).slice(0, 10);
-  const openingWinTimeoutRate = data.map(g => calcResultWinRate(g, "timeout")).slice(0, 10);
-  const openingLoseTimeoutRate = data.map(g => calcResultLoseRate(g, "timeout")).slice(0, 10);
+  const openingStalemateRate = data.map(g => calcResultWinRate(g, "stalemate"));
+  const openingWinOutOfTimeRate = data.map(g => calcResultWinRate(g, "outoftime"));
+  const openingLoseOutOfTimeRate = data.map(g => calcResultLoseRate(g, "outoftime"));
+  const openingWinTimeoutRate = data.map(g => calcResultWinRate(g, "timeout"));
+  const openingLoseTimeoutRate = data.map(g => calcResultLoseRate(g, "timeout"));
 
-  const openingNumberOfGames = data.map(g => g.insights.numberOfGames).slice(0, 10);
+  const openingNumberOfGames = data.map(g => g.insights.numberOfGames);
 
   const totalWins = data.map(g => g.insights.totals.win);
   const totalDraws = data.map(g => g.insights.totals.draw);
   const totalLosses = data.map(g => g.insights.totals.lose);
-
-  const oldChart = Chart.getChart("ca_openings_chart");
-  if(oldChart != undefined) {
-    oldChart.destroy();
-  }
 
   let openingsChart = new Chart(document.querySelector("#ca_openings_chart"),
     {
@@ -311,35 +305,6 @@ function renderOpeningsChart(response) {
             ticks: {
               color: "rgb(186, 186, 186)"
             }
-          }
-        },
-        onClick: (evt) => {
-          const res = openingsChart.getElementsAtEventForMode(
-              evt,
-              'nearest',
-              { intersect: true },
-              true
-          );
-          if(res) {
-            const di = res[0].datasetIndex;
-            const openingLabelName = openingLabels[di];
-            const openingData = data.filter(d => d.name === openingLabelName)[0];
-            const openingVariations = openingData.variations;
-
-            // hide opening chart and display reset button
-            document.querySelector(".ca_openings_chart_reset_trigger").classList.remove("ca_hidden");
-
-            const openingVariationLabels = openingVariations.map(d => d.name);
-
-            const ovTotalWins = openingVariations.map(g => g.insights.totals.win);
-            const ovTotalDraws = openingVariations.map(g => g.insights.totals.draw);
-            const ovTotalLosses = openingVariations.map(g => g.insights.totals.lose);
-
-            openingsChart.data.labels = openingVariationLabels;
-            openingsChart.data.datasets[0].data = ovTotalWins;
-            openingsChart.data.datasets[1].data = ovTotalDraws;
-            openingsChart.data.datasets[2].data = ovTotalLosses;
-            openingsChart.update();
           }
         },
         plugins: {
