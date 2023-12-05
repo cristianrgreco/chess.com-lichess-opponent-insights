@@ -101,26 +101,29 @@ function initEventListeners() {
   statsTabTrigger.addEventListener("click", e => {
     statsTabTrigger.classList.add("ca_active");
     statsEl.classList.remove("ca_hidden");
+
     openingsTabTrigger.classList.remove("ca_active");
-    overviewTabTrigger.classList.remove("ca_active");
     openingsEl.classList.add("ca_hidden");
+    overviewTabTrigger.classList.remove("ca_active");
+    overviewEl.classList.add("ca_hidden");
   });
   openingsTabTrigger.addEventListener("click", e => {
-    statsTabTrigger.classList.remove("ca_active");
-    overviewTabTrigger.classList.remove("ca_active");
-    statsEl.classList.add("ca_hidden");
-    overviewEl.classList.add("ca_hidden");
-
     openingsTabTrigger.classList.add("ca_active");
     openingsEl.classList.remove("ca_hidden");
+
+    statsTabTrigger.classList.remove("ca_active");
+    statsEl.classList.add("ca_hidden");
+    overviewTabTrigger.classList.remove("ca_active");
+    overviewEl.classList.add("ca_hidden");
   });
   overviewTabTrigger.addEventListener("click", e => {
-    statsTabTrigger.classList.remove("ca_active");
-    openingsTabTrigger.classList.remove("ca_active");
-    statsEl.classList.add("ca_hidden");
-    openingsTabTrigger.classList.add("ca_active");
-    openingsEl.classList.add("ca_hidden");
+    overviewTabTrigger.classList.add("ca_active");
     overviewEl.classList.remove("ca_hidden");
+
+    statsTabTrigger.classList.remove("ca_active");
+    statsEl.classList.add("ca_hidden");
+    openingsTabTrigger.classList.remove("ca_active");
+    openingsEl.classList.add("ca_hidden");
   });
 
   const errorReloadBtnTrigger = document.querySelector(".ca_error_reload_btn");
@@ -225,13 +228,21 @@ function renderStatsChart(response) {
     },
   );
 
+  const overviewTabTrigger = document.querySelector(".ca_overview_tab_trigger");
   const statsWinTrigger = document.querySelector(".ca_stats_win_trigger");
   const statsLossesTrigger = document.querySelector(".ca_stats_lose_trigger");
+
+  overviewTabTrigger.addEventListener("click", e => {
+    statsLossesTrigger.classList.remove("selected");
+    statsWinTrigger.classList.remove("selected");
+    overviewTabTrigger.classList.add("selected");
+  });
   statsWinTrigger.addEventListener("click", e => {
     statsChart.config.data.datasets[0].data = winData;
     statsChart.config.data.datasets[0].borderColor = "#FFFFFF";
     statsChart.update();
     statsLossesTrigger.classList.remove("selected");
+    overviewTabTrigger.classList.remove("selected");
     statsWinTrigger.classList.add("selected");
   });
   statsLossesTrigger.addEventListener("click", e => {
@@ -240,6 +251,7 @@ function renderStatsChart(response) {
     statsChart.update();
     statsLossesTrigger.classList.add("selected");
     statsWinTrigger.classList.remove("selected");
+    overviewTabTrigger.classList.remove("selected");
   });
 }
 
