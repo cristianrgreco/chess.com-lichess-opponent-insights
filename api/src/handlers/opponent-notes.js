@@ -22,7 +22,7 @@ async function getOpponentNotes(event) {
 
   return {
     statusCode: 200,
-    body: JSON.stringify({ notes }),
+    body: JSON.stringify({ notes: notes.Item }),
     headers: corsHeaders
   };
 }
