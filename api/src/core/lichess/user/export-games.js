@@ -80,7 +80,7 @@ async function fetchLichessUserGames(username, gameType, colour) {
       ? undefined
       : accuracies.reduce((prev, next) => prev + next, 0) / accuracies.length
 
-  const openings = openingsStats// showing a game which has only been played once does not provide useful insights
+  const openings = openingsStats
     .map(openingStats => ({
       name: openingStats.name,
       insights: {

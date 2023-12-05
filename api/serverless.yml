@@ -22,6 +22,12 @@ provider:
   timeout: 30
   logRetentionInDays: 14
 
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "dynamodb:*"
+      Resource: "*"
+
 functions:
   fetchUserAnalytics:
     handler: src/handlers/fetch-user-analytics.handler
@@ -29,3 +35,37 @@ functions:
       - http:
           path: /user-analytics
           method: get
+  getOpponentNotes:
+    handler: src/handlers/opponent-notes.getOpponentNotes
+    events:
+      - http:
+          path: /opponent-notes
+          method: get
+  createOrUpdateOpponentNotes:
+    handler: src/handlers/opponent-notes.createOrUpdateOpponentNotes
+    events:
+      - http:
+          path: /opponent-notes
+          method: post
+
+resources:
+  Resources:
+    opponentNotesTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: opponent_notes
+        AttributeDefinitions:
+          - AttributeName: username
+            AttributeType: S
+          - AttributeName: opponent_name
+            AttributeType: S
+          - AttributeName: notes
+            AttributeType: S
+        KeySchema:
+          - AttributeName: username
+            KeyType: HASH
+          - AttributeName: opponent_name
+            KeyType: RANGE
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1

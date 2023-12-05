@@ -47,7 +47,7 @@
     margin: 20px 0;
     border-bottom: 1px solid rgb(64, 64, 64);
     display: flex;
-    width: 300px;
+    width: 100%;
     justify-content: center;
   }
   .ca_tab {
@@ -67,7 +67,10 @@
   .ca_tab:active, .ca_tab.ca_active {
     background-color: rgb(64, 64, 64);
   }
-  .ca_tab_section {}
+  .ca_tab_section {
+    width: 100%;
+    height: 100%;
+  }
   .ca_hidden {
     display: none;
   }
@@ -208,6 +211,7 @@
       <span class="ca_tab ca_active ca_overview_tab_trigger">Overview</span>
       <span class="ca_tab ca_stats_tab_trigger">Stats</span>
       <span class="ca_tab ca_openings_tab_trigger">Openings</span>
+      <span class="ca_tab ca_notes_tab_trigger">Notes</span>
     </div>
     <div class="ca_section ca_tab_section ca_overview">
      <div>
@@ -223,14 +227,26 @@
         <span class="ca_overview_openings"></span>
       </div>
     </div>
-    <div class="ca_section ca_tab_section ca_stats ca_hidden" style="width: 100%; height: 100%;">
+    <div class="ca_section ca_tab_section ca_stats ca_hidden">
       <canvas id="ca_stats_chart"></canvas>
       <button class="button btn-win selected ca_stats_win_trigger">Wins</button>
       <button class="button btn-lose ca_stats_lose_trigger">Losses</button>
     </div>
-    <div class="ca_section ca_tab_section ca_openings ca_hidden" style="width: 100%; height: 100%;">
+    <div class="ca_section ca_tab_section ca_openings ca_hidden">
         <canvas id="ca_openings_chart"></canvas>
     </div>
-
+    <div class="ca_section ca_tab_section ca_notes ca_hidden">
+      <form action="" id="ca_save_opponent_notes_form">
+        <div>
+          <label for="ca_opponent_notes">Notes</label>
+        </div>
+        <div>
+          <textarea id="ca_opponent_notes"></textarea>
+        </div>
+        <div>
+          <button type="submit">Save</button>
+        </div>
+      </form>
+    </div>
   </div>
 </div>
