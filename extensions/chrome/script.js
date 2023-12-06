@@ -8,7 +8,6 @@ if (document.title.indexOf("Play ") !== -1) {
   var opponentColour = document.querySelector(".game__meta .player.white").innerHTML.includes(opponent) ? "white" : "black";
 
   var gameType = document.querySelector(".game__meta .header .setup span[title]").innerText.toLowerCase();
-  var caResponse = {};
 
   console.log("Current user: " + user);
   console.log("Opponent: " + opponent);
@@ -31,9 +30,11 @@ if (document.title.indexOf("Play ") !== -1) {
   console.log("Fetching user analytics...");
   fetchUserAnalytics();
 
+  console.log("Fetching opponent notes...");
+  fetchOpponentNotes();
 }
-function fetchUserAnalytics() {
 
+function fetchUserAnalytics() {
   fetch(`https://rlabb3msg0.execute-api.eu-west-2.amazonaws.com/prod/user-analytics?platform=lichess&username=${opponent}&gameType=${gameType}&colour=${opponentColour}`)
       .then(response => {
         if (response.ok) {
@@ -42,7 +43,6 @@ function fetchUserAnalytics() {
         return Promise.reject(response);
       })
       .then(response => {
-        caResponse = response;
         render(response);
       })
       .catch((response) => {
@@ -52,6 +52,50 @@ function fetchUserAnalytics() {
         renderError(response);
       });
 }
+
+function fetchOpponentNotes() {
+  fetch(`https://rlabb3msg0.execute-api.eu-west-2.amazonaws.com/prod/opponent-notes?username=${user}&opponentName=${opponent}`)
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        }
+        return Promise.reject(response);
+      })
+      .then(responseJson => {
+        if (responseJson.notes) {
+          document.querySelector("#ca_opponent_notes").value = responseJson.notes;
+          document.querySelector(".ca_notes_tab_trigger").textContent += " ***";
+        }
+      })
+      .catch((response) => {
+        console.log("Error fetching opponent notes");
+        console.log(response.status, response.statusText);
+        console.log(response);
+      });
+}
+
+function saveOpponentNotes() {
+  fetch(`https://rlabb3msg0.execute-api.eu-west-2.amazonaws.com/prod/opponent-notes`, {
+    method: "POST",
+    body: JSON.stringify({
+      username: user,
+      opponentName: opponent,
+      notes: document.querySelector("#ca_opponent_notes").value,
+    }),
+  })
+  .then(response => {
+    if (!response.ok) {
+      return Promise.reject(response);
+    }
+  })
+  .catch((response) => {
+    console.log("Error saving opponent notes");
+    console.log(response.status, response.statusText);
+    console.log(response);
+    renderError(response);
+  });
+}
+
 function renderError(response) {
   document.querySelector(".ca_error").classList.remove("ca_hidden");
   document.querySelector(".ca_loader_container").classList.add("ca_hidden");
@@ -64,13 +108,12 @@ function render(response) {
   renderAnalytics(response);
 }
 
-function initEventListeners() {
+function initSiteTabs() {
   const caContainer = document.querySelector(".ca_container");
   const originSiteContainer = document.querySelector(".origin_site_container");
 
   const siteTabTrigger = document.querySelector(".ca_tabs_site_trigger");
   const caTabTrigger = document.querySelector(".ca_tabs_ca_trigger");
-
 
   originSiteContainer.classList.add("ca_hidden");
   caTabTrigger.classList.add("ca_active");
@@ -89,45 +132,64 @@ function initEventListeners() {
     originSiteContainer.classList.remove("ca_hidden");
     caContainer.classList.add("ca_hidden");
   });
+}
 
+function initTabs(){
+  const selectors = {
+    overview: {
+      trigger: document.querySelector('.ca_overview_tab_trigger'),
+      el: document.querySelector('.ca_overview'),
+    },
+    stats: {
+      trigger: document.querySelector('.ca_stats_tab_trigger'),
+      el: document.querySelector('.ca_stats'),
+    },
+    openings: {
+      trigger: document.querySelector('.ca_openings_tab_trigger'),
+      el: document.querySelector('.ca_openings'),
+    },
+    notes: {
+      trigger: document.querySelector('.ca_notes_tab_trigger'),
+      el: document.querySelector('.ca_notes'),
+    }
+  };
 
-  const overviewTabTrigger = document.querySelector(".ca_overview_tab_trigger");
-  const statsTabTrigger = document.querySelector(".ca_stats_tab_trigger");
-  const openingsTabTrigger = document.querySelector(".ca_openings_tab_trigger");
-  const statsEl = document.querySelector(".ca_stats");
-  const overviewEl = document.querySelector(".ca_overview");
-  const openingsEl = document.querySelector(".ca_openings");
+  const hideTab = selector => {
+    selector.trigger.classList.remove('ca_active');
+    selector.el.classList.add('ca_hidden');
+  };
 
-  statsTabTrigger.addEventListener("click", e => {
-    statsTabTrigger.classList.add("ca_active");
-    statsEl.classList.remove("ca_hidden");
-    openingsTabTrigger.classList.remove("ca_active");
-    overviewTabTrigger.classList.remove("ca_active");
-    openingsEl.classList.add("ca_hidden");
-  });
-  openingsTabTrigger.addEventListener("click", e => {
-    statsTabTrigger.classList.remove("ca_active");
-    overviewTabTrigger.classList.remove("ca_active");
-    statsEl.classList.add("ca_hidden");
-    overviewEl.classList.add("ca_hidden");
+  const showTab = selector => {
+    selector.trigger.classList.add('ca_active');
+    selector.el.classList.remove('ca_hidden');
+  };
 
-    openingsTabTrigger.classList.add("ca_active");
-    openingsEl.classList.remove("ca_hidden");
-  });
-  overviewTabTrigger.addEventListener("click", e => {
-    statsTabTrigger.classList.remove("ca_active");
-    openingsTabTrigger.classList.remove("ca_active");
-    statsEl.classList.add("ca_hidden");
-    openingsTabTrigger.classList.add("ca_active");
-    openingsEl.classList.add("ca_hidden");
-    overviewEl.classList.remove("ca_hidden");
-  });
+  const initTabEvents = selectorKey => {
+    selectors[selectorKey].trigger.addEventListener('click', e => {
+      Object.keys(selectors).forEach(key => {
+        if (key === selectorKey) showTab(selectors[key]);
+        else hideTab(selectors[key]);
+      });
+    });
+  };
+
+  Object.keys(selectors).forEach(initTabEvents);
+}
+
+function initEventListeners() {
+  initSiteTabs();
+  initTabs();
 
   const errorReloadBtnTrigger = document.querySelector(".ca_error_reload_btn");
   errorReloadBtnTrigger.addEventListener("click", e=> {
     document.querySelector(".ca_error").classList.add("ca_hidden");
     document.querySelector(".ca_loader_container").classList.remove("ca_hidden");
     fetchUserAnalytics();
+  });
+
+  document.querySelector("#ca_save_opponent_notes_form").addEventListener("submit", e => {
+    e.preventDefault();
+    saveOpponentNotes();
   });
 
   // const openingChartResetBtnTriger = document.querySelector(".ca_openings_chart_reset_trigger");
@@ -225,21 +287,21 @@ function renderStatsChart(response) {
     },
   );
 
+  const overviewTabTrigger = document.querySelector(".ca_overview_tab_trigger");
   const statsWinTrigger = document.querySelector(".ca_stats_win_trigger");
   const statsLossesTrigger = document.querySelector(".ca_stats_lose_trigger");
+
+  overviewTabTrigger.addEventListener("click", e => {
+  });
   statsWinTrigger.addEventListener("click", e => {
     statsChart.config.data.datasets[0].data = winData;
     statsChart.config.data.datasets[0].borderColor = "#FFFFFF";
     statsChart.update();
-    statsLossesTrigger.classList.remove("selected");
-    statsWinTrigger.classList.add("selected");
   });
   statsLossesTrigger.addEventListener("click", e => {
     statsChart.config.data.datasets[0].data = loseData;
     statsChart.config.data.datasets[0].borderColor = "#AB615E";
     statsChart.update();
-    statsLossesTrigger.classList.add("selected");
-    statsWinTrigger.classList.remove("selected");
   });
 }
 
