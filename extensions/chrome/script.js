@@ -54,12 +54,18 @@ function fetchUserAnalytics() {
 }
 
 function fetchOpponentNotes() {
-  fetch(`https://rlabb3msg0.execute-api.eu-west-2.amazonaws.com/prod/opponent-notes?username=${user}&opponentName${opponent}`)
+  fetch(`https://rlabb3msg0.execute-api.eu-west-2.amazonaws.com/prod/opponent-notes?username=${user}&opponentName=${opponent}`)
       .then(response => {
         if (response.ok) {
-          document.querySelector("#ca_opponent_notes").value = response.json().notes;
+          return response.json();
         }
         return Promise.reject(response);
+      })
+      .then(responseJson => {
+        if (responseJson.notes) {
+          document.querySelector("#ca_opponent_notes").value = responseJson.notes;
+          document.querySelector(".ca_notes_tab_trigger").textContent += " ***";
+        }
       })
       .catch((response) => {
         console.log("Error fetching opponent notes");

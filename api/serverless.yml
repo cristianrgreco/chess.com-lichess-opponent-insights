@@ -59,8 +59,6 @@ resources:
             AttributeType: S
           - AttributeName: opponent_name
             AttributeType: S
-          - AttributeName: notes
-            AttributeType: S
         KeySchema:
           - AttributeName: username
             KeyType: HASH

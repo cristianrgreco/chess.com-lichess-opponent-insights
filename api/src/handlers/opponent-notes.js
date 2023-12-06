@@ -15,14 +15,14 @@ async function getOpponentNotes(event) {
 
   const {username, opponentName} = event.queryStringParameters;
 
-  const notes = await docClient.send(new GetCommand({
+  const dbResponse = await docClient.send(new GetCommand({
     TableName: "opponent_notes",
-    Key: {username, opponentName},
+    Key: {username, opponent_name: opponentName},
   }));
 
   return {
     statusCode: 200,
-    body: JSON.stringify({ notes: notes.Item }),
+    body: JSON.stringify({ notes: dbResponse.Item.notes }),
     headers: corsHeaders
   };
 }
@@ -34,22 +34,20 @@ async function createOrUpdateOpponentNotes(event) {
 
   const existingNotes = await docClient.send(new GetCommand({
     TableName: "opponent_notes",
-    Key: {username, opponentName},
+    Key: {username, opponent_name: opponentName},
   }));
 
   if (existingNotes.Item) {
     await docClient.send(new UpdateCommand({
       TableName: "opponent_notes",
-      Key: {username, opponentName},
+      Key: {username, opponent_name: opponentName},
       UpdateExpression: "SET notes = :notes",
-      ExpressionAttributeValues: {
-        ":notes": notes,
-      },
+      ExpressionAttributeValues: {":notes": notes},
     }));
   } else {
     await docClient.send(new PutCommand({
       TableName: "opponent_notes",
-      Item: {username, opponentName, notes},
+      Item: {username, opponent_name: opponentName, notes},
     }));
   }
 
