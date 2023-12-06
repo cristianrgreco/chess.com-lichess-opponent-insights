@@ -51,6 +51,9 @@
     justify-content: center;
     flex-wrap: wrap;
   }
+  .ca_tabs.left_align {
+    justify-content: flex-start;
+  }
   .ca_tab {
     background-color: rgb(22, 21, 18);
     padding: 6px 18px;
@@ -67,6 +70,9 @@
   }
   .ca_tab:active, .ca_tab.ca_active {
     background-color: rgb(64, 64, 64);
+  }
+  .ca_tabs.fill_width .ca_tab {
+    flex-grow: 1;
   }
   .ca_tab_section {
     width: 100%;
@@ -134,8 +140,6 @@
   .button:hover {
   }
 
-
-
   .btn-win {
     background-color: #68ab5e;
   }
@@ -145,6 +149,12 @@
 
   .button.selected {
     border: 2px solid gray;
+  }
+
+  .ca_textarea {
+    width: 100%;
+    height: 200px;
+    padding: 4px;
   }
 
   .ca_loader {
@@ -168,9 +178,7 @@
   }
 </style>
 
-
-
-<div class="ca_tabs">
+<div class="ca_tabs fill_width">
   <span class="ca_tab ca_tabs_site_trigger">Lichess</span>
   <span class="ca_tab ca_tabs_ca_trigger">Analytics</span>
 </div>
@@ -208,7 +216,7 @@
         </div>
       </div>
     </div>
-    <div class="ca_section ca_tabs">
+    <div class="ca_section ca_tabs left_align">
       <span class="ca_tab ca_active ca_overview_tab_trigger">Overview</span>
       <span class="ca_tab ca_stats_tab_trigger">Stats</span>
       <span class="ca_tab ca_openings_tab_trigger">Openings</span>
@@ -238,14 +246,11 @@
     </div>
     <div class="ca_section ca_tab_section ca_notes ca_hidden">
       <form action="" id="ca_save_opponent_notes_form">
-        <div>
-          <label for="ca_opponent_notes">Notes</label>
+        <div style="margin-bottom: 10px;">
+          <textarea id="ca_opponent_notes" class="ca_textarea"></textarea>
         </div>
         <div>
-          <textarea id="ca_opponent_notes"></textarea>
-        </div>
-        <div>
-          <button type="submit">Save</button>
+          <button type="submit" class="button">Save</button>
         </div>
       </form>
     </div>
