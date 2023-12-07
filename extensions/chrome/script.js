@@ -179,29 +179,29 @@ function initRealTimeEvaluation() {
 
   function processEvaluation() {
     fetch(`https://stockfish.online/api/stockfish.php?fen=${encodeURIComponent(chess.fen())}&depth=5&mode=eval`)
-    .then((response) => {
-      if (response.ok) {
-        return response.json();
-      }
-      return Promise.reject(response);
-    })
-    .then((response) => {
-      const evaluationText = response.data;
-      const evaluation = evaluationText.match(/([0-9.\-])+/g)[0];
-      evaluationEl.innerText = evaluation;
-    })
-    .catch((response) => {
-      handleHttpError("Failed to evaluate position", response);
-    });
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        }
+        return Promise.reject(response);
+      })
+      .then((response) => {
+        const evaluationText = response.data;
+        const evaluation = evaluationText.match(/([0-9.\-])+/g)[0];
+        evaluationEl.innerText = evaluation;
+      })
+      .catch((response) => {
+        handleHttpError("Failed to evaluate position", response);
+      });
   }
 
   function waitForElement(selector) {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       if (document.querySelector(selector)) {
         return resolve(document.querySelector(selector));
       }
 
-      const observer = new MutationObserver(mutations => {
+      const observer = new MutationObserver((mutations) => {
         if (document.querySelector(selector)) {
           observer.disconnect();
           resolve(document.querySelector(selector));
@@ -210,14 +210,14 @@ function initRealTimeEvaluation() {
 
       observer.observe(document.body, {
         childList: true,
-        subtree: true
+        subtree: true,
       });
     });
   }
 
-  const observer = new MutationObserver(mutations => {
-    mutations.forEach(mutation => {
-      mutation.addedNodes.forEach(addedNode => {
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      mutation.addedNodes.forEach((addedNode) => {
         if (addedNode.tagName === "KWDB") {
           chess.move(addedNode.textContent);
           processEvaluation();
@@ -226,10 +226,10 @@ function initRealTimeEvaluation() {
     });
   });
 
-  waitForElement("rm6 > l4x").then(el => {
+  waitForElement("rm6 > l4x").then((el) => {
     const existingMoves = el.querySelectorAll("kwdb");
     if (existingMoves) {
-      existingMoves.forEach(el => chess.move(el.textContent));
+      existingMoves.forEach((el) => chess.move(el.textContent));
       processEvaluation();
     }
 
