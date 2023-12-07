@@ -175,20 +175,22 @@ function initTabs() {
 
 function initRealTimeEvaluation() {
   const chess = new Chess();
-  const evaluationEl = document.querySelector(".ca_evaluation");
+  const moveElementSelector = "kwdb";
+  const evaluationElement = document.querySelector(".ca_evaluation");
 
   function processEvaluation() {
-    fetch(`https://stockfish.online/api/stockfish.php?fen=${encodeURIComponent(chess.fen())}&depth=5&mode=eval`)
+    const encodedFen = encodeURIComponent(chess.fen());
+    fetch(`https://stockfish.online/api/stockfish.php?fen=${encodedFen}&depth=5&mode=eval`)
       .then((response) => {
         if (response.ok) {
           return response.json();
         }
         return Promise.reject(response);
       })
-      .then((response) => {
-        const evaluationText = response.data;
+      .then((responseJson) => {
+        const evaluationText = responseJson.data;
         const evaluation = evaluationText.match(/([0-9.\-])+/g)[0];
-        evaluationEl.innerText = evaluation;
+        evaluationElement.innerText = evaluation;
       })
       .catch((response) => {
         handleHttpError("Failed to evaluate position", response);
@@ -218,7 +220,7 @@ function initRealTimeEvaluation() {
   const observer = new MutationObserver((mutations) => {
     mutations.forEach((mutation) => {
       mutation.addedNodes.forEach((addedNode) => {
-        if (addedNode.tagName === "KWDB") {
+        if (addedNode.tagName === moveElementSelector.toUpperCase()) {
           chess.move(addedNode.textContent);
           processEvaluation();
         }
@@ -226,14 +228,14 @@ function initRealTimeEvaluation() {
     });
   });
 
-  waitForElement("rm6 > l4x").then((el) => {
-    const existingMoves = el.querySelectorAll("kwdb");
+  waitForElement("rm6 > l4x").then((movesContainerElement) => {
+    const existingMoves = movesContainerElement.querySelectorAll(moveElementSelector);
     if (existingMoves) {
       existingMoves.forEach((el) => chess.move(el.textContent));
       processEvaluation();
     }
 
-    observer.observe(el, { subtree: false, childList: true });
+    observer.observe(movesContainerElement, { subtree: false, childList: true });
   });
 }
 
