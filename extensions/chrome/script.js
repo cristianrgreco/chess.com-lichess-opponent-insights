@@ -197,6 +197,86 @@ function initEventListeners() {
     saveOpponentNotes();
   });
 
+  // import('./scripts/chess.js').then(({ Chess }) => {
+  //   console.log("use chess");
+  const chess = new Chess();
+  // });
+  // import { Chess } from "./scripts/chess.js";
+  const moves = [];
+  const evaluationEl = document.querySelector(".ca_evaluation");
+
+  function addMove(move) {
+    moves.push(move);
+    chess.move(move);
+
+    // todo when reloading a finished game, we will process all the moves, we should only process the last.
+    fetch(`https://stockfish.online/api/stockfish.php?fen=${encodeURIComponent(chess.fen())}&depth=5&mode=eval`)
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        }
+        return Promise.reject(response);
+      })
+      .then((response) => {
+        const evaluationText = response.data;
+        const evaluation = evaluationText.match(/([0-9.\-])+/g)[0];
+        evaluationEl.innerText = evaluation;
+      })
+      .catch((response) => {
+        console.log("Error analysing FEN");
+        console.log(response.status, response.statusText);
+        console.log(response);
+        renderError(response);
+      });
+  }
+
+  function waitForElm(selector) {
+    return new Promise(resolve => {
+      if (document.querySelector(selector)) {
+        return resolve(document.querySelector(selector));
+      }
+
+      const observer = new MutationObserver(mutations => {
+        if (document.querySelector(selector)) {
+          observer.disconnect();
+          resolve(document.querySelector(selector));
+        }
+      });
+
+      observer.observe(document.body, {
+        childList: true,
+        subtree: true
+      });
+    });
+  }
+
+  const observer = new MutationObserver(mutations => {
+    mutations.forEach(mutation => {
+      mutation.addedNodes.forEach(addedNode => {
+        if (addedNode.tagName === "KWDB") {
+          addMove(addedNode.textContent);
+          // console.log(moves.join(", "));
+        }
+      });
+    });
+  });
+
+  waitForElm("rm6 > l4x").then(el => {
+    el.querySelectorAll("kwdb").forEach(el => {
+      addMove(el.textContent);
+    });
+    observer.observe(el, { subtree: false, childList: true });
+  });
+
+  // console.log('Waiting for element');
+  // waitForElm("rm6 > l4x").then(el => {
+  //   console.log('Elemente xists, waiting for child mutation');
+  // const el = document.querySelector("rm6 > l4x");
+  // observer.observe(el, { subtree: false, childList: true });
+  // });
+
+  // document.querySelectorAll("rm6 > l4x kwdb");
+
   // const openingChartResetBtnTriger = document.querySelector(".ca_openings_chart_reset_trigger");
   // openingChartResetBtnTriger.addEventListener("click", e=> {
   //   openingChartResetBtnTriger.classList.add("ca_hidden");
@@ -230,7 +310,7 @@ function renderAnalytics(response) {
     document.querySelector(".ca_win_streak_value").classList.add("ca_positive");
   }
 
-  document.querySelector(".ca_puzzle_rating").innerHTML = response.latestPuzzleRating?.value;
+  document.querySelector(".ca_puzzle_rating").innerHTML = response.latestPuzzleRating?.value ?? "N/A";
 
   renderOverview(response);
   renderStatsChart(response);
