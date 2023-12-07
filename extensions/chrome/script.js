@@ -181,56 +181,32 @@ function initTabs() {
   Object.keys(selectors).forEach(initTabEvents);
 }
 
-function initEventListeners() {
-  initSiteTabs();
-  initTabs();
-
-  const errorReloadBtnTrigger = document.querySelector(".ca_error_reload_btn");
-  errorReloadBtnTrigger.addEventListener("click", (e) => {
-    document.querySelector(".ca_error").classList.add("ca_hidden");
-    document.querySelector(".ca_loader_container").classList.remove("ca_hidden");
-    fetchUserAnalytics();
-  });
-
-  document.querySelector("#ca_save_opponent_notes_form").addEventListener("submit", (e) => {
-    e.preventDefault();
-    saveOpponentNotes();
-  });
-
-  // import('./scripts/chess.js').then(({ Chess }) => {
-  //   console.log("use chess");
+function initRealTimeEvaluation() {
   const chess = new Chess();
-  // });
-  // import { Chess } from "./scripts/chess.js";
-  const moves = [];
   const evaluationEl = document.querySelector(".ca_evaluation");
 
-  function addMove(move) {
-    moves.push(move);
-    chess.move(move);
-
-    // todo when reloading a finished game, we will process all the moves, we should only process the last.
+  function processEvaluation() {
     fetch(`https://stockfish.online/api/stockfish.php?fen=${encodeURIComponent(chess.fen())}&depth=5&mode=eval`)
-      .then((response) => {
-        if (response.ok) {
-          return response.json();
-        }
-        return Promise.reject(response);
-      })
-      .then((response) => {
-        const evaluationText = response.data;
-        const evaluation = evaluationText.match(/([0-9.\-])+/g)[0];
-        evaluationEl.innerText = evaluation;
-      })
-      .catch((response) => {
-        console.log("Error analysing FEN");
-        console.log(response.status, response.statusText);
-        console.log(response);
-        renderError(response);
-      });
+    .then((response) => {
+      if (response.ok) {
+        return response.json();
+      }
+      return Promise.reject(response);
+    })
+    .then((response) => {
+      const evaluationText = response.data;
+      const evaluation = evaluationText.match(/([0-9.\-])+/g)[0];
+      evaluationEl.innerText = evaluation;
+    })
+    .catch((response) => {
+      console.log("Error analysing FEN");
+      console.log(response.status, response.statusText);
+      console.log(response);
+      renderError(response);
+    });
   }
 
-  function waitForElm(selector) {
+  function waitForElement(selector) {
     return new Promise(resolve => {
       if (document.querySelector(selector)) {
         return resolve(document.querySelector(selector));
@@ -254,34 +230,41 @@ function initEventListeners() {
     mutations.forEach(mutation => {
       mutation.addedNodes.forEach(addedNode => {
         if (addedNode.tagName === "KWDB") {
-          addMove(addedNode.textContent);
-          // console.log(moves.join(", "));
+          chess.move(addedNode.textContent);
+          processEvaluation();
         }
       });
     });
   });
 
-  waitForElm("rm6 > l4x").then(el => {
-    el.querySelectorAll("kwdb").forEach(el => {
-      addMove(el.textContent);
-    });
+  waitForElement("rm6 > l4x").then(el => {
+    const existingMoves = el.querySelectorAll("kwdb");
+    if (existingMoves) {
+      existingMoves.forEach(el => chess.move(el.textContent));
+    }
+    processEvaluation();
+
     observer.observe(el, { subtree: false, childList: true });
   });
+}
 
-  // console.log('Waiting for element');
-  // waitForElm("rm6 > l4x").then(el => {
-  //   console.log('Elemente xists, waiting for child mutation');
-  // const el = document.querySelector("rm6 > l4x");
-  // observer.observe(el, { subtree: false, childList: true });
-  // });
+function initEventListeners() {
+  initSiteTabs();
+  initTabs();
 
-  // document.querySelectorAll("rm6 > l4x kwdb");
+  const errorReloadBtnTrigger = document.querySelector(".ca_error_reload_btn");
+  errorReloadBtnTrigger.addEventListener("click", (e) => {
+    document.querySelector(".ca_error").classList.add("ca_hidden");
+    document.querySelector(".ca_loader_container").classList.remove("ca_hidden");
+    fetchUserAnalytics();
+  });
 
-  // const openingChartResetBtnTriger = document.querySelector(".ca_openings_chart_reset_trigger");
-  // openingChartResetBtnTriger.addEventListener("click", e=> {
-  //   openingChartResetBtnTriger.classList.add("ca_hidden");
-  //   renderOpeningsChart(caResponse);
-  // });
+  document.querySelector("#ca_save_opponent_notes_form").addEventListener("submit", (e) => {
+    e.preventDefault();
+    saveOpponentNotes();
+  });
+
+  initRealTimeEvaluation();
 }
 
 function renderAnalytics(response) {
