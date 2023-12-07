@@ -1,7 +1,7 @@
-const fetch = require("node-fetch");
-const {PAT} = require("../../../conf");
+import fetch from "node-fetch";
+import {PAT} from "../../../conf";
 
-async function fetchLichessUserRatingHistory(username, ratingType) {
+export async function fetchLichessUserRatingHistory(username, ratingType) {
   const headers = {"Authorization": `Bearer ${PAT}`};
   const response = await fetch(`https://lichess.org/api/user/${username}/rating-history`, {headers});
 
@@ -29,7 +29,3 @@ async function fetchLichessUserRatingHistory(username, ratingType) {
     return {};
   }
 }
-
-module.exports = {
-  fetchLichessUserRatingHistory
-};

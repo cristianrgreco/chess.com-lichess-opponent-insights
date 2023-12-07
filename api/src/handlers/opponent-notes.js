@@ -1,16 +1,15 @@
-const corsHeaders = require("./cors-headers");
-const {DynamoDBClient} = require("@aws-sdk/client-dynamodb");
-const {
+import corsHeaders from "./cors-headers";
+import {DynamoDBClient} from "@aws-sdk/client-dynamodb";
+import {
   DynamoDBDocumentClient,
   GetCommand,
-  PutCommand,
-  UpdateCommand
-} = require("@aws-sdk/lib-dynamodb");
+  PutCommand, UpdateCommand
+} from "@aws-sdk/lib-dynamodb";
 
 const client = new DynamoDBClient({region: "eu-west-2"});
 const docClient = DynamoDBDocumentClient.from(client);
 
-async function getOpponentNotes(event) {
+export async function getOpponentNotes(event) {
   console.log(`Request received: ${JSON.stringify(event.queryStringParameters)}`);
 
   const {username, opponentName} = event.queryStringParameters;
@@ -27,7 +26,7 @@ async function getOpponentNotes(event) {
   };
 }
 
-async function createOrUpdateOpponentNotes(event) {
+export async function createOrUpdateOpponentNotes(event) {
   console.log(`Request received: ${event.body}`);
 
   const {username, opponentName, notes} = JSON.parse(event.body);
@@ -55,9 +54,4 @@ async function createOrUpdateOpponentNotes(event) {
     statusCode: 200,
     headers: corsHeaders
   };
-}
-
-module.exports = {
-  getOpponentNotes,
-  createOrUpdateOpponentNotes
 }

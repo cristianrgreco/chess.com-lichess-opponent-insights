@@ -1,7 +1,7 @@
-const fetch = require("node-fetch");
-const {PAT} = require("../../../conf");
+import fetch from "node-fetch";
+import {PAT} from "../../../conf";
 
-async function fetchLichessUserPerformanceStatistics(username, gameType) {
+export async function fetchLichessUserPerformanceStatistics(username, gameType) {
   const headers = {"Authorization": `Bearer ${PAT}`};
   const response = await fetch(`https://lichess.org/api/user/${username}/perf/${gameType}`, {headers});
 
@@ -30,7 +30,3 @@ async function fetchLichessUserPerformanceStatistics(username, gameType) {
     tilt: responseJson.stat.resultStreak.loss.cur.v >= 3,
   };
 }
-
-module.exports = {
-  fetchLichessUserPerformanceStatistics
-};

@@ -1,4 +1,4 @@
-const { fetchLichessUserPerformanceStatistics } = require("./performance-statistics");
+import {fetchLichessUserPerformanceStatistics} from "./performance-statistics";
 
 describe("Lichess performance statistics", () => {
   it("should return total number of games", async () => {

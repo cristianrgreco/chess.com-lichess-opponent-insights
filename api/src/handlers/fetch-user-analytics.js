@@ -1,9 +1,9 @@
-const {fetchLichessUserGames} = require("../core/lichess/user/export-games");
-const {fetchLichessUserPerformanceStatistics} = require("../core/lichess/user/performance-statistics");
-const corsHeaders = require("./cors-headers");
-const {fetchLichessUserRatingHistory} = require("../core/lichess/user/user-rating-history");
+import {fetchLichessUserGames} from "../core/lichess/user/export-games";
+import {fetchLichessUserPerformanceStatistics} from "../core/lichess/user/performance-statistics";
+import corsHeaders from "./cors-headers";
+import {fetchLichessUserRatingHistory} from "../core/lichess/user/user-rating-history";
 
-async function fetchUserAnalytics(event) {
+export async function fetchUserAnalytics(event) {
   console.log(`Request received: ${JSON.stringify(event.queryStringParameters)}`);
 
   const {platform, username, colour, gameType} = event.queryStringParameters;
@@ -27,8 +27,4 @@ async function fetchUserAnalytics(event) {
     body: JSON.stringify({ performance, games, latestPuzzleRating }),
     headers: corsHeaders
   };
-}
-
-module.exports = {
-  handler: fetchUserAnalytics
 }

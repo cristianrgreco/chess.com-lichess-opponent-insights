@@ -1,8 +1,8 @@
-const fetch = require("node-fetch");
-const ndjson = require('ndjson')
-const {PAT} = require("../../../conf");
+import fetch from "node-fetch";
+import ndjson from "ndjson";
+import {PAT} from "../../../conf";
 
-async function fetchLichessUserGames(username, gameType, colour) {
+export async function fetchLichessUserGames(username, gameType, colour) {
   const params = new URLSearchParams({
     max: 60, // maximum number of games Lichess will return if a PAT is provided
     rated: true,
@@ -181,7 +181,3 @@ function calculateGameResult(winner, colour) {
   }
   return winner === colour ? "win" : "lose";
 }
-
-module.exports = {
-  fetchLichessUserGames
-};

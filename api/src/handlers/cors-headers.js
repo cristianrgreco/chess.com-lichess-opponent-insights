@@ -4,4 +4,4 @@ const headers = {
   "Access-Control-Expose-Headers": "Location",
 }
 
-module.exports = headers;
+export default headers;

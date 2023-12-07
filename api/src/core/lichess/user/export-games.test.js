@@ -1,4 +1,4 @@
-const { fetchLichessUserGames } = require("./export-games");
+import {fetchLichessUserGames} from "./export-games";
 
 describe("Lichess export games", () => {
   it("should return result statistics", async () => {

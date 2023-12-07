@@ -1,4 +1,4 @@
-const {fetchLichessUserRatingHistory} = require("./user-rating-history");
+import {fetchLichessUserRatingHistory} from "./user-rating-history";
 
 describe("Lichess user rating history", () => {
   it("should return latest puzzle rating", async () => {
