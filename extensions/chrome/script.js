@@ -70,7 +70,6 @@ function fetchOpponentNotes() {
     .then((responseJson) => {
       if (responseJson.notes) {
         document.querySelector("#ca_opponent_notes").value = responseJson.notes;
-        document.querySelector(".ca_notes_tab_trigger").textContent += " ***";
       }
     })
     .catch((response) => {
@@ -275,30 +274,22 @@ function renderStatsChart(response) {
       datasets: [
         {
           data: winData,
-          borderColour: "#FFFFFF",
+          borderWidth: 0,
           hoverOffset: 4,
+          backgroundColor: ["#68ab5e", "#AB615E", "grey"],
         },
       ],
     },
     options: {
+      maintainAspectRatio: true,
       plugins: {
         legend: {
           labels: {
             color: "rgb(186, 186, 186)",
           },
         },
-        datalabels: {
-          formatter: function (value, context) {
-            return (
-              context.chart.data.labels[context.dataIndex] +
-              ": " +
-              Math.round(context.chart.data.datasets[0].data[context.dataIndex])
-            );
-          },
-        },
       },
     },
-    plugins: [ChartDataLabels],
   });
 
   const overviewTabTrigger = document.querySelector(".ca_overview_tab_trigger");
@@ -363,7 +354,7 @@ function renderOpeningsChart(response) {
       ],
     },
     options: {
-      maintainAspectRatio: false,
+      maintainAspectRatio: true,
       indexAxis: "y",
       scales: {
         x: {
@@ -372,7 +363,7 @@ function renderOpeningsChart(response) {
             color: "rgb(186, 186, 186)",
           },
           title: {
-            display: true,
+            display: false,
             text: "Number of games",
             font: {
               size: 15,

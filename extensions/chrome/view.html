@@ -22,9 +22,6 @@
   ca_section {
     margin: 10px 0;
   }
-  #ca_openings_chart {
-    margin: 10px 0;
-  }
   .ca_opponent_name {
     font-size: 1.5em;
     font-weight: bold;
@@ -57,10 +54,10 @@
   }
   .ca_tab {
     background-color: rgb(22, 21, 18);
-    padding: 6px 18px;
+    padding: 6px 8px;
     text-align: center;
     margin: 0 1px;
-    width: 100px;
+    width: 80px;
   }
   .ca_tab:hover {
     cursor: pointer;
@@ -75,6 +72,9 @@
   }
   .ca_tabs.fill_width .ca_tab {
     flex-grow: 1;
+  }
+  .ca_tab.ca_tab_icon {
+    width: 50px;
   }
   .ca_tab_section {
     width: 100%;
@@ -231,7 +231,26 @@
       <span class="ca_tab ca_active ca_overview_tab_trigger">Overview</span>
       <span class="ca_tab ca_stats_tab_trigger">Stats</span>
       <span class="ca_tab ca_openings_tab_trigger">Openings</span>
-      <span class="ca_tab ca_notes_tab_trigger">Notes</span>
+      <span class="ca_tab ca_tab_icon ca_notes_tab_trigger">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          height="16"
+          fill="currentColor"
+          class="bi bi-journal-text"
+          viewBox="0 0 16 16"
+        >
+          <path
+            d="M5 10.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5m0-2a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5m0-2a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5m0-2a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5"
+          />
+          <path
+            d="M3 0h10a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-1h1v1a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v1H1V2a2 2 0 0 1 2-2"
+          />
+          <path
+            d="M1 5v-.5a.5.5 0 0 1 1 0V5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1zm0 3v-.5a.5.5 0 0 1 1 0V8h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1zm0 3v-.5a.5.5 0 0 1 1 0v.5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1z"
+          />
+        </svg>
+      </span>
     </div>
     <div class="ca_section ca_tab_section ca_overview">
       <div>
