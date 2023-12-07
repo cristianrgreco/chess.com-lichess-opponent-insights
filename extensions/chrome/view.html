@@ -162,7 +162,12 @@
     height: 200px;
     padding: 4px;
   }
-
+  .ca_stats_chart_buttons {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0 10px 0;
+    gap: 10px;
+  }
   .ca_loader {
     width: 48px;
     height: 48px;
@@ -274,8 +279,10 @@
     </div>
     <div class="ca_section ca_tab_section ca_stats ca_hidden">
       <canvas id="ca_stats_chart"></canvas>
-      <button class="button btn-win selected ca_stats_win_trigger">Wins</button>
-      <button class="button btn-lose ca_stats_lose_trigger">Losses</button>
+      <div class="ca_stats_chart_buttons">
+        <button class="button btn-win selected ca_stats_win_trigger">Wins</button>
+        <button class="button btn-lose ca_stats_lose_trigger">Losses</button>
+      </div>
     </div>
     <div class="ca_section ca_tab_section ca_openings ca_hidden">
       <canvas id="ca_openings_chart"></canvas>
