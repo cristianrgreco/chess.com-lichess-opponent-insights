@@ -50,10 +50,7 @@ function fetchUserAnalytics() {
       render(response);
     })
     .catch((response) => {
-      console.log("Error fetching user data");
-      console.log(response.status, response.statusText);
-      console.log(response);
-      renderError(response);
+      handleHttpError("Failed to fetch user analytics", response);
     });
 }
 
@@ -73,9 +70,7 @@ function fetchOpponentNotes() {
       }
     })
     .catch((response) => {
-      console.log("Error fetching opponent notes");
-      console.log(response.status, response.statusText);
-      console.log(response);
+      handleHttpError("Failed to fetch opponent notes", response);
     });
 }
 
@@ -94,10 +89,7 @@ function saveOpponentNotes() {
       }
     })
     .catch((response) => {
-      console.log("Error saving opponent notes");
-      console.log(response.status, response.statusText);
-      console.log(response);
-      renderError(response);
+      handleHttpError("Failed to save opponent notes", response);
     });
 }
 
@@ -199,10 +191,7 @@ function initRealTimeEvaluation() {
       evaluationEl.innerText = evaluation;
     })
     .catch((response) => {
-      console.log("Error analysing FEN");
-      console.log(response.status, response.statusText);
-      console.log(response);
-      renderError(response);
+      handleHttpError("Failed to evaluate position", response);
     });
   }
 
@@ -241,11 +230,17 @@ function initRealTimeEvaluation() {
     const existingMoves = el.querySelectorAll("kwdb");
     if (existingMoves) {
       existingMoves.forEach(el => chess.move(el.textContent));
+      processEvaluation();
     }
-    processEvaluation();
 
     observer.observe(el, { subtree: false, childList: true });
   });
+}
+
+function handleHttpError(message, response) {
+  console.log(response.status, response.statusText);
+  console.log(response);
+  renderError(response);
 }
 
 function initEventListeners() {
