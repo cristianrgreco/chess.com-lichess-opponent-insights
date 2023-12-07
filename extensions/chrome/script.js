@@ -228,7 +228,8 @@ function initRealTimeEvaluation() {
     });
   });
 
-  waitForElement("rm6 > l4x").then((movesContainerElement) => {
+  const movesContainerSelector = "rm6 > l4x";
+  waitForElement(movesContainerSelector).then((movesContainerElement) => {
     const existingMoves = movesContainerElement.querySelectorAll(moveElementSelector);
     if (existingMoves) {
       existingMoves.forEach((el) => chess.move(el.textContent));
