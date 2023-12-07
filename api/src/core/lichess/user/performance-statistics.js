@@ -1,5 +1,5 @@
 import fetch from "node-fetch";
-import { PAT } from "../../../conf";
+import { PAT } from "../../../conf.js";
 
 export async function fetchLichessUserPerformanceStatistics(username, gameType) {
   const headers = { Authorization: `Bearer ${PAT}` };

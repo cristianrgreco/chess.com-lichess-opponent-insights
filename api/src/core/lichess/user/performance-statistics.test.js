@@ -1,4 +1,4 @@
-import { fetchLichessUserPerformanceStatistics } from "./performance-statistics";
+import { fetchLichessUserPerformanceStatistics } from "./performance-statistics.js";
 
 describe("Lichess performance statistics", () => {
   it("should return total number of games", async () => {

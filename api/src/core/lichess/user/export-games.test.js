@@ -1,4 +1,4 @@
-import { fetchLichessUserGames } from "./export-games";
+import { fetchLichessUserGames } from "./export-games.js";
 
 describe("Lichess export games", () => {
   it("should return result statistics", async () => {

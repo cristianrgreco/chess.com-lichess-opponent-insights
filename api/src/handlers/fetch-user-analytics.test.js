@@ -1,4 +1,4 @@
-import { fetchUserAnalytics } from "./fetch-user-analytics";
+import { fetchUserAnalytics } from "./fetch-user-analytics.js";
 
 describe("Fetch user analytics handler", () => {
   it("should return a 200 and analytics for a given platform, user, game type and colour", async () => {

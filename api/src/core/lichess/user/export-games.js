@@ -1,6 +1,6 @@
 import fetch from "node-fetch";
 import ndjson from "ndjson";
-import { PAT } from "../../../conf";
+import { PAT } from "../../../conf.js";
 
 export async function fetchLichessUserGames(username, gameType, colour) {
   const params = new URLSearchParams({

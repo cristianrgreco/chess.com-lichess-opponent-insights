@@ -1,4 +1,4 @@
-import { fetchLichessUserRatingHistory } from "./user-rating-history";
+import { fetchLichessUserRatingHistory } from "./user-rating-history.js";
 
 describe("Lichess user rating history", () => {
   it("should return latest puzzle rating", async () => {
