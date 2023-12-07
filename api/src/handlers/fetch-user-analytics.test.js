@@ -1,4 +1,4 @@
-const { handler } = require("./fetch-user-analytics")
+import { fetchUserAnalytics } from "./fetch-user-analytics.js";
 
 describe("Fetch user analytics handler", () => {
   it("should return a 200 and analytics for a given platform, user, game type and colour", async () => {
@@ -7,11 +7,11 @@ describe("Fetch user analytics handler", () => {
         platform: "lichess",
         username: "spaghetti_spoghotti",
         gameType: "blitz",
-        colour: "white"
-      }
+        colour: "white",
+      },
     };
 
-    const response = await handler(event);
+    const response = await fetchUserAnalytics(event);
 
     expect(response.statusCode).toEqual(200);
     expect(JSON.parse(response.body)).toBeDefined();
@@ -23,11 +23,11 @@ describe("Fetch user analytics handler", () => {
         platform: "lichess",
         username: "freenwil",
         gameType: "blitz",
-        colour: "white"
-      }
+        colour: "white",
+      },
     };
 
-    const response = await handler(event);
+    const response = await fetchUserAnalytics(event);
 
     expect(response.statusCode).toEqual(404);
   });

@@ -30,7 +30,7 @@ provider:
 
 functions:
   fetchUserAnalytics:
-    handler: src/handlers/fetch-user-analytics.handler
+    handler: src/handlers/fetch-user-analytics.fetchUserAnalytics
     events:
       - http:
           path: /user-analytics

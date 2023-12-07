@@ -1,9 +1,9 @@
-const fetch = require("node-fetch");
-const {PAT} = require("../../../conf");
+import fetch from "node-fetch";
+import { PAT } from "../../../conf.js";
 
-async function fetchLichessUserRatingHistory(username, ratingType) {
-  const headers = {"Authorization": `Bearer ${PAT}`};
-  const response = await fetch(`https://lichess.org/api/user/${username}/rating-history`, {headers});
+export async function fetchLichessUserRatingHistory(username, ratingType) {
+  const headers = { Authorization: `Bearer ${PAT}` };
+  const response = await fetch(`https://lichess.org/api/user/${username}/rating-history`, { headers });
 
   if (response.status !== 200) {
     console.log(`Lichess response code: ${response.status}`);
@@ -17,19 +17,15 @@ async function fetchLichessUserRatingHistory(username, ratingType) {
 
   try {
     const responseJson = await response.json();
-    const ratingHistory = responseJson.find(r => r.name === ratingType);
+    const ratingHistory = responseJson.find((r) => r.name === ratingType);
     if (ratingHistory) {
-      const latestRatingHistory = ratingHistory.points[ratingHistory.points.length - 1]
+      const latestRatingHistory = ratingHistory.points[ratingHistory.points.length - 1];
       const historyDate = new Date(`${latestRatingHistory[0]}, ${latestRatingHistory[1]}, ${latestRatingHistory[2]}`);
       const historyValue = latestRatingHistory[3];
-      return {date: historyDate, value: historyValue};
+      return { date: historyDate, value: historyValue };
     }
     return {};
   } catch {
     return {};
   }
 }
-
-module.exports = {
-  fetchLichessUserRatingHistory
-};

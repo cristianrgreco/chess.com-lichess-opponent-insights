@@ -1,8 +1,8 @@
-const fetch = require("node-fetch");
-const ndjson = require('ndjson')
-const {PAT} = require("../../../conf");
+import fetch from "node-fetch";
+import ndjson from "ndjson";
+import { PAT } from "../../../conf.js";
 
-async function fetchLichessUserGames(username, gameType, colour) {
+export async function fetchLichessUserGames(username, gameType, colour) {
   const params = new URLSearchParams({
     max: 60, // maximum number of games Lichess will return if a PAT is provided
     rated: true,
@@ -11,13 +11,13 @@ async function fetchLichessUserGames(username, gameType, colour) {
     tags: true,
     clocks: true,
     accuracy: true,
-    opening: true
+    opening: true,
   });
   const headers = {
-    "Authorization": `Bearer ${PAT}`,
-    "Accept": "application/x-ndjson",
+    Authorization: `Bearer ${PAT}`,
+    Accept: "application/x-ndjson",
   };
-  const response = await fetch(`https://lichess.org/api/games/user/${username}?${params}`, {headers})
+  const response = await fetch(`https://lichess.org/api/games/user/${username}?${params}`, { headers });
 
   if (response.status !== 200) {
     console.log(`Lichess response code: ${response.status}`);
@@ -35,28 +35,30 @@ async function fetchLichessUserGames(username, gameType, colour) {
   for await (const record of ndjsonParserResponseStream) {
     const opening = parseOpeningName(record.opening.name);
 
-    let openingStats = openingsStats.find(anOpening => anOpening.name === opening.name);
+    let openingStats = openingsStats.find((anOpening) => anOpening.name === opening.name);
     if (openingStats === undefined) {
       openingStats = {
         name: opening.name,
         accuracies: [],
-        results: {"win": [], "lose": [], "draw": []},
+        results: { win: [], lose: [], draw: [] },
         totals: {},
-        variations: []
-      }
+        variations: [],
+      };
       openingsStats.push(openingStats);
     }
 
-    let variationStats = openingsStats.find(opening => opening.name).variations.find(variation => variation.name === opening.variationName);
+    let variationStats = openingsStats
+      .find((opening) => opening.name)
+      .variations.find((variation) => variation.name === opening.variationName);
     if (variationStats === undefined) {
       variationStats = {
         name: opening.variationName,
         accuracies: [],
-        results: {"win": [], "lose": [], "draw": []},
-        totals: {}
-      }
+        results: { win: [], lose: [], draw: [] },
+        totals: {},
+      };
       if (opening.variationName) {
-        openingsStats.find(opening => opening.name).variations.push(variationStats);
+        openingsStats.find((opening) => opening.name).variations.push(variationStats);
       }
     }
 
@@ -74,51 +76,55 @@ async function fetchLichessUserGames(username, gameType, colour) {
     }
   }
 
-  const sortOpeningsByNumberOfGamesDesc = (a, b) =>
-      b.insights.numberOfGames - a.insights.numberOfGames;
-  const calculateAccuracy = accuracies => accuracies.length === 0
-      ? undefined
-      : accuracies.reduce((prev, next) => prev + next, 0) / accuracies.length
+  const sortOpeningsByNumberOfGamesDesc = (a, b) => b.insights.numberOfGames - a.insights.numberOfGames;
+  const calculateAccuracy = (accuracies) =>
+    accuracies.length === 0 ? undefined : accuracies.reduce((prev, next) => prev + next, 0) / accuracies.length;
 
   const openings = openingsStats
-    .map(openingStats => ({
+    .map((openingStats) => ({
       name: openingStats.name,
       insights: {
         numberOfGames: Object.values(Object.values(openingStats.results)).reduce((prev, next) => prev + next.length, 0),
         results: calculateGameResultStatusCounts(openingStats.results),
         totals: calculateTotalGameStatusesCount(openingStats.results),
-        accuracy: calculateAccuracy(openingStats.accuracies)
+        accuracy: calculateAccuracy(openingStats.accuracies),
       },
       variations: openingStats.variations
-        .map(variation => ({
+        .map((variation) => ({
           name: variation.name,
           insights: {
-            numberOfGames: Object.values(Object.values(variation.results)).reduce((prev, next) => prev + next.length, 0),
+            numberOfGames: Object.values(Object.values(variation.results)).reduce(
+              (prev, next) => prev + next.length,
+              0,
+            ),
             results: calculateGameResultStatusCounts(variation.results),
             totals: calculateTotalGameStatusesCount(variation.results),
-            accuracy: calculateAccuracy(variation.accuracies)
-          }
+            accuracy: calculateAccuracy(variation.accuracies),
+          },
         }))
-        .sort(sortOpeningsByNumberOfGamesDesc)
+        .sort(sortOpeningsByNumberOfGamesDesc),
     }))
-    .sort(sortOpeningsByNumberOfGamesDesc)
+    .sort(sortOpeningsByNumberOfGamesDesc);
 
   // @tom todo these stats are now for wins only. Do we want overall/wins/loses/draws?
-  const rawStats = openings.reduce((prev, next) => ({
-    numberOfGames: (prev.numberOfGames ?? 0) + next.insights.numberOfGames,
-    numberOfGamesWin: (prev.numberOfGamesWin ?? 0) + (next.insights.totals["win"] ?? 0),
-    numberOfGamesLose: (prev.numberOfGamesLose ?? 0) + (next.insights.totals["lose"] ?? 0),
-    winMateCount: (prev.winMateCount ?? 0) + (next.insights.results["win"].mate ?? 0),
-    winResignCount: (prev.winResignCount ?? 0) + (next.insights.results["win"].resign ?? 0),
-    winDrawCount: (prev.winDrawCount ?? 0) + (next.insights.results["win"].draw ?? 0),
-    winStalemateCount: (prev.winStalemateCount ?? 0) + (next.insights.results["win"].stalemate ?? 0),
-    winOutOfTimeCount: (prev.winOutOfTimeCount ?? 0) + (next.insights.results["win"].outoftime ?? 0),
-    loseMateCount: (prev.loseMateCount ?? 0) + (next.insights.results["lose"].mate ?? 0),
-    loseResignCount: (prev.loseResignCount ?? 0) + (next.insights.results["lose"].resign ?? 0),
-    loseDrawCount: (prev.loseDrawCount ?? 0) + (next.insights.results["lose"].draw ?? 0),
-    loseStalemateCount: (prev.loseStalemateCount ?? 0) + (next.insights.results["lose"].stalemate ?? 0),
-    loseOutOfTimeCount: (prev.loseOutOfTimeCount ?? 0) + (next.insights.results["lose"].outoftime ?? 0),
-  }), {});
+  const rawStats = openings.reduce(
+    (prev, next) => ({
+      numberOfGames: (prev.numberOfGames ?? 0) + next.insights.numberOfGames,
+      numberOfGamesWin: (prev.numberOfGamesWin ?? 0) + (next.insights.totals["win"] ?? 0),
+      numberOfGamesLose: (prev.numberOfGamesLose ?? 0) + (next.insights.totals["lose"] ?? 0),
+      winMateCount: (prev.winMateCount ?? 0) + (next.insights.results["win"].mate ?? 0),
+      winResignCount: (prev.winResignCount ?? 0) + (next.insights.results["win"].resign ?? 0),
+      winDrawCount: (prev.winDrawCount ?? 0) + (next.insights.results["win"].draw ?? 0),
+      winStalemateCount: (prev.winStalemateCount ?? 0) + (next.insights.results["win"].stalemate ?? 0),
+      winOutOfTimeCount: (prev.winOutOfTimeCount ?? 0) + (next.insights.results["win"].outoftime ?? 0),
+      loseMateCount: (prev.loseMateCount ?? 0) + (next.insights.results["lose"].mate ?? 0),
+      loseResignCount: (prev.loseResignCount ?? 0) + (next.insights.results["lose"].resign ?? 0),
+      loseDrawCount: (prev.loseDrawCount ?? 0) + (next.insights.results["lose"].draw ?? 0),
+      loseStalemateCount: (prev.loseStalemateCount ?? 0) + (next.insights.results["lose"].stalemate ?? 0),
+      loseOutOfTimeCount: (prev.loseOutOfTimeCount ?? 0) + (next.insights.results["lose"].outoftime ?? 0),
+    }),
+    {},
+  );
 
   const stats = {
     numberOfGames: rawStats.numberOfGames,
@@ -131,12 +137,12 @@ async function fetchLichessUserGames(username, gameType, colour) {
       mateRate: rawStats.loseMateCount / rawStats.numberOfGamesLose,
       resignRate: rawStats.loseResignCount / rawStats.numberOfGamesLose,
       outOfTimeRate: rawStats.loseOutOfTimeCount / rawStats.numberOfGamesLose,
-    }
+    },
   };
 
   return {
     stats,
-    openings
+    openings,
   };
 }
 
@@ -146,20 +152,24 @@ async function fetchLichessUserGames(username, gameType, colour) {
  */
 function calculateGameResultStatusCounts(gameResultStatuses) {
   return Object.entries(gameResultStatuses).reduce(
-      (gameResultStatusCounts, [resultStatus, resultTypes]) => ({
-        ...gameResultStatusCounts,
-        [resultStatus]: resultTypes.reduce(
-            (resultStatuses, resultType) => ({...resultStatuses, [resultType]: (resultStatuses[resultType] ?? 0) + 1}),
-            {})
-      }), {"win": {}, "lose": {}, "draw": {}});
+    (gameResultStatusCounts, [resultStatus, resultTypes]) => ({
+      ...gameResultStatusCounts,
+      [resultStatus]: resultTypes.reduce(
+        (resultStatuses, resultType) => ({ ...resultStatuses, [resultType]: (resultStatuses[resultType] ?? 0) + 1 }),
+        {},
+      ),
+    }),
+    { win: {}, lose: {}, draw: {} },
+  );
 }
 
 function calculateTotalGameStatusesCount(gameResultStatuses) {
   return Object.entries(gameResultStatuses).reduce(
-      (gameResultTotalCounts, [resultStatus, resultTypes]) => ({
-        ...gameResultTotalCounts,
-        [resultStatus]: resultTypes.length
-      }), {"win": 0, "lose": 0, "draw": 0}
+    (gameResultTotalCounts, [resultStatus, resultTypes]) => ({
+      ...gameResultTotalCounts,
+      [resultStatus]: resultTypes.length,
+    }),
+    { win: 0, lose: 0, draw: 0 },
   );
 }
 
@@ -167,21 +177,17 @@ function parseOpeningName(openingName) {
   const [opening, variation] = openingName.split(": ");
 
   if (opening === undefined) {
-    return {name};
+    return { name };
   }
   return {
     name: opening,
-    variationName: variation
+    variationName: variation,
   };
 }
 
 function calculateGameResult(winner, colour) {
-  if(winner === undefined) {
+  if (winner === undefined) {
     return "draw";
   }
   return winner === colour ? "win" : "lose";
 }
-
-module.exports = {
-  fetchLichessUserGames
-};

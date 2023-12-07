@@ -3,8 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "type": "module",
   "scripts": {
-    "test": "jest src"
+    "test": "NODE_OPTIONS='--experimental-vm-modules' jest --runInBand src",
+    "format": "npx prettier --write --print-width 120 src ../extensions/chrome/{manifest.json,script.js,view.html}"
   },
   "author": "",
   "license": "ISC",
@@ -18,6 +20,7 @@
     "node-fetch": "^2.7.0"
   },
   "jest": {
+    "transform": {},
     "testTimeout": 60000
   }
 }
