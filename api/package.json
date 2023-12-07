@@ -5,7 +5,8 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "NODE_OPTIONS='--experimental-vm-modules' jest --runInBand src"
+    "test": "NODE_OPTIONS='--experimental-vm-modules' jest --runInBand src",
+    "format": "npx prettier --write --print-width 120 src ../extensions/chrome/{manifest.json,script.js,view.html}"
   },
   "author": "",
   "license": "ISC",

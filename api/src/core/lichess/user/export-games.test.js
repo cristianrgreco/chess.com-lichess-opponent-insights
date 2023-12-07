@@ -1,4 +1,4 @@
-import {fetchLichessUserGames} from "./export-games";
+import { fetchLichessUserGames } from "./export-games";
 
 describe("Lichess export games", () => {
   it("should return result statistics", async () => {
@@ -13,7 +13,7 @@ describe("Lichess export games", () => {
     expect(games.stats.lose.outOfTimeRate).toBeGreaterThanOrEqual(0);
   });
 
-  it("should return opening results with total wins", async() => {
+  it("should return opening results with total wins", async () => {
     const games = await fetchLichessUserGames("tmevans", "rapid", "white");
     expect(games.openings[0].insights.totals.win).toBeGreaterThan(0);
   });
@@ -21,7 +21,7 @@ describe("Lichess export games", () => {
   it("should return opening results and accuracies", async () => {
     const games = await fetchLichessUserGames("Spaghetti_Spoghotti", "blitz", "white");
 
-    const { insights } = games.openings.find(game => game.name === "Queen's Pawn Game");
+    const { insights } = games.openings.find((game) => game.name === "Queen's Pawn Game");
     expect(insights.results["win"]?.mate).toBeGreaterThanOrEqual(0);
     expect(insights.numberOfGames).toBeGreaterThanOrEqual(0);
     expect(insights.accuracy).toBeGreaterThanOrEqual(0);
@@ -30,8 +30,8 @@ describe("Lichess export games", () => {
   it("should return opening win rates and accuracies for opening variations", async () => {
     const games = await fetchLichessUserGames("Spaghetti_Spoghotti", "blitz", "white");
 
-    const openingFamily = games.openings.find(game => game.name === "Queen's Pawn Game");
-    const { insights } = openingFamily.variations.find(variation => variation.name === "Accelerated London System");
+    const openingFamily = games.openings.find((game) => game.name === "Queen's Pawn Game");
+    const { insights } = openingFamily.variations.find((variation) => variation.name === "Accelerated London System");
     expect(insights.results.win.mate).toBeGreaterThanOrEqual(0);
     expect(insights.numberOfGames).toBeGreaterThanOrEqual(0);
     expect(insights.accuracy).toBeGreaterThanOrEqual(0);
@@ -40,7 +40,7 @@ describe("Lichess export games", () => {
   it("should return sorted by number of games descending", async () => {
     const games = await fetchLichessUserGames("Spaghetti_Spoghotti", "blitz", "white");
 
-    const numberOfGamesList = games.openings.map(game => game.insights.numberOfGames);
+    const numberOfGamesList = games.openings.map((game) => game.insights.numberOfGames);
     expect(numberOfGamesList).toEqual([...numberOfGamesList].sort((a, b) => b - a));
   });
 });

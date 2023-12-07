@@ -1,4 +1,4 @@
-import {fetchLichessUserPerformanceStatistics} from "./performance-statistics";
+import { fetchLichessUserPerformanceStatistics } from "./performance-statistics";
 
 describe("Lichess performance statistics", () => {
   it("should return total number of games", async () => {
@@ -39,5 +39,5 @@ describe("Lichess performance statistics", () => {
   it("should return total number of disconnects", async () => {
     const stats = await fetchLichessUserPerformanceStatistics("tmevans", "blitz");
     expect(stats.totalNumberOfDisconnects).toBeGreaterThan(5);
-  })
+  });
 });

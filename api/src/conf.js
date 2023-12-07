@@ -1,1 +1,1 @@
-export const PAT = "lip_KXW3EGwsUdLfzFttKzKN"
+export const PAT = "lip_KXW3EGwsUdLfzFttKzKN";

@@ -1,4 +1,4 @@
-import {fetchUserAnalytics} from "./fetch-user-analytics";
+import { fetchUserAnalytics } from "./fetch-user-analytics";
 
 describe("Fetch user analytics handler", () => {
   it("should return a 200 and analytics for a given platform, user, game type and colour", async () => {
@@ -7,8 +7,8 @@ describe("Fetch user analytics handler", () => {
         platform: "lichess",
         username: "spaghetti_spoghotti",
         gameType: "blitz",
-        colour: "white"
-      }
+        colour: "white",
+      },
     };
 
     const response = await fetchUserAnalytics(event);
@@ -23,8 +23,8 @@ describe("Fetch user analytics handler", () => {
         platform: "lichess",
         username: "freenwil",
         gameType: "blitz",
-        colour: "white"
-      }
+        colour: "white",
+      },
     };
 
     const response = await fetchUserAnalytics(event);

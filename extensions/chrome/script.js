@@ -2,10 +2,12 @@ if (document.title.indexOf("Play ") !== -1) {
   var user = document.querySelector("#user_tag").innerText;
 
   var [opponent] = Array.from(document.querySelectorAll(".game__meta .player .user-link"))
-      .map(playerElement => playerElement.getAttribute("href").split("/").pop())
-      .filter(player => player !== user);
+    .map((playerElement) => playerElement.getAttribute("href").split("/").pop())
+    .filter((player) => player !== user);
 
-  var opponentColour = document.querySelector(".game__meta .player.white").innerHTML.includes(opponent) ? "white" : "black";
+  var opponentColour = document.querySelector(".game__meta .player.white").innerHTML.includes(opponent)
+    ? "white"
+    : "black";
 
   var gameType = document.querySelector(".game__meta .header .setup span[title]").innerText.toLowerCase();
 
@@ -17,15 +19,15 @@ if (document.title.indexOf("Play ") !== -1) {
   const htmlUrl = chrome.runtime.getURL(`./view.html`);
   let viewHtml = "";
   fetch(htmlUrl)
-      .then(response => response.text())
-      .then(response => {
-        console.log("Fetched html");
-        viewHtml = response;
-        const site_html = document.querySelector(".round__side").innerHTML;
-        document.querySelector(".round__side").innerHTML = viewHtml // todo viewHtml may not be resolved, chain the promise
-        document.querySelector(".origin_site_container").innerHTML = site_html;
-        initEventListeners();
-      })
+    .then((response) => response.text())
+    .then((response) => {
+      console.log("Fetched html");
+      viewHtml = response;
+      const site_html = document.querySelector(".round__side").innerHTML;
+      document.querySelector(".round__side").innerHTML = viewHtml; // todo viewHtml may not be resolved, chain the promise
+      document.querySelector(".origin_site_container").innerHTML = site_html;
+      initEventListeners();
+    });
 
   console.log("Fetching user analytics...");
   fetchUserAnalytics();
@@ -35,43 +37,47 @@ if (document.title.indexOf("Play ") !== -1) {
 }
 
 function fetchUserAnalytics() {
-  fetch(`https://rlabb3msg0.execute-api.eu-west-2.amazonaws.com/prod/user-analytics?platform=lichess&username=${opponent}&gameType=${gameType}&colour=${opponentColour}`)
-      .then(response => {
-        if (response.ok) {
-          return response.json();
-        }
-        return Promise.reject(response);
-      })
-      .then(response => {
-        render(response);
-      })
-      .catch((response) => {
-        console.log("Error fetching user data");
-        console.log(response.status, response.statusText);
-        console.log(response);
-        renderError(response);
-      });
+  fetch(
+    `https://rlabb3msg0.execute-api.eu-west-2.amazonaws.com/prod/user-analytics?platform=lichess&username=${opponent}&gameType=${gameType}&colour=${opponentColour}`,
+  )
+    .then((response) => {
+      if (response.ok) {
+        return response.json();
+      }
+      return Promise.reject(response);
+    })
+    .then((response) => {
+      render(response);
+    })
+    .catch((response) => {
+      console.log("Error fetching user data");
+      console.log(response.status, response.statusText);
+      console.log(response);
+      renderError(response);
+    });
 }
 
 function fetchOpponentNotes() {
-  fetch(`https://rlabb3msg0.execute-api.eu-west-2.amazonaws.com/prod/opponent-notes?username=${user}&opponentName=${opponent}`)
-      .then(response => {
-        if (response.ok) {
-          return response.json();
-        }
-        return Promise.reject(response);
-      })
-      .then(responseJson => {
-        if (responseJson.notes) {
-          document.querySelector("#ca_opponent_notes").value = responseJson.notes;
-          document.querySelector(".ca_notes_tab_trigger").textContent += " ***";
-        }
-      })
-      .catch((response) => {
-        console.log("Error fetching opponent notes");
-        console.log(response.status, response.statusText);
-        console.log(response);
-      });
+  fetch(
+    `https://rlabb3msg0.execute-api.eu-west-2.amazonaws.com/prod/opponent-notes?username=${user}&opponentName=${opponent}`,
+  )
+    .then((response) => {
+      if (response.ok) {
+        return response.json();
+      }
+      return Promise.reject(response);
+    })
+    .then((responseJson) => {
+      if (responseJson.notes) {
+        document.querySelector("#ca_opponent_notes").value = responseJson.notes;
+        document.querySelector(".ca_notes_tab_trigger").textContent += " ***";
+      }
+    })
+    .catch((response) => {
+      console.log("Error fetching opponent notes");
+      console.log(response.status, response.statusText);
+      console.log(response);
+    });
 }
 
 function saveOpponentNotes() {
@@ -83,17 +89,17 @@ function saveOpponentNotes() {
       notes: document.querySelector("#ca_opponent_notes").value,
     }),
   })
-  .then(response => {
-    if (!response.ok) {
-      return Promise.reject(response);
-    }
-  })
-  .catch((response) => {
-    console.log("Error saving opponent notes");
-    console.log(response.status, response.statusText);
-    console.log(response);
-    renderError(response);
-  });
+    .then((response) => {
+      if (!response.ok) {
+        return Promise.reject(response);
+      }
+    })
+    .catch((response) => {
+      console.log("Error saving opponent notes");
+      console.log(response.status, response.statusText);
+      console.log(response);
+      renderError(response);
+    });
 }
 
 function renderError(response) {
@@ -118,14 +124,14 @@ function initSiteTabs() {
   originSiteContainer.classList.add("ca_hidden");
   caTabTrigger.classList.add("ca_active");
 
-  caTabTrigger.addEventListener("click", e => {
+  caTabTrigger.addEventListener("click", (e) => {
     caTabTrigger.classList.add("ca_active");
     siteTabTrigger.classList.remove("ca_active");
     caContainer.classList.remove("ca_hidden");
     originSiteContainer.classList.add("ca_hidden");
   });
 
-  siteTabTrigger.addEventListener("click", e => {
+  siteTabTrigger.addEventListener("click", (e) => {
     siteTabTrigger.classList.add("ca_active");
     caTabTrigger.classList.remove("ca_active");
 
@@ -134,39 +140,39 @@ function initSiteTabs() {
   });
 }
 
-function initTabs(){
+function initTabs() {
   const selectors = {
     overview: {
-      trigger: document.querySelector('.ca_overview_tab_trigger'),
-      el: document.querySelector('.ca_overview'),
+      trigger: document.querySelector(".ca_overview_tab_trigger"),
+      el: document.querySelector(".ca_overview"),
     },
     stats: {
-      trigger: document.querySelector('.ca_stats_tab_trigger'),
-      el: document.querySelector('.ca_stats'),
+      trigger: document.querySelector(".ca_stats_tab_trigger"),
+      el: document.querySelector(".ca_stats"),
     },
     openings: {
-      trigger: document.querySelector('.ca_openings_tab_trigger'),
-      el: document.querySelector('.ca_openings'),
+      trigger: document.querySelector(".ca_openings_tab_trigger"),
+      el: document.querySelector(".ca_openings"),
     },
     notes: {
-      trigger: document.querySelector('.ca_notes_tab_trigger'),
-      el: document.querySelector('.ca_notes'),
-    }
+      trigger: document.querySelector(".ca_notes_tab_trigger"),
+      el: document.querySelector(".ca_notes"),
+    },
   };
 
-  const hideTab = selector => {
-    selector.trigger.classList.remove('ca_active');
-    selector.el.classList.add('ca_hidden');
+  const hideTab = (selector) => {
+    selector.trigger.classList.remove("ca_active");
+    selector.el.classList.add("ca_hidden");
   };
 
-  const showTab = selector => {
-    selector.trigger.classList.add('ca_active');
-    selector.el.classList.remove('ca_hidden');
+  const showTab = (selector) => {
+    selector.trigger.classList.add("ca_active");
+    selector.el.classList.remove("ca_hidden");
   };
 
-  const initTabEvents = selectorKey => {
-    selectors[selectorKey].trigger.addEventListener('click', e => {
-      Object.keys(selectors).forEach(key => {
+  const initTabEvents = (selectorKey) => {
+    selectors[selectorKey].trigger.addEventListener("click", (e) => {
+      Object.keys(selectors).forEach((key) => {
         if (key === selectorKey) showTab(selectors[key]);
         else hideTab(selectors[key]);
       });
@@ -181,13 +187,13 @@ function initEventListeners() {
   initTabs();
 
   const errorReloadBtnTrigger = document.querySelector(".ca_error_reload_btn");
-  errorReloadBtnTrigger.addEventListener("click", e=> {
+  errorReloadBtnTrigger.addEventListener("click", (e) => {
     document.querySelector(".ca_error").classList.add("ca_hidden");
     document.querySelector(".ca_loader_container").classList.remove("ca_hidden");
     fetchUserAnalytics();
   });
 
-  document.querySelector("#ca_save_opponent_notes_form").addEventListener("submit", e => {
+  document.querySelector("#ca_save_opponent_notes_form").addEventListener("submit", (e) => {
     e.preventDefault();
     saveOpponentNotes();
   });
@@ -203,9 +209,13 @@ function renderAnalytics(response) {
   document.querySelector(".ca_opponent_name").innerText = opponent;
 
   document.querySelector(".ca_elo_range_lowest_value").innerText = response.performance.lowestRating;
-  document.querySelector(".ca_elo_range_lowest_value").title = new Date(response.performance.lowestRatingDateTime)?.toLocaleDateString();
+  document.querySelector(".ca_elo_range_lowest_value").title = new Date(
+    response.performance.lowestRatingDateTime,
+  )?.toLocaleDateString();
   document.querySelector(".ca_elo_range_highest_value").innerText = response.performance.highestRating;
-  document.querySelector(".ca_elo_range_highest_value").title = new Date(response.performance.highestRatingDateTime)?.toLocaleDateString();
+  document.querySelector(".ca_elo_range_highest_value").title = new Date(
+    response.performance.highestRatingDateTime,
+  )?.toLocaleDateString();
   document.querySelector(".ca_elo_range_current_value").innerText = Math.floor(response.performance.currentRating);
 
   const range = response.performance.highestRating - response.performance.lowestRating;
@@ -221,7 +231,7 @@ function renderAnalytics(response) {
     document.querySelector(".ca_win_streak_value").classList.add("ca_positive");
   }
 
-  document.querySelector(".ca_puzzle_rating").innerHTML = response.latestPuzzleRating?.value
+  document.querySelector(".ca_puzzle_rating").innerHTML = response.latestPuzzleRating?.value;
 
   renderOverview(response);
   renderStatsChart(response);
@@ -229,15 +239,16 @@ function renderAnalytics(response) {
 }
 
 function renderOverview(response) {
-  const winData = Object.values(response.games.stats.win).map(stat => stat * 100);
-  const loseData = Object.values(response.games.stats.lose).map(stat => stat * 100);
-  document.querySelector(".ca_win_flag_perc_value").innerHTML = Math.round(response.games.stats.win["outOfTimeRate"] * 100) + '%';
-  document.querySelector(".ca_lose_flag_perc_value").innerHTML = Math.round(response.games.stats.lose["outOfTimeRate"] * 100) + '%';
-
+  const winData = Object.values(response.games.stats.win).map((stat) => stat * 100);
+  const loseData = Object.values(response.games.stats.lose).map((stat) => stat * 100);
+  document.querySelector(".ca_win_flag_perc_value").innerHTML =
+    Math.round(response.games.stats.win["outOfTimeRate"] * 100) + "%";
+  document.querySelector(".ca_lose_flag_perc_value").innerHTML =
+    Math.round(response.games.stats.lose["outOfTimeRate"] * 100) + "%";
 }
 
 function renderStatsChart(response) {
-  const labels = Object.keys(response.games.stats.win).map(stat => {
+  const labels = Object.keys(response.games.stats.win).map((stat) => {
     switch (stat) {
       case "mateRate":
         return "Mate";
@@ -254,51 +265,53 @@ function renderStatsChart(response) {
     }
   });
 
-  const winData = Object.values(response.games.stats.win).map(stat => stat * 100);
-  const loseData = Object.values(response.games.stats.lose).map(stat => stat * 100);
+  const winData = Object.values(response.games.stats.win).map((stat) => stat * 100);
+  const loseData = Object.values(response.games.stats.lose).map((stat) => stat * 100);
 
-  let statsChart = new Chart(
-    document.querySelector("#ca_stats_chart"),
-    {
-      type: 'pie',
-      data: {
-        labels,
-        datasets: [{
+  let statsChart = new Chart(document.querySelector("#ca_stats_chart"), {
+    type: "pie",
+    data: {
+      labels,
+      datasets: [
+        {
           data: winData,
           borderColour: "#FFFFFF",
           hoverOffset: 4,
-        }]
-      },
-      options: {
-        plugins: {
-          legend: {
-            labels: {
-              color: 'rgb(186, 186, 186)'
-            }
-          },
-          datalabels: {
-            formatter: function(value, context) {
-              return context.chart.data.labels[context.dataIndex] + ": " + Math.round(context.chart.data.datasets[0].data[context.dataIndex]);
-            }
-          }
-        }
-      },
-      plugins: [ChartDataLabels]
+        },
+      ],
     },
-  );
+    options: {
+      plugins: {
+        legend: {
+          labels: {
+            color: "rgb(186, 186, 186)",
+          },
+        },
+        datalabels: {
+          formatter: function (value, context) {
+            return (
+              context.chart.data.labels[context.dataIndex] +
+              ": " +
+              Math.round(context.chart.data.datasets[0].data[context.dataIndex])
+            );
+          },
+        },
+      },
+    },
+    plugins: [ChartDataLabels],
+  });
 
   const overviewTabTrigger = document.querySelector(".ca_overview_tab_trigger");
   const statsWinTrigger = document.querySelector(".ca_stats_win_trigger");
   const statsLossesTrigger = document.querySelector(".ca_stats_lose_trigger");
 
-  overviewTabTrigger.addEventListener("click", e => {
-  });
-  statsWinTrigger.addEventListener("click", e => {
+  overviewTabTrigger.addEventListener("click", (e) => {});
+  statsWinTrigger.addEventListener("click", (e) => {
     statsChart.config.data.datasets[0].data = winData;
     statsChart.config.data.datasets[0].borderColor = "#FFFFFF";
     statsChart.update();
   });
-  statsLossesTrigger.addEventListener("click", e => {
+  statsLossesTrigger.addEventListener("click", (e) => {
     statsChart.config.data.datasets[0].data = loseData;
     statsChart.config.data.datasets[0].borderColor = "#AB615E";
     statsChart.update();
@@ -306,115 +319,118 @@ function renderStatsChart(response) {
 }
 
 function renderOpeningsChart(response) {
-  const calcResultWinRate = (opening, rateName) => ((opening.insights.results.win[rateName] ?? 0) / opening.insights.numberOfGames) * 100
-  const calcResultLoseRate = (opening, rateName) => ((opening.insights.results.lose[rateName] ?? 0) / opening.insights.numberOfGames) * 100
-  const data = response.games.openings.filter(g => g.insights.numberOfGames > 1);
-  const openingLabels = data.map(g => g.name);
-  const openingMateRate = data.map(g => calcResultWinRate(g, "mate")).slice(0, 10);
-  const openingResignRate = data.map(g => calcResultWinRate(g, "resign")).slice(0, 10);
-  const openingDrawRate = data.map(g => calcResultWinRate(g, "draw")).slice(0, 10);
-  const openingStalemateRate = data.map(g => calcResultWinRate(g, "stalemate"));
-  const openingWinOutOfTimeRate = data.map(g => calcResultWinRate(g, "outoftime"));
-  const openingLoseOutOfTimeRate = data.map(g => calcResultLoseRate(g, "outoftime"));
-  const openingWinTimeoutRate = data.map(g => calcResultWinRate(g, "timeout"));
-  const openingLoseTimeoutRate = data.map(g => calcResultLoseRate(g, "timeout"));
+  const calcResultWinRate = (opening, rateName) =>
+    ((opening.insights.results.win[rateName] ?? 0) / opening.insights.numberOfGames) * 100;
+  const calcResultLoseRate = (opening, rateName) =>
+    ((opening.insights.results.lose[rateName] ?? 0) / opening.insights.numberOfGames) * 100;
+  const data = response.games.openings.filter((g) => g.insights.numberOfGames > 1);
+  const openingLabels = data.map((g) => g.name);
+  const openingMateRate = data.map((g) => calcResultWinRate(g, "mate")).slice(0, 10);
+  const openingResignRate = data.map((g) => calcResultWinRate(g, "resign")).slice(0, 10);
+  const openingDrawRate = data.map((g) => calcResultWinRate(g, "draw")).slice(0, 10);
+  const openingStalemateRate = data.map((g) => calcResultWinRate(g, "stalemate"));
+  const openingWinOutOfTimeRate = data.map((g) => calcResultWinRate(g, "outoftime"));
+  const openingLoseOutOfTimeRate = data.map((g) => calcResultLoseRate(g, "outoftime"));
+  const openingWinTimeoutRate = data.map((g) => calcResultWinRate(g, "timeout"));
+  const openingLoseTimeoutRate = data.map((g) => calcResultLoseRate(g, "timeout"));
 
-  const openingNumberOfGames = data.map(g => g.insights.numberOfGames);
+  const openingNumberOfGames = data.map((g) => g.insights.numberOfGames);
 
-  const totalWins = data.map(g => g.insights.totals.win);
-  const totalDraws = data.map(g => g.insights.totals.draw);
-  const totalLosses = data.map(g => g.insights.totals.lose);
+  const totalWins = data.map((g) => g.insights.totals.win);
+  const totalDraws = data.map((g) => g.insights.totals.draw);
+  const totalLosses = data.map((g) => g.insights.totals.lose);
 
-  let openingsChart = new Chart(document.querySelector("#ca_openings_chart"),
-    {
-      type: 'bar',
-      data: {
-        labels: openingLabels,
-        datasets: [{
-          label: 'Wins',
+  let openingsChart = new Chart(document.querySelector("#ca_openings_chart"), {
+    type: "bar",
+    data: {
+      labels: openingLabels,
+      datasets: [
+        {
+          label: "Wins",
           data: totalWins,
           backgroundColor: "#68ab5e",
-
-        }, {
-          label: 'Draws',
-          data: totalDraws,
-          backgroundColor: "grey"
-        }, {
-          label: 'Losses',
-          data: totalLosses,
-          backgroundColor: "#AB615E"
-        }]
-      },
-      options: {
-        maintainAspectRatio: false,
-        indexAxis: 'y',
-        scales: {
-          x: {
-            stacked: true,
-            ticks: {
-              color: "rgb(186, 186, 186)"
-            },
-            title: {
-              display: true,
-              text: "Number of games",
-              font: {
-                size: 15
-              }
-            }
-          },
-          y: {
-            stacked: true,
-            ticks: {
-              color: "rgb(186, 186, 186)"
-            }
-          }
         },
-        plugins: {
-          datalabels: {
-            formatter: function(value, context) {
-              const val = context.dataset.data[context.dataIndex];
-              if(val > 0) {
-                return val;
-              }
-              return "";
+        {
+          label: "Draws",
+          data: totalDraws,
+          backgroundColor: "grey",
+        },
+        {
+          label: "Losses",
+          data: totalLosses,
+          backgroundColor: "#AB615E",
+        },
+      ],
+    },
+    options: {
+      maintainAspectRatio: false,
+      indexAxis: "y",
+      scales: {
+        x: {
+          stacked: true,
+          ticks: {
+            color: "rgb(186, 186, 186)",
+          },
+          title: {
+            display: true,
+            text: "Number of games",
+            font: {
+              size: 15,
             },
-            labels: {
-              value: {
-                color: 'white',
-                font: {
-                  size: 10
-                }
-              }
+          },
+        },
+        y: {
+          stacked: true,
+          ticks: {
+            color: "rgb(186, 186, 186)",
+          },
+        },
+      },
+      plugins: {
+        datalabels: {
+          formatter: function (value, context) {
+            const val = context.dataset.data[context.dataIndex];
+            if (val > 0) {
+              return val;
             }
+            return "";
           },
-          legend: {
-            labels: {
-              color: 'rgb(186, 186, 186)',
-            },
-          },
-          tooltip: {
-            callbacks: {
-              footer: function(ctx) {
-                // todo I am not proud of this
-                const value = openingNumberOfGames[ctx[0].dataIndex];
-                let outofTime = 0;
-                let timeout = 0;
-                if(ctx[0].dataset.label === "Wins") {
-                  outofTime = openingWinOutOfTimeRate[ctx[0].dataIndex];
-                  timeout = openingWinTimeoutRate[ctx[0].dataIndex];
-                } else if(ctx[0].dataset.label === "Losses") {
-                  outofTime = openingLoseOutOfTimeRate[ctx[0].dataIndex];
-                  timeout = openingLoseTimeoutRate[ctx[0].dataIndex];
-                } else {
-                  return `Games: ${value}`;
-                }
-                return `Games: ${value}\nTimeouts: ${Math.round(outofTime + timeout)}`;
+          labels: {
+            value: {
+              color: "white",
+              font: {
+                size: 10,
               },
             },
-            }
-        }
+          },
+        },
+        legend: {
+          labels: {
+            color: "rgb(186, 186, 186)",
+          },
+        },
+        tooltip: {
+          callbacks: {
+            footer: function (ctx) {
+              // todo I am not proud of this
+              const value = openingNumberOfGames[ctx[0].dataIndex];
+              let outofTime = 0;
+              let timeout = 0;
+              if (ctx[0].dataset.label === "Wins") {
+                outofTime = openingWinOutOfTimeRate[ctx[0].dataIndex];
+                timeout = openingWinTimeoutRate[ctx[0].dataIndex];
+              } else if (ctx[0].dataset.label === "Losses") {
+                outofTime = openingLoseOutOfTimeRate[ctx[0].dataIndex];
+                timeout = openingLoseTimeoutRate[ctx[0].dataIndex];
+              } else {
+                return `Games: ${value}`;
+              }
+              return `Games: ${value}\nTimeouts: ${Math.round(outofTime + timeout)}`;
+            },
+          },
+        },
       },
-      plugins: [ChartDataLabels]
-    }
-  );
+    },
+    plugins: [ChartDataLabels],
+  });
 }
