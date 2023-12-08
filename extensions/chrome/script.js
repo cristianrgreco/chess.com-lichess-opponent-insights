@@ -307,7 +307,7 @@ function renderStatsChart(response) {
   const winData = Object.values(response.games.stats.win).map((stat) => stat * 100);
   const loseData = Object.values(response.games.stats.lose).map((stat) => stat * 100);
 
-  let statsChart = new Chart(document.querySelector("#ca_stats_chart"), {
+  const statsChart = new Chart(document.querySelector("#ca_stats_chart"), {
     type: "pie",
     data: {
       labels,
@@ -332,11 +332,9 @@ function renderStatsChart(response) {
     },
   });
 
-  const overviewTabTrigger = document.querySelector(".ca_overview_tab_trigger");
   const statsWinTrigger = document.querySelector(".ca_stats_win_trigger");
   const statsLossesTrigger = document.querySelector(".ca_stats_lose_trigger");
 
-  overviewTabTrigger.addEventListener("click", (e) => {});
   statsWinTrigger.addEventListener("click", (e) => {
     statsChart.config.data.datasets[0].data = winData;
     statsChart.config.data.datasets[0].borderColor = "#FFFFFF";
@@ -371,7 +369,7 @@ function renderOpeningsChart(response) {
   const totalDraws = data.map((g) => g.insights.totals.draw);
   const totalLosses = data.map((g) => g.insights.totals.lose);
 
-  let openingsChart = new Chart(document.querySelector("#ca_openings_chart"), {
+  new Chart(document.querySelector("#ca_openings_chart"), {
     type: "bar",
     data: {
       labels: openingLabels,
