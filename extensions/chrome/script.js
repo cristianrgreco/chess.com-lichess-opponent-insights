@@ -375,7 +375,7 @@ function renderOpeningsChart(response) {
     ((opening.insights.results.win[rateName] ?? 0) / opening.insights.numberOfGames) * 100;
   const calcResultLoseRate = (opening, rateName) =>
     ((opening.insights.results.lose[rateName] ?? 0) / opening.insights.numberOfGames) * 100;
-  const data = response.games.openings.filter((g) => g.insights.numberOfGames > 1);
+  const data = response.games.openings.filter((g) => g.insights.numberOfGames > 2);
   const openingLabels = data.map((g) => g.name);
   const openingMateRate = data.map((g) => calcResultWinRate(g, "mate")).slice(0, 10);
   const openingResignRate = data.map((g) => calcResultWinRate(g, "resign")).slice(0, 10);
@@ -416,11 +416,13 @@ function renderOpeningsChart(response) {
     },
     options: {
       maintainAspectRatio: true,
+      scaleShowValues: true,
       indexAxis: "y",
       scales: {
         x: {
           stacked: true,
           ticks: {
+            autoSkip: false,
             color: "rgb(186, 186, 186)",
           },
           title: {
@@ -434,6 +436,7 @@ function renderOpeningsChart(response) {
         y: {
           stacked: true,
           ticks: {
+            autoSkip: false,
             color: "rgb(186, 186, 186)",
           },
         },

@@ -30,7 +30,7 @@
   .ca_game_type {
   }
   .ca_win_streak_value {
-    padding: 4px;
+    padding: 4px 8px;
     color: white;
     margin-left: 4px;
   }
@@ -165,7 +165,7 @@
   .ca_stats_chart_buttons {
     display: flex;
     justify-content: center;
-    margin: 20px 0 10px 0;
+    margin: 10px 0;
     gap: 10px;
   }
   .ca_loader {
@@ -288,14 +288,14 @@
       </div>
     </div>
     <div class="ca_section ca_tab_section ca_stats ca_hidden">
-      <canvas id="ca_stats_chart"></canvas>
+      <canvas id="ca_stats_chart" height="400"></canvas>
       <div class="ca_stats_chart_buttons">
         <button class="button btn-win selected ca_stats_win_trigger">Wins</button>
         <button class="button btn-lose ca_stats_lose_trigger">Losses</button>
       </div>
     </div>
     <div class="ca_section ca_tab_section ca_openings ca_hidden">
-      <canvas id="ca_openings_chart"></canvas>
+      <canvas id="ca_openings_chart" height="400"></canvas>
     </div>
     <div class="ca_section ca_tab_section ca_notes ca_hidden">
       <form action="" id="ca_save_opponent_notes_form">
