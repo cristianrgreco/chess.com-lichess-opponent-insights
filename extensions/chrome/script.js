@@ -1,86 +1,77 @@
-if (document.title.indexOf("Play ") !== -1) {
-  var user = document.querySelector("#user_tag").innerText;
+let user;
+let opponent;
+let opponentColour;
+let gameType;
 
-  var [opponent] = Array.from(document.querySelectorAll(".game__meta .player .user-link"))
+const API = "https://rlabb3msg0.execute-api.eu-west-2.amazonaws.com/prod/";
+
+if (document.title.includes("Play ")) {
+  init();
+}
+
+function init() {
+  user = document.querySelector("#user_tag").innerText;
+  opponent = Array.from(document.querySelectorAll(".game__meta .player .user-link"))
     .map((playerElement) => playerElement.getAttribute("href").split("/").pop())
-    .filter((player) => player !== user);
+    .filter((player) => player !== user)[0];
+  opponentColour = document.querySelector(".game__meta .player.white").innerHTML.includes(opponent) ? "white" : "black";
+  gameType = document.querySelector(".game__meta .header .setup span[title]").innerText.toLowerCase();
 
-  var opponentColour = document.querySelector(".game__meta .player.white").innerHTML.includes(opponent)
-    ? "white"
-    : "black";
+  console.log(
+    `Current user: ${user}, Opponent: ${opponent}, Opponent colour: ${opponentColour}, Game type: ${gameType}`,
+  );
 
-  var gameType = document.querySelector(".game__meta .header .setup span[title]").innerText.toLowerCase();
-
-  console.log("Current user: " + user);
-  console.log("Opponent: " + opponent);
-  console.log("Opponent colour: " + opponentColour);
-  console.log("Game type: " + gameType);
-
-  const htmlUrl = chrome.runtime.getURL(`./view.html`);
-  let viewHtml = "";
-  console.log("Fetching HTML...");
-  fetch(htmlUrl)
-    .then((response) => {
-      console.log("Fetched HTML");
-      return response.text();
-    })
-    .then((response) => {
-      viewHtml = response;
-      const site_html = document.querySelector(".round__side").innerHTML;
-      document.querySelector(".round__side").innerHTML = viewHtml; // todo viewHtml may not be resolved, chain the promise
-      document.querySelector(".origin_site_container").innerHTML = site_html;
-      initEventListeners();
-    });
-
+  fetchView().then(() => {
+    initSiteTabs();
+    initSubTabs();
+    initRealTimeEvaluation();
+    document.querySelector("#ca_save_opponent_notes_form").addEventListener("submit", onSaveOpponentNotes);
+  });
   fetchUserAnalytics();
   fetchOpponentNotes();
 }
 
+function fetchView() {
+  console.log("Fetching HTML...");
+  return fetch(chrome.runtime.getURL(`./view.html`))
+    .then((response) => {
+      console.log("Fetched HTML");
+      return response.text();
+    })
+    .then((responseText) => {
+      const siteHtml = document.querySelector(".round__side").innerHTML;
+      document.querySelector(".round__side").innerHTML = responseText;
+      document.querySelector(".origin_site_container").innerHTML = siteHtml;
+    });
+}
+
 function fetchUserAnalytics() {
   console.log("Fetching user analytics...");
-  fetch(
-    `https://rlabb3msg0.execute-api.eu-west-2.amazonaws.com/prod/user-analytics?platform=lichess&username=${opponent}&gameType=${gameType}&colour=${opponentColour}`,
-  )
+  fetch(`${API}/user-analytics?platform=lichess&username=${opponent}&gameType=${gameType}&colour=${opponentColour}`)
+    .then((response) => (response.ok ? response.json() : Promise.reject(response)))
     .then((response) => {
       console.log("Fetched user analytics");
-      if (response.ok) {
-        return response.json();
-      }
-      return Promise.reject(response);
-    })
-    .then((response) => {
       render(response);
     })
-    .catch((response) => {
-      handleHttpError("Failed to fetch user analytics", response);
-    });
+    .catch((response) => renderError("Failed to fetch user analytics", response));
 }
 
 function fetchOpponentNotes() {
   console.log("Fetching opponent notes...");
-  fetch(
-    `https://rlabb3msg0.execute-api.eu-west-2.amazonaws.com/prod/opponent-notes?username=${user}&opponentName=${opponent}`,
-  )
-    .then((response) => {
-      console.log("Fetched opponent notes");
-      if (response.ok) {
-        return response.json();
-      }
-      return Promise.reject(response);
-    })
+  fetch(`${API}/opponent-notes?username=${user}&opponentName=${opponent}`)
+    .then((response) => (response.ok ? response.json() : Promise.reject(response)))
     .then((responseJson) => {
+      console.log("Fetched opponent notes");
       if (responseJson.notes) {
         document.querySelector("#ca_opponent_notes").value = responseJson.notes;
       }
     })
-    .catch((response) => {
-      handleHttpError("Failed to fetch opponent notes", response);
-    });
+    .catch((response) => renderError("Failed to fetch opponent notes", response));
 }
 
 function saveOpponentNotes() {
   console.log("Saving opponent notes...");
-  fetch(`https://rlabb3msg0.execute-api.eu-west-2.amazonaws.com/prod/opponent-notes`, {
+  fetch(`${API}/opponent-notes`, {
     method: "POST",
     body: JSON.stringify({
       username: user,
@@ -88,27 +79,27 @@ function saveOpponentNotes() {
       notes: document.querySelector("#ca_opponent_notes").value,
     }),
   })
-    .then((response) => {
-      console.log("Saved opponent notes");
-      if (!response.ok) {
-        return Promise.reject(response);
-      }
-    })
-    .catch((response) => {
-      handleHttpError("Failed to save opponent notes", response);
-    });
+    .then((response) => (response.ok ? Promise.resolve() : Promise.reject(response)))
+    .then(() => console.log("Saved opponent notes"))
+    .catch((response) => renderError("Failed to save opponent notes", response));
 }
 
-function renderError(message) {
-  document.querySelector(".ca_error").classList.remove("ca_hidden");
-  document.querySelector(".ca_loader_container").classList.add("ca_hidden");
-  document.querySelector(".ca_error_message").innerText = message;
+function onSaveOpponentNotes(e) {
+  e.preventDefault();
+  saveOpponentNotes();
 }
 
 function render(response) {
   document.querySelector(".ca_container").classList.remove("ca_hidden");
   document.querySelector(".ca_loader_container").classList.add("ca_hidden");
   renderAnalytics(response);
+}
+
+function renderError(message, response) {
+  console.log(response.status, response.statusText);
+  document.querySelector(".ca_error").classList.remove("ca_hidden");
+  document.querySelector(".ca_loader_container").classList.add("ca_hidden");
+  document.querySelector(".ca_error_message").innerText = message;
 }
 
 function initSiteTabs() {
@@ -137,7 +128,7 @@ function initSiteTabs() {
   });
 }
 
-function initTabs() {
+function initSubTabs() {
   const selectors = {
     overview: {
       trigger: document.querySelector(".ca_overview_tab_trigger"),
@@ -187,17 +178,13 @@ function initRealTimeEvaluation() {
   function fetchEvaluation() {
     const fen = chess.fen();
     const encodedFen = encodeURIComponent(fen);
-    console.log("Fetching evaluation...");
     evaluationElement.innerText = "...";
+
+    console.log("Fetching evaluation...");
     fetch(`https://stockfish.online/api/stockfish.php?fen=${encodedFen}&depth=5&mode=eval`)
-      .then((response) => {
-        console.log("Fetched evaluation");
-        if (response.ok) {
-          return response.json();
-        }
-        return Promise.reject(response);
-      })
+      .then((response) => (response.ok ? response.json() : Promise.reject(response)))
       .then((responseJson) => {
+        console.log("Fetched evaluation");
         // if another move has been made since, don't update the UI with the evaluation of the old position
         if (fen === chess.fen()) {
           const evaluationText = responseJson.data;
@@ -205,9 +192,7 @@ function initRealTimeEvaluation() {
           evaluationElement.innerText = evaluation;
         }
       })
-      .catch((response) => {
-        handleHttpError("Failed to evaluate position", response);
-      });
+      .catch((response) => renderError("Failed to evaluate position", response));
   }
 
   function waitForElement(selector) {
@@ -253,54 +238,43 @@ function initRealTimeEvaluation() {
   });
 }
 
-function handleHttpError(message, response) {
-  console.log(response.status, response.statusText);
-  renderError(message);
-}
-
-function initEventListeners() {
-  initSiteTabs();
-  initTabs();
-
-  document.querySelector("#ca_save_opponent_notes_form").addEventListener("submit", (e) => {
-    e.preventDefault();
-    saveOpponentNotes();
-  });
-
-  initRealTimeEvaluation();
-}
-
 function renderAnalytics(response) {
   document.querySelector(".ca_opponent_name").innerText = opponent;
+  renderEloSlider(response);
+  renderWinStreak(response);
+  document.querySelector(".ca_puzzle_rating").innerHTML = response.latestPuzzleRating?.value ?? "N/A";
+  renderOverview(response);
+  renderStatsChart(response);
+  renderOpeningsChart(response);
+}
 
-  document.querySelector(".ca_elo_range_lowest_value").innerText = response.performance.lowestRating;
-  document.querySelector(".ca_elo_range_lowest_value").title = new Date(
-    response.performance.lowestRatingDateTime,
-  )?.toLocaleDateString();
-  document.querySelector(".ca_elo_range_highest_value").innerText = response.performance.highestRating;
-  document.querySelector(".ca_elo_range_highest_value").title = new Date(
-    response.performance.highestRatingDateTime,
-  )?.toLocaleDateString();
-  document.querySelector(".ca_elo_range_current_value").innerText = Math.floor(response.performance.currentRating);
+function renderEloSlider(response) {
+  const lowestEloElement = document.querySelector(".ca_elo_range_lowest_value");
+  lowestEloElement.innerText = response.performance.lowestRating;
+  lowestEloElement.title = new Date(response.performance.lowestRatingDateTime,)?.toLocaleDateString();
+
+  const highestEloEl = document.querySelector(".ca_elo_range_highest_value");
+  highestEloEl.innerText = response.performance.highestRating;
+  highestEloEl.title = new Date(response.performance.highestRatingDateTime,)?.toLocaleDateString();
+
+  const currentEloEl = document.querySelector(".ca_elo_range_current_value");
+  currentEloEl.innerText = Math.floor(response.performance.currentRating);
 
   const range = response.performance.highestRating - response.performance.lowestRating;
   const diff = response.performance.currentRating - response.performance.lowestRating;
   const percentageIncrease = (diff / range) * 100;
   document.querySelector(".ca_elo_range_current").style.left = `${percentageIncrease}%`;
+}
 
+function renderWinStreak(response) {
+  const winStreakEl = document.querySelector(".ca_win_streak_value")
   if (response.performance.currentWinningStreak <= 0) {
-    document.querySelector(".ca_win_streak_value").innerHTML = `-${response.performance.currentLosingStreak}`;
-    document.querySelector(".ca_win_streak_value").classList.add("ca_negative");
+    winStreakEl.innerHTML = `-${response.performance.currentLosingStreak}`;
+    winStreakEl.classList.add("ca_negative");
   } else {
-    document.querySelector(".ca_win_streak_value").innerHTML = `+${response.performance.currentWinningStreak}`;
-    document.querySelector(".ca_win_streak_value").classList.add("ca_positive");
+    winStreakEl.innerHTML = `+${response.performance.currentWinningStreak}`;
+    winStreakEl.classList.add("ca_positive");
   }
-
-  document.querySelector(".ca_puzzle_rating").innerHTML = response.latestPuzzleRating?.value ?? "N/A";
-
-  renderOverview(response);
-  renderStatsChart(response);
-  renderOpeningsChart(response);
 }
 
 function renderOverview(response) {
