@@ -1,5 +1,5 @@
 {
-  "name": "Chess Analaytics",
+  "name": "Chess Analytics",
   "description": "Get good",
   "version": "1",
   "manifest_version": 2,
@@ -7,22 +7,17 @@
   "content_scripts": [
     {
       "matches": ["https://lichess.org/*"],
-      "js": ["script.js", "./scripts/chess.js", "./scripts/chart.umd.js", "./scripts/chartjs-plugin-datalabels.min.js"],
-      "web_accessible_resources": [
+      "js": [
+        "script.js",
         "./scripts/chess.js",
         "./scripts/chart.umd.js",
-        "./scripts/chart.umd.js.map",
-        "view.html",
         "./scripts/chartjs-plugin-datalabels.min.js"
       ]
     }
   ],
   "web_accessible_resources": [
-    "./scripts/chess.js",
-    "./scripts/chart.umd.js",
     "./scripts/chart.umd.js.map",
-    "view.html",
-    "./scripts/chartjs-plugin-datalabels.min.js"
+    "view.html"
   ],
   "permissions": ["<all_urls>"]
 }
