@@ -99,10 +99,10 @@ function saveOpponentNotes() {
     });
 }
 
-function renderError(response) {
+function renderError(message) {
   document.querySelector(".ca_error").classList.remove("ca_hidden");
   document.querySelector(".ca_loader_container").classList.add("ca_hidden");
-  document.querySelector(".ca_error_message").innerHTML = (response.status, response.statusText);
+  document.querySelector(".ca_error_message").innerText = message;
 }
 
 function render(response) {
@@ -250,19 +250,12 @@ function initRealTimeEvaluation() {
 
 function handleHttpError(message, response) {
   console.log(response.status, response.statusText);
-  renderError(response);
+  renderError(message);
 }
 
 function initEventListeners() {
   initSiteTabs();
   initTabs();
-
-  const errorReloadBtnTrigger = document.querySelector(".ca_error_reload_btn");
-  errorReloadBtnTrigger.addEventListener("click", (e) => {
-    document.querySelector(".ca_error").classList.add("ca_hidden");
-    document.querySelector(".ca_loader_container").classList.remove("ca_hidden");
-    fetchUserAnalytics();
-  });
 
   document.querySelector("#ca_save_opponent_notes_form").addEventListener("submit", (e) => {
     e.preventDefault();
