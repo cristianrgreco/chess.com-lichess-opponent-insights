@@ -19,7 +19,7 @@ export async function getOpponentNotes(event) {
 
   return {
     statusCode: 200,
-    body: JSON.stringify({ notes: dbResponse.Item.notes }),
+    body: JSON.stringify({ notes: dbResponse.Item?.notes }),
     headers: corsHeaders,
   };
 }

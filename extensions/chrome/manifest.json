@@ -7,8 +7,9 @@
   "content_scripts": [
     {
       "matches": ["https://lichess.org/*"],
-      "js": ["script.js", "./scripts/chart.umd.js", "./scripts/chartjs-plugin-datalabels.min.js"],
+      "js": ["script.js", "./scripts/chess.js", "./scripts/chart.umd.js", "./scripts/chartjs-plugin-datalabels.min.js"],
       "web_accessible_resources": [
+        "./scripts/chess.js",
         "./scripts/chart.umd.js",
         "./scripts/chart.umd.js.map",
         "view.html",
@@ -17,6 +18,7 @@
     }
   ],
   "web_accessible_resources": [
+    "./scripts/chess.js",
     "./scripts/chart.umd.js",
     "./scripts/chart.umd.js.map",
     "view.html",

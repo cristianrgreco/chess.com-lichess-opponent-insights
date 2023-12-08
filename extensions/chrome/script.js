@@ -50,10 +50,7 @@ function fetchUserAnalytics() {
       render(response);
     })
     .catch((response) => {
-      console.log("Error fetching user data");
-      console.log(response.status, response.statusText);
-      console.log(response);
-      renderError(response);
+      handleHttpError("Failed to fetch user analytics", response);
     });
 }
 
@@ -73,9 +70,7 @@ function fetchOpponentNotes() {
       }
     })
     .catch((response) => {
-      console.log("Error fetching opponent notes");
-      console.log(response.status, response.statusText);
-      console.log(response);
+      handleHttpError("Failed to fetch opponent notes", response);
     });
 }
 
@@ -94,10 +89,7 @@ function saveOpponentNotes() {
       }
     })
     .catch((response) => {
-      console.log("Error saving opponent notes");
-      console.log(response.status, response.statusText);
-      console.log(response);
-      renderError(response);
+      handleHttpError("Failed to save opponent notes", response);
     });
 }
 
@@ -181,6 +173,79 @@ function initTabs() {
   Object.keys(selectors).forEach(initTabEvents);
 }
 
+function initRealTimeEvaluation() {
+  const chess = new Chess();
+  const moveElementSelector = "kwdb";
+  const evaluationElement = document.querySelector(".ca_evaluation");
+
+  function processEvaluation() {
+    const encodedFen = encodeURIComponent(chess.fen());
+    fetch(`https://stockfish.online/api/stockfish.php?fen=${encodedFen}&depth=5&mode=eval`)
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        }
+        return Promise.reject(response);
+      })
+      .then((responseJson) => {
+        const evaluationText = responseJson.data;
+        const evaluation = evaluationText.match(/([0-9.\-])+/g)[0];
+        evaluationElement.innerText = evaluation;
+      })
+      .catch((response) => {
+        handleHttpError("Failed to evaluate position", response);
+      });
+  }
+
+  function waitForElement(selector) {
+    return new Promise((resolve) => {
+      if (document.querySelector(selector)) {
+        return resolve(document.querySelector(selector));
+      }
+
+      const observer = new MutationObserver((mutations) => {
+        if (document.querySelector(selector)) {
+          observer.disconnect();
+          resolve(document.querySelector(selector));
+        }
+      });
+
+      observer.observe(document.body, {
+        childList: true,
+        subtree: true,
+      });
+    });
+  }
+
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      mutation.addedNodes.forEach((addedNode) => {
+        if (addedNode.tagName === moveElementSelector.toUpperCase()) {
+          chess.move(addedNode.textContent);
+          processEvaluation();
+        }
+      });
+    });
+  });
+
+  const movesContainerSelector = "rm6 > l4x";
+  waitForElement(movesContainerSelector).then((movesContainerElement) => {
+    const existingMoves = movesContainerElement.querySelectorAll(moveElementSelector);
+    if (existingMoves) {
+      existingMoves.forEach((el) => chess.move(el.textContent));
+      processEvaluation();
+    }
+
+    observer.observe(movesContainerElement, { subtree: false, childList: true });
+  });
+}
+
+function handleHttpError(message, response) {
+  console.log(response.status, response.statusText);
+  console.log(response);
+  renderError(response);
+}
+
 function initEventListeners() {
   initSiteTabs();
   initTabs();
@@ -197,11 +262,7 @@ function initEventListeners() {
     saveOpponentNotes();
   });
 
-  // const openingChartResetBtnTriger = document.querySelector(".ca_openings_chart_reset_trigger");
-  // openingChartResetBtnTriger.addEventListener("click", e=> {
-  //   openingChartResetBtnTriger.classList.add("ca_hidden");
-  //   renderOpeningsChart(caResponse);
-  // });
+  initRealTimeEvaluation();
 }
 
 function renderAnalytics(response) {
@@ -230,7 +291,7 @@ function renderAnalytics(response) {
     document.querySelector(".ca_win_streak_value").classList.add("ca_positive");
   }
 
-  document.querySelector(".ca_puzzle_rating").innerHTML = response.latestPuzzleRating?.value;
+  document.querySelector(".ca_puzzle_rating").innerHTML = response.latestPuzzleRating?.value ?? "N/A";
 
   renderOverview(response);
   renderStatsChart(response);
