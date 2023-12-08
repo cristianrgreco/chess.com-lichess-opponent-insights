@@ -18,10 +18,13 @@ if (document.title.indexOf("Play ") !== -1) {
 
   const htmlUrl = chrome.runtime.getURL(`./view.html`);
   let viewHtml = "";
+  console.log("Fetching HTML...");
   fetch(htmlUrl)
-    .then((response) => response.text())
     .then((response) => {
-      console.log("Fetched html");
+      console.log("Fetched HTML");
+      return response.text();
+    })
+    .then((response) => {
       viewHtml = response;
       const site_html = document.querySelector(".round__side").innerHTML;
       document.querySelector(".round__side").innerHTML = viewHtml; // todo viewHtml may not be resolved, chain the promise
@@ -29,18 +32,17 @@ if (document.title.indexOf("Play ") !== -1) {
       initEventListeners();
     });
 
-  console.log("Fetching user analytics...");
   fetchUserAnalytics();
-
-  console.log("Fetching opponent notes...");
   fetchOpponentNotes();
 }
 
 function fetchUserAnalytics() {
+  console.log("Fetching user analytics...");
   fetch(
     `https://rlabb3msg0.execute-api.eu-west-2.amazonaws.com/prod/user-analytics?platform=lichess&username=${opponent}&gameType=${gameType}&colour=${opponentColour}`,
   )
     .then((response) => {
+      console.log("Fetched user analytics");
       if (response.ok) {
         return response.json();
       }
@@ -55,10 +57,12 @@ function fetchUserAnalytics() {
 }
 
 function fetchOpponentNotes() {
+  console.log("Fetching opponent notes...");
   fetch(
     `https://rlabb3msg0.execute-api.eu-west-2.amazonaws.com/prod/opponent-notes?username=${user}&opponentName=${opponent}`,
   )
     .then((response) => {
+      console.log("Fetched opponent notes");
       if (response.ok) {
         return response.json();
       }
@@ -75,6 +79,7 @@ function fetchOpponentNotes() {
 }
 
 function saveOpponentNotes() {
+  console.log("Saving opponent notes...");
   fetch(`https://rlabb3msg0.execute-api.eu-west-2.amazonaws.com/prod/opponent-notes`, {
     method: "POST",
     body: JSON.stringify({
@@ -84,6 +89,7 @@ function saveOpponentNotes() {
     }),
   })
     .then((response) => {
+      console.log("Saved opponent notes")
       if (!response.ok) {
         return Promise.reject(response);
       }
@@ -178,10 +184,12 @@ function initRealTimeEvaluation() {
   const moveElementSelector = "kwdb";
   const evaluationElement = document.querySelector(".ca_evaluation");
 
-  function processEvaluation() {
+  function fetchEvaluation() {
     const encodedFen = encodeURIComponent(chess.fen());
+    console.log("Fetching evaluation...");
     fetch(`https://stockfish.online/api/stockfish.php?fen=${encodedFen}&depth=5&mode=eval`)
       .then((response) => {
+        console.log("Fetched evaluation");
         if (response.ok) {
           return response.json();
         }
@@ -222,7 +230,7 @@ function initRealTimeEvaluation() {
       mutation.addedNodes.forEach((addedNode) => {
         if (addedNode.tagName === moveElementSelector.toUpperCase()) {
           chess.move(addedNode.textContent);
-          processEvaluation();
+          fetchEvaluation();
         }
       });
     });
@@ -233,7 +241,7 @@ function initRealTimeEvaluation() {
     const existingMoves = movesContainerElement.querySelectorAll(moveElementSelector);
     if (existingMoves) {
       existingMoves.forEach((el) => chess.move(el.textContent));
-      processEvaluation();
+      fetchEvaluation();
     }
 
     observer.observe(movesContainerElement, { subtree: false, childList: true });
@@ -242,7 +250,6 @@ function initRealTimeEvaluation() {
 
 function handleHttpError(message, response) {
   console.log(response.status, response.statusText);
-  console.log(response);
   renderError(response);
 }
 
