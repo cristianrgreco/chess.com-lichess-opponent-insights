@@ -89,7 +89,7 @@ function saveOpponentNotes() {
     }),
   })
     .then((response) => {
-      console.log("Saved opponent notes")
+      console.log("Saved opponent notes");
       if (!response.ok) {
         return Promise.reject(response);
       }
@@ -185,8 +185,10 @@ function initRealTimeEvaluation() {
   const evaluationElement = document.querySelector(".ca_evaluation");
 
   function fetchEvaluation() {
-    const encodedFen = encodeURIComponent(chess.fen());
+    const fen = chess.fen();
+    const encodedFen = encodeURIComponent(fen);
     console.log("Fetching evaluation...");
+    evaluationElement.innerText = "...";
     fetch(`https://stockfish.online/api/stockfish.php?fen=${encodedFen}&depth=5&mode=eval`)
       .then((response) => {
         console.log("Fetched evaluation");
@@ -196,9 +198,12 @@ function initRealTimeEvaluation() {
         return Promise.reject(response);
       })
       .then((responseJson) => {
-        const evaluationText = responseJson.data;
-        const evaluation = evaluationText.match(/([0-9.\-])+/g)[0];
-        evaluationElement.innerText = evaluation;
+        // if another move has been made since, don't update the UI with the evaluation of the old position
+        if (fen === chess.fen()) {
+          const evaluationText = responseJson.data;
+          const evaluation = evaluationText.match(/([0-9.\-])+/g)[0];
+          evaluationElement.innerText = evaluation;
+        }
       })
       .catch((response) => {
         handleHttpError("Failed to evaluate position", response);
