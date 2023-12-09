@@ -118,7 +118,7 @@ function initSiteTabs() {
       trigger: document.querySelector(".ca_tabs_site_trigger"),
       el: originSiteContainer,
     },
-  })
+  });
 }
 
 function initSubTabs() {
@@ -203,11 +203,11 @@ function renderAnalytics(response) {
 function renderEloSlider(response) {
   const lowestEloElement = document.querySelector(".ca_elo_range_lowest_value");
   lowestEloElement.innerText = response.performance.lowestRating;
-  lowestEloElement.title = new Date(response.performance.lowestRatingDateTime,)?.toLocaleDateString();
+  lowestEloElement.title = new Date(response.performance.lowestRatingDateTime)?.toLocaleDateString();
 
   const highestEloEl = document.querySelector(".ca_elo_range_highest_value");
   highestEloEl.innerText = response.performance.highestRating;
-  highestEloEl.title = new Date(response.performance.highestRatingDateTime,)?.toLocaleDateString();
+  highestEloEl.title = new Date(response.performance.highestRatingDateTime)?.toLocaleDateString();
 
   const currentEloEl = document.querySelector(".ca_elo_range_current_value");
   currentEloEl.innerText = Math.floor(response.performance.currentRating);
@@ -219,7 +219,7 @@ function renderEloSlider(response) {
 }
 
 function renderWinStreak(response) {
-  const winStreakEl = document.querySelector(".ca_win_streak_value")
+  const winStreakEl = document.querySelector(".ca_win_streak_value");
   if (response.performance.currentWinningStreak <= 0) {
     winStreakEl.innerHTML = `-${response.performance.currentLosingStreak}`;
     winStreakEl.classList.add("ca_negative");

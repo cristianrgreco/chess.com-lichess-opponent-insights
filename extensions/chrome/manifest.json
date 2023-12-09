@@ -13,12 +13,10 @@
         "./lib/chess.js",
         "./lib/chart.umd.js",
         "./lib/chartjs-plugin-datalabels.min.js"
-      ]
+      ],
+      "css": ["./view.css"]
     }
   ],
-  "web_accessible_resources": [
-    "./lib/chart.umd.js.map",
-    "view.html"
-  ],
+  "web_accessible_resources": ["./lib/chart.umd.js.map", "view.html"],
   "permissions": ["<all_urls>"]
 }
