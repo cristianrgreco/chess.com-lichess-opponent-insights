@@ -31,6 +31,11 @@ function init() {
   fetchOpponentNotes();
 }
 
+function onSaveOpponentNotes(e) {
+  e.preventDefault();
+  saveOpponentNotes();
+}
+
 function fetchView() {
   console.log("Fetching HTML...");
   return fetch(chrome.runtime.getURL(`./view.html`))
@@ -84,11 +89,6 @@ function saveOpponentNotes() {
     .catch((response) => renderError("Failed to save opponent notes", response));
 }
 
-function onSaveOpponentNotes(e) {
-  e.preventDefault();
-  saveOpponentNotes();
-}
-
 function render(response) {
   document.querySelector(".ca_container").classList.remove("ca_hidden");
   document.querySelector(".ca_loader_container").classList.add("ca_hidden");
@@ -103,33 +103,26 @@ function renderError(message, response) {
 }
 
 function initSiteTabs() {
-  const caContainer = document.querySelector(".ca_container");
   const originSiteContainer = document.querySelector(".origin_site_container");
-
-  const siteTabTrigger = document.querySelector(".ca_tabs_site_trigger");
-  const caTabTrigger = document.querySelector(".ca_tabs_ca_trigger");
-
   originSiteContainer.classList.add("ca_hidden");
-  caTabTrigger.classList.add("ca_active");
 
-  caTabTrigger.addEventListener("click", (e) => {
-    caTabTrigger.classList.add("ca_active");
-    siteTabTrigger.classList.remove("ca_active");
-    caContainer.classList.remove("ca_hidden");
-    originSiteContainer.classList.add("ca_hidden");
-  });
+  const analyticsTrigger = document.querySelector(".ca_tabs_ca_trigger");
+  analyticsTrigger.classList.add("ca_active");
 
-  siteTabTrigger.addEventListener("click", (e) => {
-    siteTabTrigger.classList.add("ca_active");
-    caTabTrigger.classList.remove("ca_active");
-
-    originSiteContainer.classList.remove("ca_hidden");
-    caContainer.classList.add("ca_hidden");
-  });
+  _initTabs({
+    analytics: {
+      trigger: analyticsTrigger,
+      el: document.querySelector(".ca_container"),
+    },
+    origin: {
+      trigger: document.querySelector(".ca_tabs_site_trigger"),
+      el: originSiteContainer,
+    },
+  })
 }
 
 function initSubTabs() {
-  const selectors = {
+  _initTabs({
     overview: {
       trigger: document.querySelector(".ca_overview_tab_trigger"),
       el: document.querySelector(".ca_overview"),
@@ -146,28 +139,7 @@ function initSubTabs() {
       trigger: document.querySelector(".ca_notes_tab_trigger"),
       el: document.querySelector(".ca_notes"),
     },
-  };
-
-  const hideTab = (selector) => {
-    selector.trigger.classList.remove("ca_active");
-    selector.el.classList.add("ca_hidden");
-  };
-
-  const showTab = (selector) => {
-    selector.trigger.classList.add("ca_active");
-    selector.el.classList.remove("ca_hidden");
-  };
-
-  const initTabEvents = (selectorKey) => {
-    selectors[selectorKey].trigger.addEventListener("click", (e) => {
-      Object.keys(selectors).forEach((key) => {
-        if (key === selectorKey) showTab(selectors[key]);
-        else hideTab(selectors[key]);
-      });
-    });
-  };
-
-  Object.keys(selectors).forEach(initTabEvents);
+  });
 }
 
 function initRealTimeEvaluation() {
@@ -195,26 +167,6 @@ function initRealTimeEvaluation() {
       .catch((response) => renderError("Failed to evaluate position", response));
   }
 
-  function waitForElement(selector) {
-    return new Promise((resolve) => {
-      if (document.querySelector(selector)) {
-        return resolve(document.querySelector(selector));
-      }
-
-      const observer = new MutationObserver((mutations) => {
-        if (document.querySelector(selector)) {
-          observer.disconnect();
-          resolve(document.querySelector(selector));
-        }
-      });
-
-      observer.observe(document.body, {
-        childList: true,
-        subtree: true,
-      });
-    });
-  }
-
   const observer = new MutationObserver((mutations) => {
     mutations.forEach((mutation) => {
       mutation.addedNodes.forEach((addedNode) => {
@@ -227,7 +179,7 @@ function initRealTimeEvaluation() {
   });
 
   const movesContainerSelector = "rm6 > l4x";
-  waitForElement(movesContainerSelector).then((movesContainerElement) => {
+  _waitForElement(movesContainerSelector).then((movesContainerElement) => {
     const existingMoves = movesContainerElement.querySelectorAll(moveElementSelector);
     if (existingMoves) {
       existingMoves.forEach((el) => chess.move(el.textContent));
