@@ -344,7 +344,7 @@ function renderOpeningsChart(response) {
       ],
     },
     options: {
-      maintainAspectRatio: true,
+      maintainAspectRatio: false,
       scaleShowValues: true,
       indexAxis: "y",
       scales: {
