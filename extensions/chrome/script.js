@@ -68,6 +68,7 @@ function fetchOpponentNotes() {
     .then((responseJson) => {
       console.log("Fetched opponent notes");
       if (responseJson.notes) {
+        document.querySelector(".ca_notes_tab_trigger").classList.add("ca_green_colour");
         document.querySelector("#ca_opponent_notes").value = responseJson.notes;
       }
     })
@@ -96,7 +97,7 @@ function render(response) {
 }
 
 function renderError(message, response) {
-  console.log(response.status, response.statusText);
+  console.error(response);
   document.querySelector(".ca_error").classList.remove("ca_hidden");
   document.querySelector(".ca_loader_container").classList.add("ca_hidden");
   document.querySelector(".ca_error_message").innerText = message;
