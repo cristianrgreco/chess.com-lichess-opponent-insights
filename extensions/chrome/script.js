@@ -200,24 +200,6 @@ function renderAnalytics(response) {
   renderOpeningsChart(response);
 }
 
-// function renderEloSlider(response) {
-//   const lowestEloElement = document.querySelector(".ca_elo_range_lowest_value");
-//   lowestEloElement.innerText = response.performance.lowestRating;
-//   lowestEloElement.title = new Date(response.performance.lowestRatingDateTime)?.toLocaleDateString();
-//
-//   const highestEloEl = document.querySelector(".ca_elo_range_highest_value");
-//   highestEloEl.innerText = response.performance.highestRating;
-//   highestEloEl.title = new Date(response.performance.highestRatingDateTime)?.toLocaleDateString();
-//
-//   const currentEloEl = document.querySelector(".ca_elo_range_current_value");
-//   currentEloEl.innerText = Math.floor(response.performance.currentRating);
-//
-//   const range = response.performance.highestRating - response.performance.lowestRating;
-//   const diff = response.performance.currentRating - response.performance.lowestRating;
-//   const percentageIncrease = (diff / range) * 100;
-//   document.querySelector(".ca_elo_range_current").style.left = `${percentageIncrease}%`;
-// }
-
 function renderWinStreak(response) {
   const winStreakEl = document.querySelector(".ca_win_streak_value");
   if (response.performance.currentWinningStreak <= 0) {
