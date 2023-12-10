@@ -8,11 +8,14 @@
     {
       "matches": ["https://lichess.org/*"],
       "js": [
-        "./utils.js",
-        "./script.js",
         "./lib/chess.js",
         "./lib/chart.umd.js",
-        "./lib/chartjs-plugin-datalabels.min.js"
+        "./lib/chartjs-plugin-datalabels.min.js",
+        "./lib/custom-elements-polyfill.min.js",
+        "./elo-slider.js",
+        "./puzzle-rating.js",
+        "./utils.js",
+        "./script.js"
       ],
       "css": ["./view.css"]
     }

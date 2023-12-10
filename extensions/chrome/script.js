@@ -96,7 +96,7 @@ function render(response) {
 }
 
 function renderError(message, response) {
-  console.log(response.status, response.statusText);
+  console.log(response, response.status, response.statusText);
   document.querySelector(".ca_error").classList.remove("ca_hidden");
   document.querySelector(".ca_loader_container").classList.add("ca_hidden");
   document.querySelector(".ca_error_message").innerText = message;
@@ -192,31 +192,31 @@ function initRealTimeEvaluation() {
 
 function renderAnalytics(response) {
   document.querySelector(".ca_opponent_name").innerText = opponent;
-  renderEloSlider(response);
+  document.querySelector("elo-slider").setSlider(response.performance);
+  document.querySelector("puzzle-rating").setRating(response.latestPuzzleRating?.value);
   renderWinStreak(response);
-  document.querySelector(".ca_puzzle_rating").innerHTML = response.latestPuzzleRating?.value ?? "N/A";
   renderOverview(response);
   renderStatsChart(response);
   renderOpeningsChart(response);
 }
 
-function renderEloSlider(response) {
-  const lowestEloElement = document.querySelector(".ca_elo_range_lowest_value");
-  lowestEloElement.innerText = response.performance.lowestRating;
-  lowestEloElement.title = new Date(response.performance.lowestRatingDateTime)?.toLocaleDateString();
-
-  const highestEloEl = document.querySelector(".ca_elo_range_highest_value");
-  highestEloEl.innerText = response.performance.highestRating;
-  highestEloEl.title = new Date(response.performance.highestRatingDateTime)?.toLocaleDateString();
-
-  const currentEloEl = document.querySelector(".ca_elo_range_current_value");
-  currentEloEl.innerText = Math.floor(response.performance.currentRating);
-
-  const range = response.performance.highestRating - response.performance.lowestRating;
-  const diff = response.performance.currentRating - response.performance.lowestRating;
-  const percentageIncrease = (diff / range) * 100;
-  document.querySelector(".ca_elo_range_current").style.left = `${percentageIncrease}%`;
-}
+// function renderEloSlider(response) {
+//   const lowestEloElement = document.querySelector(".ca_elo_range_lowest_value");
+//   lowestEloElement.innerText = response.performance.lowestRating;
+//   lowestEloElement.title = new Date(response.performance.lowestRatingDateTime)?.toLocaleDateString();
+//
+//   const highestEloEl = document.querySelector(".ca_elo_range_highest_value");
+//   highestEloEl.innerText = response.performance.highestRating;
+//   highestEloEl.title = new Date(response.performance.highestRatingDateTime)?.toLocaleDateString();
+//
+//   const currentEloEl = document.querySelector(".ca_elo_range_current_value");
+//   currentEloEl.innerText = Math.floor(response.performance.currentRating);
+//
+//   const range = response.performance.highestRating - response.performance.lowestRating;
+//   const diff = response.performance.currentRating - response.performance.lowestRating;
+//   const percentageIncrease = (diff / range) * 100;
+//   document.querySelector(".ca_elo_range_current").style.left = `${percentageIncrease}%`;
+// }
 
 function renderWinStreak(response) {
   const winStreakEl = document.querySelector(".ca_win_streak_value");
