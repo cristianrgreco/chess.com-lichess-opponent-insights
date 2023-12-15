@@ -1,16 +1,13 @@
 import corsHeaders from "./cors-headers.js";
-import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { DynamoDBDocumentClient, GetCommand, PutCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
-
-const client = new DynamoDBClient({ region: "eu-west-2" });
-const docClient = DynamoDBDocumentClient.from(client);
+import { getDocClient } from "../core/dynamodb.js";
+import { GetCommand, PutCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 
 export async function getOpponentNotes(event) {
   console.log(`Request received: ${JSON.stringify(event.queryStringParameters)}`);
 
   const { username, opponentName } = event.queryStringParameters;
 
-  const dbResponse = await docClient.send(
+  const dbResponse = await getDocClient().send(
     new GetCommand({
       TableName: "opponent_notes",
       Key: { username, opponent_name: opponentName },
@@ -29,7 +26,7 @@ export async function createOrUpdateOpponentNotes(event) {
 
   const { username, opponentName, notes } = JSON.parse(event.body);
 
-  const existingNotes = await docClient.send(
+  const existingNotes = await getDocClient().send(
     new GetCommand({
       TableName: "opponent_notes",
       Key: { username, opponent_name: opponentName },
@@ -37,7 +34,7 @@ export async function createOrUpdateOpponentNotes(event) {
   );
 
   if (existingNotes.Item) {
-    await docClient.send(
+    await getDocClient().send(
       new UpdateCommand({
         TableName: "opponent_notes",
         Key: { username, opponent_name: opponentName },
@@ -46,7 +43,7 @@ export async function createOrUpdateOpponentNotes(event) {
       }),
     );
   } else {
-    await docClient.send(
+    await getDocClient().send(
       new PutCommand({
         TableName: "opponent_notes",
         Item: { username, opponent_name: opponentName, notes },
