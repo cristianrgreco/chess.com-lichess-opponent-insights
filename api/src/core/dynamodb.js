@@ -6,18 +6,22 @@ let docClient;
 export function getDocClient() {
   if (!docClient) {
     const client = new DynamoDBClient({
-      endpoint: process.env.LOCALSTACK_URI,
-      credentials: process.env.LOCALSTACK_URI
-        ? {
-            secretAccessKey: "test",
-            accessKeyId: "test",
-          }
-        : undefined,
       region: "eu-west-2",
+      ...(process.env.LOCALSTACK_URI ? localstackConfig() : {}),
     });
 
     docClient = DynamoDBDocumentClient.from(client);
   }
 
   return docClient;
+}
+
+function localstackConfig() {
+  return {
+    endpoint: process.env.LOCALSTACK_URI,
+    credentials: {
+      secretAccessKey: "test",
+      accessKeyId: "test",
+    },
+  };
 }

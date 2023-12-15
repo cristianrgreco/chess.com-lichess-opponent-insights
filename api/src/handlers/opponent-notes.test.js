@@ -1,7 +1,4 @@
-import {
-  createOrUpdateOpponentNotes,
-  getOpponentNotes
-} from "./opponent-notes.js";
+import { createOrUpdateOpponentNotes, getOpponentNotes } from "./opponent-notes.js";
 
 describe("Opponent Notes", () => {
   it("should create opponent notes", async () => {
@@ -27,7 +24,7 @@ describe("Opponent Notes", () => {
         notes: "notes",
       }),
     });
-    const response =     await createOrUpdateOpponentNotes({
+    const response = await createOrUpdateOpponentNotes({
       body: JSON.stringify({
         username: "username2",
         opponentName: "opponentName",
