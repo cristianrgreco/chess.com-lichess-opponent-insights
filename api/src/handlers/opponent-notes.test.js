@@ -1,4 +1,7 @@
-import { createOrUpdateOpponentNotes, getOpponentNotes } from "./opponent-notes.js";
+import {
+  createOrUpdateOpponentNotes,
+  getOpponentNotes
+} from "./opponent-notes.js";
 
 describe("Opponent Notes", () => {
   it("should create opponent notes", async () => {
@@ -13,23 +16,27 @@ describe("Opponent Notes", () => {
     const response = await createOrUpdateOpponentNotes(event);
 
     expect(response.statusCode).toBe(200);
-    expect(await _getOpponentNotes("username", "opponentName")).toBe("notes");
+    expect(await _getOpponentNotes("username1", "opponentName")).toBe("notes");
   });
 
   it("should update opponent notes", async () => {
-    const event = {
+    await createOrUpdateOpponentNotes({
       body: JSON.stringify({
         username: "username2",
         opponentName: "opponentName",
         notes: "notes",
       }),
-    };
-
-    await createOrUpdateOpponentNotes(event);
-    const response = await createOrUpdateOpponentNotes({ ...event, notes: "updated notes" });
+    });
+    const response =     await createOrUpdateOpponentNotes({
+      body: JSON.stringify({
+        username: "username2",
+        opponentName: "opponentName",
+        notes: "updated notes",
+      }),
+    });
 
     expect(response.statusCode).toBe(200);
-    expect(await _getOpponentNotes("username", "opponentName")).toBe("updated notes");
+    expect(await _getOpponentNotes("username2", "opponentName")).toBe("updated notes");
   });
 });
 
