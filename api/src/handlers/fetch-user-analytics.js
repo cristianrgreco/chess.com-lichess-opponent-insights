@@ -12,9 +12,12 @@ export async function fetchUserAnalytics(event) {
     return { statusCode: 501 };
   }
 
-  const games = await fetchLichessUserGames(username, gameType, colour);
-  const performance = await fetchLichessUserPerformanceStatistics(username, gameType);
-  const latestPuzzleRating = await fetchLichessUserRatingHistory(username, "Puzzles");
+  const [games, performance, latestPuzzleRating] = await Promise.all([
+    fetchLichessUserGames(username, gameType, colour),
+    fetchLichessUserPerformanceStatistics(username, gameType),
+    fetchLichessUserRatingHistory(username, "Puzzles"),
+  ]);
+
   if (!games || !performance) {
     return {
       statusCode: 404,
