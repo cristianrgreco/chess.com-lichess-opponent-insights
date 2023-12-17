@@ -132,7 +132,7 @@
   bottom: -5px;
   height: 10px;
   width: 5px;
-  background-color: var(--background-color);
+  background-color: var(--color);
 }
 
 .ca_elo_range .ca_elo_range_lowest {
