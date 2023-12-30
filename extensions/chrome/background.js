@@ -1,26 +1,30 @@
 chrome.runtime.onConnect.addListener((port) => {
   port.onMessage.addListener((message) => {
     if (message.action === "AUTH_LICHESS") {
-      loadAccessToken().then((accessTokenFromStorage) => {
-        if (accessTokenFromStorage && !shouldRefreshAuthToken(accessTokenFromStorage.expiresAt)) {
-          console.log(`Returning Lichess access token from cache: `, accessTokenFromStorage);
-          port.postMessage({ action: "AUTH_LICHESS", payload: accessTokenFromStorage });
-        } else {
-          console.log("Requesting new Lichess access token");
-          requestAccessToken(message.payload)
-            .then((accessToken) => {
-              saveAccessToken(accessToken);
-              port.postMessage({ action: "AUTH_LICHESS", payload: accessToken });
-            })
-            .catch((err) => {
-              console.error(`Failed to authorise with Lichess: ${err}`);
-              throw err;
-            });
-        }
-      });
+      handleAuthLichess(port, message);
     }
   });
 });
+
+function handleAuthLichess(port, message) {
+  loadAccessToken().then((accessTokenFromStorage) => {
+    if (accessTokenFromStorage && !shouldRefreshAuthToken(accessTokenFromStorage.expiresAt)) {
+      console.log(`Returning Lichess access token from cache: `, accessTokenFromStorage);
+      port.postMessage({ action: "AUTH_LICHESS", payload: accessTokenFromStorage });
+    } else {
+      console.log("Requesting new Lichess access token");
+      requestAccessToken(message.payload)
+        .then((accessToken) => {
+          saveAccessToken(accessToken);
+          port.postMessage({ action: "AUTH_LICHESS", payload: accessToken });
+        })
+        .catch((err) => {
+          console.error(`Failed to authorise with Lichess: ${err}`);
+          throw err;
+        });
+    }
+  });
+}
 
 function shouldRefreshAuthToken(expiresAt) {
   const timeRemainingMins = Math.floor((expiresAt - Date.now()) / 1000 / 60);

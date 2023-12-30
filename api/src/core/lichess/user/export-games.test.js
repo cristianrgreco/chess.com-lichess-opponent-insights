@@ -1,5 +1,5 @@
 import { fetchLichessUserGames } from "./export-games.js";
-import {PAT} from "../../../test/conf.js";
+import { PAT } from "../../../test/conf.js";
 
 describe("Lichess export games", () => {
   it("should return result statistics", async () => {
