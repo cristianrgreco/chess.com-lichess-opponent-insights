@@ -27,6 +27,14 @@ function init() {
     initRealTimeEvaluation();
     document.querySelector("#ca_save_opponent_notes_form").addEventListener("submit", onSaveOpponentNotes);
   });
+
+  const port = chrome.runtime.connect({ name: "ca-port" });
+  port.onMessage.addListener((message) => {
+    if (message.action === "AUTH_LICHESS") {
+      console.log("Lichess access token: ", message.payload);
+    }
+  });
+  port.postMessage({ action: "AUTH_LICHESS", payload: { user } });
   fetchUserAnalytics();
   fetchOpponentNotes();
 }
