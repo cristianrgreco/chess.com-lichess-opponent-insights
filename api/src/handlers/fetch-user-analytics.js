@@ -4,7 +4,7 @@ import corsHeaders from "./cors-headers.js";
 import { fetchLichessUserRatingHistory } from "../core/lichess/user/user-rating-history.js";
 
 export async function fetchUserAnalytics(event) {
-  const authorisation = event.headers["Authorization"]
+  const authorisation = event.headers?.Authorization;
   if (!authorisation) {
     return {
       statusCode: 401,
