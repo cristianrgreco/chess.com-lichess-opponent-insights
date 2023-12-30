@@ -7,7 +7,7 @@ export function getDocClient() {
   if (!docClient) {
     const client = new DynamoDBClient({
       region: "eu-west-2",
-      ...(process.env.LOCALSTACK_URI ? localstackConfig() : {}),
+      ...(process.env.NODE_ENV === "test" ? localstackConfig() : {}),
     });
 
     docClient = DynamoDBDocumentClient.from(client);
