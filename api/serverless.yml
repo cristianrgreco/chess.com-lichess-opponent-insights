@@ -35,18 +35,21 @@ functions:
       - http:
           path: /user-analytics
           method: get
+          cors: true
   getOpponentNotes:
     handler: src/handlers/opponent-notes.getOpponentNotes
     events:
       - http:
           path: /opponent-notes
           method: get
+          cors: true
   createOrUpdateOpponentNotes:
     handler: src/handlers/opponent-notes.createOrUpdateOpponentNotes
     events:
       - http:
           path: /opponent-notes
           method: post
+          cors: true
 
 resources:
   Resources:
