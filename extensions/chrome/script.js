@@ -3,7 +3,7 @@ let opponent;
 let opponentColour;
 let gameType;
 
-const API = "https://rlabb3msg0.execute-api.eu-west-2.amazonaws.com/prod/";
+const API = "https://rlabb3msg0.execute-api.eu-west-2.amazonaws.com/prod";
 
 if (document.title.includes("Play ")) {
   init();
@@ -27,7 +27,16 @@ function init() {
     initRealTimeEvaluation();
     document.querySelector("#ca_save_opponent_notes_form").addEventListener("submit", onSaveOpponentNotes);
   });
-  fetchUserAnalytics();
+
+  const port = chrome.runtime.connect({ name: "ca-port" });
+  port.onMessage.addListener((message) => {
+    if (message.action === "AUTH_LICHESS") {
+      const accessToken = message.payload.value;
+      fetchUserAnalytics(accessToken);
+    }
+  });
+  port.postMessage({ action: "AUTH_LICHESS", payload: { user } });
+
   fetchOpponentNotes();
 }
 
@@ -50,9 +59,11 @@ function fetchView() {
     });
 }
 
-function fetchUserAnalytics() {
+function fetchUserAnalytics(accessToken) {
   console.log("Fetching user analytics...");
-  fetch(`${API}/user-analytics?platform=lichess&username=${opponent}&gameType=${gameType}&colour=${opponentColour}`)
+  fetch(`${API}/user-analytics?platform=lichess&username=${opponent}&gameType=${gameType}&colour=${opponentColour}`, {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  })
     .then((response) => (response.ok ? response.json() : Promise.reject(response)))
     .then((response) => {
       console.log("Fetched user analytics");
