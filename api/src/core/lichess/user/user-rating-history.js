@@ -1,8 +1,7 @@
 import fetch from "node-fetch";
-import { PAT } from "../../../conf.js";
 
-export async function fetchLichessUserRatingHistory(username, ratingType) {
-  const headers = { Authorization: `Bearer ${PAT}` };
+export async function fetchLichessUserRatingHistory(authorisation, username, ratingType) {
+  const headers = { Authorization: authorisation };
   const response = await fetch(`https://lichess.org/api/user/${username}/rating-history`, { headers });
 
   if (response.status !== 200) {

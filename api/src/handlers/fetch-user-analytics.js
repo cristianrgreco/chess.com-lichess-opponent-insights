@@ -4,18 +4,29 @@ import corsHeaders from "./cors-headers.js";
 import { fetchLichessUserRatingHistory } from "../core/lichess/user/user-rating-history.js";
 
 export async function fetchUserAnalytics(event) {
+  const authorisation = event.headers["Authorization"]
+  if (!authorisation) {
+    return {
+      statusCode: 401,
+      headers: corsHeaders,
+    };
+  }
+
   console.log(`Request received: ${JSON.stringify(event.queryStringParameters)}`);
 
   const { platform, username, colour, gameType } = event.queryStringParameters;
 
   if (platform !== "lichess") {
-    return { statusCode: 501 };
+    return {
+      statusCode: 501,
+      headers: corsHeaders,
+    };
   }
 
   const [games, performance, latestPuzzleRating] = await Promise.all([
-    fetchLichessUserGames(username, gameType, colour),
-    fetchLichessUserPerformanceStatistics(username, gameType),
-    fetchLichessUserRatingHistory(username, "Puzzles"),
+    fetchLichessUserGames(authorisation, username, gameType, colour),
+    fetchLichessUserPerformanceStatistics(authorisation, username, gameType),
+    fetchLichessUserRatingHistory(authorisation, username, "Puzzles"),
   ]);
 
   if (!games || !performance) {

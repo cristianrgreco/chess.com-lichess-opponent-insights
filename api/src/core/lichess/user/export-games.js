@@ -1,8 +1,7 @@
 import fetch from "node-fetch";
 import ndjson from "ndjson";
-import { PAT } from "../../../conf.js";
 
-export async function fetchLichessUserGames(username, gameType, colour) {
+export async function fetchLichessUserGames(authorisation, username, gameType, colour) {
   const params = new URLSearchParams({
     max: 60, // maximum number of games Lichess will return if a PAT is provided
     rated: true,
@@ -14,7 +13,7 @@ export async function fetchLichessUserGames(username, gameType, colour) {
     opening: true,
   });
   const headers = {
-    Authorization: `Bearer ${PAT}`,
+    Authorization: authorisation,
     Accept: "application/x-ndjson",
   };
   const response = await fetch(`https://lichess.org/api/games/user/${username}?${params}`, { headers });

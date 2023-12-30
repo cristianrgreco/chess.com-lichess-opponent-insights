@@ -1,17 +1,46 @@
 chrome.runtime.onConnect.addListener((port) => {
   port.onMessage.addListener((message) => {
     if (message.action === "AUTH_LICHESS") {
-      requestAccessToken(message.payload)
-        .then((accessToken) => {
-          port.postMessage({ action: "AUTH_LICHESS", payload: accessToken });
-        })
-        .catch((err) => {
-          console.error(`Failed to authorise with Lichess: ${err}`);
-          throw err;
-        });
+      loadAccessToken().then((accessTokenFromStorage) => {
+        if (accessTokenFromStorage && !shouldRefreshAuthToken(accessTokenFromStorage.expiresAt)) {
+          console.log(`Returning Lichess access token from cache: `, accessTokenFromStorage);
+          port.postMessage({ action: "AUTH_LICHESS", payload: accessTokenFromStorage });
+        } else {
+          console.log("Requesting new Lichess access token");
+          requestAccessToken(message.payload)
+            .then((accessToken) => {
+              saveAccessToken(accessToken);
+              port.postMessage({ action: "AUTH_LICHESS", payload: accessToken });
+            })
+            .catch((err) => {
+              console.error(`Failed to authorise with Lichess: ${err}`);
+              throw err;
+            });
+        }
+      });
     }
   });
 });
+
+function shouldRefreshAuthToken(expiresAt) {
+  const timeRemainingMins = Math.floor((expiresAt - Date.now()) / 1000 / 60);
+  return timeRemainingMins < 60;
+}
+
+function saveAccessToken(accessToken) {
+  chrome.storage.sync.set({ lichessAccessToken: JSON.stringify(accessToken) });
+}
+
+function loadAccessToken() {
+  return new Promise((resolve) => {
+    chrome.storage.sync.get("lichessAccessToken", (accessToken) => {
+      if (!accessToken.lichessAccessToken) {
+        return resolve();
+      }
+      return resolve(JSON.parse(accessToken.lichessAccessToken));
+    });
+  });
+}
 
 async function requestAccessToken({ user }) {
   const codeVerifier = "baeba1aa6c7fafe635b9fbe66eefddde6e1183a5c02f21c4fc6cb95c";
@@ -76,8 +105,8 @@ async function requestAccessToken({ user }) {
           })
           .then((responseJson) => {
             return resolve({
-              accessToken: responseJson["access_token"],
-              expiresIn: responseJson["expires_in"],
+              value: responseJson["access_token"],
+              expiresAt: Date.now() + responseJson["expires_in"],
             });
           })
           .catch((err) => {
