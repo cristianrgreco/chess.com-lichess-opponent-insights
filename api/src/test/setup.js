@@ -2,7 +2,7 @@ import { LocalstackContainer } from "@testcontainers/localstack";
 import { getDocClient } from "../core/dynamodb.js";
 import { CreateTableCommand } from "@aws-sdk/client-dynamodb";
 
-export default async () => {
+export async function setup() {
   console.log("Starting Localstack container...");
   globalThis.localstackContainer = await new LocalstackContainer().start();
   process.env.LOCALSTACK_URI = globalThis.localstackContainer.getConnectionUri();
@@ -25,4 +25,9 @@ export default async () => {
       },
     }),
   );
-};
+}
+
+export async function teardown() {
+  console.log("Stopping Localstack container...");
+  await globalThis.localstackContainer.stop();
+}
