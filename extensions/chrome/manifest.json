@@ -5,7 +5,7 @@
   "manifest_version": 2,
   "content_security_policy": "default-src 'self' 'unsafe-eval' https://lichess.org/api/token; object-src 'self'",
   "background": {
-    "scripts": ["background.js", "stockfish.js"]
+    "scripts": ["auth.js", "stockfish.js"]
   },
   "content_scripts": [
     {
