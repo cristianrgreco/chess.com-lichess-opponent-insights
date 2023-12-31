@@ -25,24 +25,43 @@ function init() {
     initSiteTabs();
     initSubTabs();
     initRealTimeEvaluation();
-    document.querySelector("#ca_save_opponent_notes_form").addEventListener("submit", onSaveOpponentNotes);
-  });
+    fetchOpponentNotes();
+    setupSaveOpponentNotes();
 
-  const port = chrome.runtime.connect({ name: "ca-port" });
-  port.onMessage.addListener((message) => {
-    if (message.action === "AUTH_LICHESS") {
-      const accessToken = message.payload.value;
-      fetchUserAnalytics(accessToken);
-    }
+    const port = chrome.runtime.connect({ name: "ca-port" });
+    port.onMessage.addListener((message) => {
+      if (message.action === "GET_LICHESS_ACCESS_TOKEN") {
+        if (!message.payload) {
+          setupAuthLichessButtonClick(port);
+          setAuthContainerVisibility(true);
+        } else {
+          onAccessToken(message.payload.value);
+        }
+      } else if (message.action === "AUTH_LICHESS") {
+        onAccessToken(message.payload.value);
+      }
+    });
+    port.postMessage({ action: "GET_LICHESS_ACCESS_TOKEN" });
   });
-  port.postMessage({ action: "AUTH_LICHESS", payload: { user } });
-
-  fetchOpponentNotes();
 }
 
-function onSaveOpponentNotes(e) {
-  e.preventDefault();
-  saveOpponentNotes();
+function onAccessToken(accessToken) {
+  setAuthContainerVisibility(false);
+  setLoaderVisibility(true);
+  fetchUserAnalytics(accessToken);
+}
+
+function setupAuthLichessButtonClick(port) {
+  document.getElementById("auth_lichess_btn").addEventListener("click", () => {
+    port.postMessage({ action: "AUTH_LICHESS", payload: { user } });
+  });
+}
+
+function setupSaveOpponentNotes() {
+  document.querySelector("#ca_save_opponent_notes_form").addEventListener("submit", e => {
+    e.preventDefault();
+    saveOpponentNotes();
+  });
 }
 
 function fetchView() {
@@ -102,16 +121,40 @@ function saveOpponentNotes() {
 }
 
 function render(response) {
-  document.querySelector(".ca_container").classList.remove("ca_hidden");
-  document.querySelector(".ca_loader_container").classList.add("ca_hidden");
+  setLoaderVisibility(false);
+  setMainContainerVisibility(true);
   renderAnalytics(response);
 }
 
 function renderError(message, response) {
   console.error(response);
+  setLoaderVisibility(false);
   document.querySelector(".ca_error").classList.remove("ca_hidden");
-  document.querySelector(".ca_loader_container").classList.add("ca_hidden");
   document.querySelector(".ca_error_message").innerText = message;
+}
+
+function setAuthContainerVisibility(visible) {
+  if (visible) {
+    document.querySelector(".ca_auth_container").classList.remove("ca_hidden");
+  } else {
+    document.querySelector(".ca_auth_container").classList.add("ca_hidden");
+  }
+}
+
+function setMainContainerVisibility(visible) {
+  if (visible) {
+    document.querySelector(".ca_container").classList.remove("ca_hidden");
+  } else {
+    document.querySelector(".ca_container").classList.add("ca_hidden");
+  }
+}
+
+function setLoaderVisibility(visible) {
+  if (visible) {
+    document.querySelector(".ca_loader_container").classList.remove("ca_hidden");
+  } else {
+    document.querySelector(".ca_loader_container").classList.add("ca_hidden");
+  }
 }
 
 function initSiteTabs() {
