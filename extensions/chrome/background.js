@@ -1,15 +1,31 @@
 chrome.runtime.onConnect.addListener((port) => {
   port.onMessage.addListener((message) => {
-    if (message.action === "AUTH_LICHESS") {
+    if (message.action === "GET_LICHESS_ACCESS_TOKEN") {
+      handleGetLichessAccessToken(port);
+    } else if (message.action === "AUTH_LICHESS") {
       handleAuthLichess(port, message);
     }
   });
 });
 
-function handleAuthLichess(port, message) {
+function handleGetLichessAccessToken(port) {
+  console.log("Check for existing Lichess access token");
   loadAccessToken().then((accessTokenFromStorage) => {
     if (accessTokenFromStorage && !shouldRefreshAuthToken(accessTokenFromStorage.expiresAt)) {
-      console.log(`Returning Lichess access token from cache: `, accessTokenFromStorage);
+      console.log("Returning Lichess access token from cache");
+      port.postMessage({ action: "GET_LICHESS_ACCESS_TOKEN", payload: accessTokenFromStorage });
+    } else {
+      console.log("Lichess authorisation required");
+      port.postMessage({ action: "GET_LICHESS_ACCESS_TOKEN", payload: undefined });
+    }
+  })
+}
+
+function handleAuthLichess(port, message) {
+  console.log("Perform Lichess OAuth flow");
+  loadAccessToken().then((accessTokenFromStorage) => {
+    if (accessTokenFromStorage && !shouldRefreshAuthToken(accessTokenFromStorage.expiresAt)) {
+      console.log("Returning Lichess access token from cache");
       port.postMessage({ action: "AUTH_LICHESS", payload: accessTokenFromStorage });
     } else {
       console.log("Requesting new Lichess access token");

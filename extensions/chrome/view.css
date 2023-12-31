@@ -33,7 +33,21 @@
   height: 100%;
 }
 
+.ca_auth_container {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  row-gap: 20px;
+  justify-content: center;
+  align-items: center;
+}
+
 .ca_section {
+}
+
+.ca_title {
+  font-size: 1.5em;
+  font-weight: bold;
 }
 
 .ca_opponent_name {
