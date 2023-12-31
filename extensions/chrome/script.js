@@ -33,7 +33,7 @@ function init() {
       if (message.action === "GET_LICHESS_ACCESS_TOKEN") {
         if (!message.payload) {
           setupAuthLichessButtonClick(port);
-          showAuthContainer();
+          setAuthContainerVisibility(true);
         } else {
           onAccessToken(message.payload.value);
         }
@@ -46,8 +46,8 @@ function init() {
 }
 
 function onAccessToken(accessToken) {
-  hideAuthContainer();
-  showLoader();
+  setAuthContainerVisibility(false);
+  setLoaderVisibility(true);
   fetchUserAnalytics(accessToken);
 }
 
@@ -121,40 +121,40 @@ function saveOpponentNotes() {
 }
 
 function render(response) {
-  hideLoader();
-  showMainContainer();
+  setLoaderVisibility(false);
+  setMainContainerVisibility(true);
   renderAnalytics(response);
 }
 
 function renderError(message, response) {
   console.error(response);
-  hideLoader();
+  setLoaderVisibility(false);
   document.querySelector(".ca_error").classList.remove("ca_hidden");
   document.querySelector(".ca_error_message").innerText = message;
 }
 
-function showAuthContainer() {
-  document.querySelector(".ca_auth_container").classList.remove("ca_hidden");
+function setAuthContainerVisibility(visible) {
+  if (visible) {
+    document.querySelector(".ca_auth_container").classList.remove("ca_hidden");
+  } else {
+    document.querySelector(".ca_auth_container").classList.add("ca_hidden");
+  }
 }
 
-function hideAuthContainer() {
-  document.querySelector(".ca_auth_container").classList.add("ca_hidden");
+function setMainContainerVisibility(visible) {
+  if (visible) {
+    document.querySelector(".ca_container").classList.remove("ca_hidden");
+  } else {
+    document.querySelector(".ca_container").classList.add("ca_hidden");
+  }
 }
 
-function showMainContainer() {
-  document.querySelector(".ca_container").classList.remove("ca_hidden");
-}
-
-function hideMainContainer() {
-  document.querySelector(".ca_container").classList.add("ca_hidden");
-}
-
-function showLoader() {
-  document.querySelector(".ca_loader_container").classList.remove("ca_hidden");
-}
-
-function hideLoader() {
-  document.querySelector(".ca_loader_container").classList.add("ca_hidden");
+function setLoaderVisibility(visible) {
+  if (visible) {
+    document.querySelector(".ca_loader_container").classList.remove("ca_hidden");
+  } else {
+    document.querySelector(".ca_loader_container").classList.add("ca_hidden");
+  }
 }
 
 function initSiteTabs() {
