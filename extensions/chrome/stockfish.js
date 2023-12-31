@@ -30,7 +30,6 @@ function setupStockfishMessageHandler(port) {
 }
 
 function postFenToStockfish(fen) {
-  console.log(`Performing Stockfish evaluation: ${fen}`);
   engine.postMessage(`position fen ${fen}`);
   engine.postMessage(`go depth ${depth}`);
 }
