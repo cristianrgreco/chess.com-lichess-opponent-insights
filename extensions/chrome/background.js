@@ -18,7 +18,7 @@ function handleGetLichessAccessToken(port) {
       console.log("Lichess authorisation required");
       port.postMessage({ action: "GET_LICHESS_ACCESS_TOKEN", payload: undefined });
     }
-  })
+  });
 }
 
 function handleAuthLichess(port, message) {

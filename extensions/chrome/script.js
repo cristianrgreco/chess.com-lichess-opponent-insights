@@ -21,24 +21,29 @@ function init() {
     `Current user: ${user}, Opponent: ${opponent}, Opponent colour: ${opponentColour}, Game type: ${gameType}`,
   );
 
+  const port = chrome.runtime.connect({ name: "ca-port" });
+
   fetchView().then(() => {
     initSiteTabs();
     initSubTabs();
-    initRealTimeEvaluation();
     fetchOpponentNotes();
     setupSaveOpponentNotes();
-
-    const port = chrome.runtime.connect({ name: "ca-port" });
+    setupAuthLichessButtonClick(port);
+    initRealTimeEvaluation(port);
+    const evaluationElement = document.querySelector(".ca_evaluation");
     port.onMessage.addListener((message) => {
       if (message.action === "GET_LICHESS_ACCESS_TOKEN") {
         if (!message.payload) {
-          setupAuthLichessButtonClick(port);
           setAuthContainerVisibility(true);
         } else {
           onAccessToken(message.payload.value);
         }
       } else if (message.action === "AUTH_LICHESS") {
         onAccessToken(message.payload.value);
+      } else if (message.action === "STOCKFISH_EVALUATION") {
+        evaluationElement.innerText = message.payload;
+      } else {
+        console.log(`Unhandled message received: ${message.action}`);
       }
     });
     port.postMessage({ action: "GET_LICHESS_ACCESS_TOKEN" });
@@ -58,7 +63,7 @@ function setupAuthLichessButtonClick(port) {
 }
 
 function setupSaveOpponentNotes() {
-  document.querySelector("#ca_save_opponent_notes_form").addEventListener("submit", e => {
+  document.querySelector("#ca_save_opponent_notes_form").addEventListener("submit", (e) => {
     e.preventDefault();
     saveOpponentNotes();
   });
@@ -197,37 +202,16 @@ function initSubTabs() {
   });
 }
 
-function initRealTimeEvaluation() {
+function initRealTimeEvaluation(port) {
   const chess = new Chess();
   const moveElementSelector = "kwdb";
-  const evaluationElement = document.querySelector(".ca_evaluation");
-
-  function fetchEvaluation() {
-    const fen = chess.fen();
-    const encodedFen = encodeURIComponent(fen);
-    evaluationElement.innerText = "...";
-
-    console.log("Fetching evaluation...");
-    fetch(`https://stockfish.online/api/stockfish.php?fen=${encodedFen}&depth=5&mode=eval`)
-      .then((response) => (response.ok ? response.json() : Promise.reject(response)))
-      .then((responseJson) => {
-        console.log("Fetched evaluation");
-        // if another move has been made since, don't update the UI with the evaluation of the old position
-        if (fen === chess.fen()) {
-          const evaluationText = responseJson.data;
-          const evaluation = evaluationText.match(/([0-9.\-])+/g)[0];
-          evaluationElement.innerText = evaluation;
-        }
-      })
-      .catch((response) => renderError("Failed to evaluate position", response));
-  }
 
   const observer = new MutationObserver((mutations) => {
     mutations.forEach((mutation) => {
       mutation.addedNodes.forEach((addedNode) => {
         if (addedNode.tagName === moveElementSelector.toUpperCase()) {
           chess.move(addedNode.textContent);
-          fetchEvaluation();
+          port.postMessage({ action: "STOCKFISH_EVALUATION", payload: chess.fen() });
         }
       });
     });
@@ -238,7 +222,7 @@ function initRealTimeEvaluation() {
     const existingMoves = movesContainerElement.querySelectorAll(moveElementSelector);
     if (existingMoves) {
       existingMoves.forEach((el) => chess.move(el.textContent));
-      fetchEvaluation();
+      port.postMessage({ action: "STOCKFISH_EVALUATION", payload: chess.fen() });
     }
 
     observer.observe(movesContainerElement, { subtree: false, childList: true });
