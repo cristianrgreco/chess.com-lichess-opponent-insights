@@ -10,11 +10,10 @@ export async function setup() {
   process.env.LOCALSTACK_URI = globalThis.localstackContainer.getConnectionUri();
 
   console.log("Creating DynamoDB tables...");
-  const serverlessResources = yaml.parse(fs.readFileSync("serverless.yml", "utf8")).resources.Resources;
   await Promise.all(
-    Object.values(serverlessResources)
-      .map((resource) => resource.Properties)
-      .map((tableDefinition) => getDocClient().send(new CreateTableCommand(tableDefinition))),
+    Object.values(yaml.parse(fs.readFileSync("serverless.yml", "utf8")).resources.Resources).map((tableDefinition) =>
+      getDocClient().send(new CreateTableCommand(tableDefinition.Properties)),
+    ),
   );
 }
 
