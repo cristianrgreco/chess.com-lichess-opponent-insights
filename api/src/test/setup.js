@@ -1,6 +1,8 @@
 import { LocalstackContainer } from "@testcontainers/localstack";
 import { getDocClient } from "../core/dynamodb.js";
 import { CreateTableCommand } from "@aws-sdk/client-dynamodb";
+import yaml from "yaml";
+import fs from "fs";
 
 export async function setup() {
   console.log("Starting Localstack container...");
@@ -8,22 +10,11 @@ export async function setup() {
   process.env.LOCALSTACK_URI = globalThis.localstackContainer.getConnectionUri();
 
   console.log("Creating DynamoDB tables...");
-  await getDocClient().send(
-    new CreateTableCommand({
-      TableName: "opponent_notes",
-      KeySchema: [
-        { AttributeName: "username", KeyType: "HASH" },
-        { AttributeName: "opponent_name", KeyType: "RANGE" },
-      ],
-      AttributeDefinitions: [
-        { AttributeName: "username", AttributeType: "S" },
-        { AttributeName: "opponent_name", AttributeType: "S" },
-      ],
-      ProvisionedThroughput: {
-        ReadCapacityUnits: 1,
-        WriteCapacityUnits: 1,
-      },
-    }),
+  const serverlessResources = yaml.parse(fs.readFileSync("serverless.yml", "utf8")).resources.Resources;
+  await Promise.all(
+    Object.values(serverlessResources)
+      .map((resource) => resource.Properties)
+      .map((tableDefinition) => getDocClient().send(new CreateTableCommand(tableDefinition))),
   );
 }
 

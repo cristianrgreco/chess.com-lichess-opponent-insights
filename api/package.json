@@ -12,7 +12,8 @@
   "license": "ISC",
   "devDependencies": {
     "@testcontainers/localstack": "^10.4.0",
-    "vitest": "^1.1.0"
+    "vitest": "^1.1.0",
+    "yaml": "^2.3.4"
   },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.465.0",
