@@ -1,6 +1,6 @@
 import corsHeaders from "./cors-headers.js";
 import { getDocClient } from "../core/dynamodb.js";
-import { GetCommand, PutCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
+import { GetCommand, PutCommand } from "@aws-sdk/lib-dynamodb";
 
 export async function getOpponentNotes(event) {
   console.log(`Request received: ${JSON.stringify(event.queryStringParameters)}`);
@@ -26,30 +26,12 @@ export async function createOrUpdateOpponentNotes(event) {
 
   const { username, opponentName, notes } = JSON.parse(event.body);
 
-  const existingNotes = await getDocClient().send(
-    new GetCommand({
+  await getDocClient().send(
+    new PutCommand({
       TableName: "opponent_notes",
-      Key: { username, opponent_name: opponentName },
+      Item: { username, opponent_name: opponentName, notes },
     }),
   );
-
-  if (existingNotes.Item) {
-    await getDocClient().send(
-      new UpdateCommand({
-        TableName: "opponent_notes",
-        Key: { username, opponent_name: opponentName },
-        UpdateExpression: "SET notes = :notes",
-        ExpressionAttributeValues: { ":notes": notes },
-      }),
-    );
-  } else {
-    await getDocClient().send(
-      new PutCommand({
-        TableName: "opponent_notes",
-        Item: { username, opponent_name: opponentName, notes },
-      }),
-    );
-  }
 
   return {
     statusCode: 200,
