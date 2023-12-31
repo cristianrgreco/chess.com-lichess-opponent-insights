@@ -68,12 +68,12 @@ async function requestAccessToken({ user }) {
         if (responseUrlParams.has("error")) {
           const error = responseUrlParams.get("error");
           const errorDescription = responseUrlParams.get("error_description");
-          return reject(`OAuth request auth code response failed with error ${error}: ${errorDescription}`);
+          return reject(new Error(`OAuth request auth code response failed with error ${error}: ${errorDescription}`));
         }
 
         const responseState = responseUrlParams.get("state");
         if (state !== responseState) {
-          return reject("OAuth request auth code response state does not match");
+          return reject(new Error("OAuth request auth code response state does not match"));
         }
 
         const code = responseUrlParams.get("code");
@@ -98,11 +98,13 @@ async function requestAccessToken({ user }) {
                   const error = responseJson["error"];
                   const errorDescription = responseJson["error_description"];
                   return Promise.reject(
-                    `OAuth obtain access token response failed with error ${error}: ${errorDescription}`,
+                    new Error(`OAuth obtain access token response failed with error ${error}: ${errorDescription}`),
                   );
                 })
                 .catch(() => {
-                  return Promise.reject(`OAuth obtain access token response failed with status ${response.status}`);
+                  return Promise.reject(
+                    new Error(`OAuth obtain access token response failed with status ${response.status}`),
+                  );
                 });
             }
             return response.json();
@@ -114,7 +116,7 @@ async function requestAccessToken({ user }) {
             });
           })
           .catch((err) => {
-            return reject(`Oauth obtain access token failed: ${err}`);
+            return reject(new Error(`Oauth obtain access token failed: ${err}`));
           });
       },
     );
