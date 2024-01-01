@@ -23,7 +23,7 @@ function setupStockfishMessageHandler(port) {
       if (evalType === "cp") {
         port.postMessage({ action: "STOCKFISH_EVALUATION", payload: parseInt(evalValue) / 100 });
       } else if (evalType === "mate") {
-        port.postMessage({ action: "STOCKFISH_EVALUATION", payload: `#${evalValue}` });
+        port.postMessage({ action: "STOCKFISH_EVALUATION", payload: `M${evalValue}` });
       }
     }
   };
