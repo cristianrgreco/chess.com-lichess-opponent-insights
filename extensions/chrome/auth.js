@@ -8,47 +8,16 @@ chrome.runtime.onConnect.addListener((port) => {
   });
 });
 
-function handleGetLichessAccessToken(port) {
+async function handleGetLichessAccessToken(port) {
   console.log("Check for existing Lichess access token");
-  loadAccessToken().then((accessTokenFromStorage) => {
-    if (accessTokenFromStorage && !shouldRefreshAuthToken(accessTokenFromStorage.expiresAt)) {
-      console.log("Returning Lichess access token from cache");
-      port.postMessage({ action: "GET_LICHESS_ACCESS_TOKEN", payload: accessTokenFromStorage });
-    } else {
-      console.log("Lichess authorisation required");
-      port.postMessage({ action: "GET_LICHESS_ACCESS_TOKEN", payload: undefined });
-    }
-  });
-}
-
-function handleAuthLichess(port, message) {
-  console.log("Perform Lichess OAuth flow");
-  loadAccessToken().then((accessTokenFromStorage) => {
-    if (accessTokenFromStorage && !shouldRefreshAuthToken(accessTokenFromStorage.expiresAt)) {
-      console.log("Returning Lichess access token from cache");
-      port.postMessage({ action: "AUTH_LICHESS", payload: accessTokenFromStorage });
-    } else {
-      console.log("Requesting new Lichess access token");
-      requestAccessToken(message.payload)
-        .then((accessToken) => {
-          saveAccessToken(accessToken);
-          port.postMessage({ action: "AUTH_LICHESS", payload: accessToken });
-        })
-        .catch((err) => {
-          console.error(`Failed to authorise with Lichess: ${err}`);
-          throw err;
-        });
-    }
-  });
-}
-
-function shouldRefreshAuthToken(expiresAt) {
-  const timeRemainingMins = Math.floor((expiresAt - Date.now()) / 1000 / 60);
-  return timeRemainingMins < 60;
-}
-
-function saveAccessToken(accessToken) {
-  chrome.storage.sync.set({ lichessAccessToken: JSON.stringify(accessToken) });
+  const accessTokenFromStorage = await loadAccessToken();
+  if (accessTokenFromStorage && !shouldRefreshAuthToken(accessTokenFromStorage.expiresAt)) {
+    console.log("Returning Lichess access token from cache");
+    port.postMessage({ action: "GET_LICHESS_ACCESS_TOKEN", payload: accessTokenFromStorage });
+  } else {
+    console.log("Lichess authorisation required");
+    port.postMessage({ action: "GET_LICHESS_ACCESS_TOKEN", payload: undefined });
+  }
 }
 
 function loadAccessToken() {
@@ -60,6 +29,28 @@ function loadAccessToken() {
       return resolve(JSON.parse(accessToken.lichessAccessToken));
     });
   });
+}
+
+function saveAccessToken(accessToken) {
+  chrome.storage.sync.set({ lichessAccessToken: JSON.stringify(accessToken) });
+}
+
+function shouldRefreshAuthToken(expiresAt) {
+  const timeRemainingMins = Math.floor((expiresAt - Date.now()) / 1000 / 60);
+  return timeRemainingMins < 60;
+}
+
+async function handleAuthLichess(port, message) {
+  console.log("Requesting new Lichess access token");
+  try {
+    const accessToken = await requestAccessToken(message.payload);
+    console.error(`Requested new Lichess access token`);
+    saveAccessToken(accessToken);
+    port.postMessage({ action: "AUTH_LICHESS", payload: accessToken });
+  } catch (err) {
+    console.error(`Failed to request new Lichess access token: ${err}`);
+    throw err;
+  }
 }
 
 async function requestAccessToken({ user }) {

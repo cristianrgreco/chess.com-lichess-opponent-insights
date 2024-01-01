@@ -16,7 +16,7 @@ function setupStockfishMessageHandler(port) {
     const parts = event.data.split(" ");
 
     if (parts[0] === "info" && parts.includes("score")) {
-      const scoreIndex = parts.findIndex(part => part === "score");
+      const scoreIndex = parts.findIndex((part) => part === "score");
       const evalType = parts[scoreIndex + 1];
       const evalValue = parts[scoreIndex + 2];
 
