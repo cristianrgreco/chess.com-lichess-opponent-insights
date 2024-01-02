@@ -183,10 +183,6 @@ function initSiteTabs() {
 
 function initSubTabs() {
   _initTabs({
-    overview: {
-      trigger: document.querySelector(".ca_overview_tab_trigger"),
-      el: document.querySelector(".ca_overview"),
-    },
     stats: {
       trigger: document.querySelector(".ca_stats_tab_trigger"),
       el: document.querySelector(".ca_stats"),
@@ -234,7 +230,6 @@ function renderAnalytics(response) {
   renderEloSlider(response);
   renderWinStreak(response);
   document.querySelector(".ca_puzzle_rating").innerHTML = response.latestPuzzleRating?.value ?? "N/A";
-  renderOverview(response);
   renderStatsChart(response);
   renderOpeningsChart(response);
 }
@@ -268,15 +263,6 @@ function renderWinStreak(response) {
   }
 }
 
-function renderOverview(response) {
-  const winData = Object.values(response.games.stats.win).map((stat) => stat * 100);
-  const loseData = Object.values(response.games.stats.lose).map((stat) => stat * 100);
-  document.querySelector(".ca_win_flag_perc_value").innerHTML =
-    Math.round(response.games.stats.win["outOfTimeRate"] * 100) + "%";
-  document.querySelector(".ca_lose_flag_perc_value").innerHTML =
-    Math.round(response.games.stats.lose["outOfTimeRate"] * 100) + "%";
-}
-
 function renderStatsChart(response) {
   const labels = Object.keys(response.games.stats.win).map((stat) => {
     switch (stat) {
@@ -289,22 +275,26 @@ function renderStatsChart(response) {
       case "stalemateRate":
         return "Stalemate";
       case "outOfTimeRate":
-        return "Time Out";
+        return "Timeout";
       default:
         return "Unknown label";
     }
   });
 
   const winData = Object.values(response.games.stats.win).map((stat) => stat * 100);
+  createStatsChart(document.querySelector("#ca_stats_win_chart"), "Wins", labels, winData);
   const loseData = Object.values(response.games.stats.lose).map((stat) => stat * 100);
+  createStatsChart(document.querySelector("#ca_stats_lose_chart"), "Losses", labels, loseData);
+}
 
-  const statsChart = new Chart(document.querySelector("#ca_stats_chart"), {
+function createStatsChart(selector, title, labels, data) {
+  new Chart(selector, {
     type: "pie",
     data: {
       labels,
       datasets: [
         {
-          data: winData,
+          data: data,
           borderWidth: 0,
           hoverOffset: 4,
           backgroundColor: ["#68ab5e", "#AB615E", "grey"],
@@ -314,28 +304,38 @@ function renderStatsChart(response) {
     options: {
       maintainAspectRatio: true,
       plugins: {
+        datalabels: {
+          formatter: function(value, context) {
+            const val = context.chart.data.datasets[0].data[context.dataIndex];
+            if (val === 0) {
+              return "";
+            }
+            return `${context.chart.data.labels[context.dataIndex]}\n${Math.round(val)}%`;
+          },
+          color: "white",
+          size: 10,
+        },
+        tooltip: {
+          enabled: false,
+          callbacks: {
+            label: tooltipItem => `${tooltipItem.formattedValue}%`
+          }
+        },
+        title: {
+          display: true,
+          text: title,
+          color: "rgb(186, 186, 186)"
+        },
         legend: {
+          display: false,
           labels: {
             color: "rgb(186, 186, 186)",
           },
         },
       },
     },
-  });
-
-  const statsWinTrigger = document.querySelector(".ca_stats_win_trigger");
-  const statsLossesTrigger = document.querySelector(".ca_stats_lose_trigger");
-
-  statsWinTrigger.addEventListener("click", (e) => {
-    statsChart.config.data.datasets[0].data = winData;
-    statsChart.config.data.datasets[0].borderColor = "#FFFFFF";
-    statsChart.update();
-  });
-  statsLossesTrigger.addEventListener("click", (e) => {
-    statsChart.config.data.datasets[0].data = loseData;
-    statsChart.config.data.datasets[0].borderColor = "#AB615E";
-    statsChart.update();
-  });
+    plugins: [ChartDataLabels]
+  })
 }
 
 function renderOpeningsChart(response) {
