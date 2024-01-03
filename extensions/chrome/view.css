@@ -145,7 +145,7 @@
   position: absolute;
   bottom: -5px;
   height: 10px;
-  width: 5px;
+  width: 3px;
   background-color: var(--color);
   border-radius: 2px;
 }
@@ -175,6 +175,7 @@
   bottom: -10px;
   height: 20px;
   left: 50%;
+  width: 5px;
 }
 
 .ca_elo_range .ca_elo_range_current_value {
