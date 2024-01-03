@@ -314,7 +314,9 @@ function createStatsChart(selector, title, labels, data) {
             return `${context.chart.data.labels[context.dataIndex]}\n${Math.round(val)}%`;
           },
           color: "white",
-          size: 10,
+          font: {
+            size: "10px",
+          }
         },
         tooltip: {
           enabled: false,
@@ -433,6 +435,7 @@ function renderOpeningsChart(response) {
           labels: {
             color: "rgb(186, 186, 186)",
           },
+          position: "bottom",
         },
         tooltip: {
           callbacks: {
