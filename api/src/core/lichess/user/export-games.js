@@ -30,6 +30,7 @@ export async function fetchLichessUserGames(authorisation, username, gameType, c
 
   const ndjsonParserResponseStream = response.body.pipe(ndjson.parse());
   const openingsStats = [];
+  const moveTimes = [];
 
   for await (const record of ndjsonParserResponseStream) {
     const opening = parseOpeningName(record.opening.name);
@@ -73,6 +74,14 @@ export async function fetchLichessUserGames(authorisation, username, gameType, c
     if (opening.variationName) {
       variationStats.results[gameResult].push(record.status);
     }
+
+    const userMoveTimes = [];
+    for (let i = colour === "white" ? 0 : 1; i < record.clocks.length; i+=2) {
+      const moveTimeCentiseconds = record.clocks[i];
+      const moveTimeSeconds = moveTimeCentiseconds / 100;
+      userMoveTimes.push(moveTimeSeconds);
+    }
+    moveTimes.push(userMoveTimes);
   }
 
   const sortOpeningsByNumberOfGamesDesc = (a, b) => b.insights.numberOfGames - a.insights.numberOfGames;
@@ -142,6 +151,7 @@ export async function fetchLichessUserGames(authorisation, username, gameType, c
   return {
     stats,
     openings,
+    moveTimes
   };
 }
 
