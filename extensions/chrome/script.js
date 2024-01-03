@@ -275,7 +275,7 @@ function renderStatsChart(response) {
       case "stalemateRate":
         return "Stalemate";
       case "outOfTimeRate":
-        return "Timeout";
+        return "Flag";
       default:
         return "Unknown label";
     }
@@ -305,7 +305,7 @@ function createStatsChart(selector, title, labels, data) {
       maintainAspectRatio: true,
       plugins: {
         datalabels: {
-          formatter: function(value, context) {
+          formatter: (value, context) => {
             const val = context.chart.data.datasets[0].data[context.dataIndex];
             if (val === 0) {
               return "";
