@@ -383,7 +383,7 @@ function renderOpeningsChart(response) {
       ],
     },
     options: {
-      maintainAspectRatio: false,
+      maintainAspectRatio: true,
       scaleShowValues: true,
       indexAxis: "y",
       scales: {
