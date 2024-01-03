@@ -12,7 +12,6 @@
 }
 
 .ca_container_root {
-  padding: 20px 10px;
   font-family: sans-serif;
   background-color: var(--background-color);
   color: var(--color);
@@ -20,7 +19,6 @@
   flex-direction: column;
   align-items: center;
   height: 100%;
-  overflow-y: scroll;
 }
 
 .ca_container {
@@ -45,6 +43,7 @@
 }
 
 .ca_section {
+  margin: 10px 0;
 }
 
 .ca_title {
@@ -82,7 +81,7 @@
 }
 
 .ca_tabs {
-  margin: 20px 0;
+  margin-top: 20px;
   border-bottom: 1px solid var(--tab-border-color);
   display: flex;
   width: 100%;
@@ -219,19 +218,8 @@
   padding: 4px;
 }
 
-.ca_stats {
-  display: flex;
-  flex-direction: column;
-  height: 220px;
-  width: 100%;
-  align-items: center;
-}
-
-.ca_stats_chart_buttons {
-  display: flex;
-  justify-content: center;
-  margin: 10px 0;
-  gap: 10px;
+.ca_stats, .ca_openings, .ca_notes {
+  flex-basis: fit-content;
 }
 
 .ca_loader {

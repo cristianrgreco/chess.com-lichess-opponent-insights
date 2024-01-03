@@ -303,6 +303,7 @@ function createStatsChart(selector, title, labels, data) {
     },
     options: {
       maintainAspectRatio: true,
+      responsive: false,
       plugins: {
         datalabels: {
           formatter: (value, context) => {
@@ -384,6 +385,7 @@ function renderOpeningsChart(response) {
     },
     options: {
       maintainAspectRatio: true,
+      responsive: false,
       scaleShowValues: true,
       indexAxis: "y",
       scales: {
