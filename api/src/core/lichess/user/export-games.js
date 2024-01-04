@@ -34,7 +34,8 @@ export async function fetchLichessUserGames(authorisation, username, gameType, c
   const moveTimes = [];
 
   for await (const record of ndjsonParserResponseStream) {
-    if (!record.opening) { // looks like if you're in a tournament and don't start the game, this is undefined
+    // looks like if you're in a tournament and don't start the game, this is undefined
+    if (!record.opening) {
       continue;
     }
     const opening = parseOpeningName(record.opening.name);
