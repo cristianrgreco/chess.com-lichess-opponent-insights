@@ -9,7 +9,7 @@
       "strict_min_version": "42.0"
     }
   },
-  "content_security_policy": "default-src 'self' 'unsafe-eval' https://lichess.org/api/token; object-src 'self'",
+  "content_security_policy": "script-src 'self' 'unsafe-eval' https://lichess.org/api/token; object-src 'self'",
   "background": {
     "scripts": ["auth.js", "stockfish.js"]
   },
