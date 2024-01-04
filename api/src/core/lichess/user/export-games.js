@@ -1,5 +1,6 @@
 import fetch from "node-fetch";
 import ndjson from "ndjson";
+import { calculateMoveTimeDurations, convertMoveTimesToSeconds, extractOpponentMoveTimes } from "./move-times.js";
 
 export async function fetchLichessUserGames(authorisation, username, gameType, colour) {
   const params = new URLSearchParams({
@@ -30,6 +31,7 @@ export async function fetchLichessUserGames(authorisation, username, gameType, c
 
   const ndjsonParserResponseStream = response.body.pipe(ndjson.parse());
   const openingsStats = [];
+  const moveTimes = [];
 
   for await (const record of ndjsonParserResponseStream) {
     const opening = parseOpeningName(record.opening.name);
@@ -73,6 +75,11 @@ export async function fetchLichessUserGames(authorisation, username, gameType, c
     if (opening.variationName) {
       variationStats.results[gameResult].push(record.status);
     }
+
+    const opponentMoveTimes = extractOpponentMoveTimes(record.clocks, colour);
+    const opponentMoveTimesInSeconds = convertMoveTimesToSeconds(opponentMoveTimes);
+    const opponentMoveTimeDurations = calculateMoveTimeDurations(opponentMoveTimesInSeconds);
+    moveTimes.push(opponentMoveTimeDurations);
   }
 
   const sortOpeningsByNumberOfGamesDesc = (a, b) => b.insights.numberOfGames - a.insights.numberOfGames;
@@ -142,6 +149,7 @@ export async function fetchLichessUserGames(authorisation, username, gameType, c
   return {
     stats,
     openings,
+    moveTimes,
   };
 }
 
