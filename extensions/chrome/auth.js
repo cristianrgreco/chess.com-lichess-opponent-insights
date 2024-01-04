@@ -20,15 +20,22 @@ async function handleGetLichessAccessToken(port) {
   }
 }
 
-function loadAccessToken() {
-  return new Promise((resolve) => {
-    chrome.storage.sync.get("lichessAccessToken", (accessToken) => {
-      if (!accessToken.lichessAccessToken) {
-        return resolve();
-      }
-      return resolve(JSON.parse(accessToken.lichessAccessToken));
+async function loadAccessToken() {
+  try {
+    const accessToken = await browser.storage.sync.get("lichessAccessToken");
+    if (accessToken && accessToken.lichessAccessToken) {
+      return JSON.parse(accessToken.lichessAccessToken);
+    }
+  } catch (err) {
+    return new Promise((resolve) => {
+      chrome.storage.sync.get("lichessAccessToken", (accessToken) => {
+        if (!accessToken || !accessToken.lichessAccessToken) {
+          return resolve();
+        }
+        return resolve(JSON.parse(accessToken.lichessAccessToken));
+      });
     });
-  });
+  }
 }
 
 function saveAccessToken(accessToken) {
@@ -44,7 +51,7 @@ async function handleAuthLichess(port, message) {
   console.log("Requesting new Lichess access token");
   try {
     const accessToken = await requestAccessToken(message.payload);
-    console.error(`Requested new Lichess access token`);
+    console.log(`Requested new Lichess access token`);
     saveAccessToken(accessToken);
     port.postMessage({ action: "AUTH_LICHESS", payload: accessToken });
   } catch (err) {

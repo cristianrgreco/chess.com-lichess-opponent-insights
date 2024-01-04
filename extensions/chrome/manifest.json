@@ -3,6 +3,12 @@
   "description": "Get good",
   "version": "1",
   "manifest_version": 2,
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "cristianrgreco@gmail.com",
+      "strict_min_version": "42.0"
+    }
+  },
   "content_security_policy": "default-src 'self' 'unsafe-eval' https://lichess.org/api/token; object-src 'self'",
   "background": {
     "scripts": ["auth.js", "stockfish.js"]
