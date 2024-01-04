@@ -27,14 +27,28 @@
     <span class="ca_loader"></span>
   </div>
   <div class="ca_container ca_hidden">
-    <div class="ca_section" style="display: flex; align-items: center">
-      <span class="ca_opponent_name">Loading...</span>
-      <span class="ca_win_streak_value" title="Win/Lose Streak">...</span>
+    <div class="ca_section" style="display: flex; align-items: center; text-align: center">
+      <div>
+        <div class="ca_opponent_name"></div>
+        <div class="ca_game_info">
+          <div>
+            <span>Type: </span>
+            <span class="ca_game_type"></span>
+          </div>
+          <span>&bull;</span>
+          <div>
+            <span>Colour: </span>
+            <span class="ca_opponent_colour"></span>
+          </div>
+          <span>&bull;</span>
+          <div>
+            <span>Streak: </span>
+            <span class="ca_win_streak_value"></span>
+          </div>
+        </div>
+      </div>
     </div>
-    <div
-      class="ca_section"
-      style="display: flex; flex-direction: row; justify-content: center; align-items: center; width: 100%"
-    >
+    <div class="ca_section ca_opponent_info">
       <div class="ca_elo_range">
         <div class="ca_elo_range_lowest">
           <div class="ca_elo_range_lowest_value"></div>
@@ -62,7 +76,23 @@
           </svg>
           <span class="ca_puzzle_rating" title="Latest puzzle rating">??</span>
         </div>
-        <span class="ca_evaluation" style="margin-left: 20px">...</span>
+        <div style="display: flex; flex-direction: column; align-items: center; margin-left: 10px">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            height="16"
+            width="18"
+            viewBox="0 0 576 512"
+            fill="#262421"
+            stroke="#ffffff"
+            stroke-width="20"
+            stroke-opacity="1"
+          >
+            <path
+              d="M180.5 141.5C219.7 108.5 272.6 80 336 80s116.3 28.5 155.5 61.5c39.1 33 66.9 72.4 81 99.8c4.7 9.2 4.7 20.1 0 29.3c-14.1 27.4-41.9 66.8-81 99.8C452.3 403.5 399.4 432 336 432s-116.3-28.5-155.5-61.5c-16.2-13.7-30.5-28.5-42.7-43.1L48.1 379.6c-12.5 7.3-28.4 5.3-38.7-4.9S-3 348.7 4.2 336.1L50 256 4.2 175.9c-7.2-12.6-5-28.4 5.3-38.6s26.1-12.2 38.7-4.9l89.7 52.3c12.2-14.6 26.5-29.4 42.7-43.1zM448 256a32 32 0 1 0 -64 0 32 32 0 1 0 64 0z"
+            />
+          </svg>
+          <span class="ca_evaluation" title="Evaluation">??</span>
+        </div>
       </div>
     </div>
     <div class="ca_section ca_tabs">
@@ -89,14 +119,14 @@
         </svg>
       </span>
     </div>
-    <div class="ca_section ca_tab_section ca_stats" style="margin: 0;">
+    <div class="ca_section ca_tab_section ca_stats" style="margin: 0">
       <canvas id="ca_stats_chart" height="100"></canvas>
       <canvas id="ca_stats_move_times_chart" height="200"></canvas>
     </div>
-    <div class="ca_section ca_tab_section ca_openings ca_hidden" style="margin: 0;">
+    <div class="ca_section ca_tab_section ca_openings ca_hidden" style="margin: 0">
       <canvas id="ca_openings_chart" height="300"></canvas>
     </div>
-    <div class="ca_section ca_tab_section ca_notes ca_hidden" style="margin: 0;">
+    <div class="ca_section ca_tab_section ca_notes ca_hidden" style="margin: 0">
       <form action="" id="ca_save_opponent_notes_form">
         <div style="margin-bottom: 10px">
           <textarea id="ca_opponent_notes" class="ca_textarea"></textarea>

@@ -1,4 +1,5 @@
 :root {
+  --title-font-size: 20px;
   --background-color: #262421;
   --color: rgb(186, 186, 186);
   --success: #68ab5e;
@@ -12,13 +13,23 @@
 }
 
 .ca_container_root {
+  font-size: 12px;
   font-family: sans-serif;
   background-color: var(--background-color);
   color: var(--color);
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 20px;
+  padding: 15px;
+}
+
+.ca_opponent_info {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin: 5px 0 !important;
 }
 
 .ca_container {
@@ -46,23 +57,40 @@
 }
 
 .ca_title {
-  font-size: 1.5em;
+  font-size: var(--title-font-size);
   font-weight: bold;
 }
 
+.ca_opponent_colour {
+  height: 12px;
+  width: 12px;
+  vertical-align: middle;
+  border: 2px solid;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.ca_white {
+  background-color: var(--color);
+  border-color: var(--color);
+}
+
+.ca_black {
+  background-color: var(--background-color);
+  border-color: var(--color);
+}
+
 .ca_opponent_name {
-  font-size: 1.5em;
+  font-size: var(--title-font-size);
   font-weight: bold;
-  margin-right: 10px;
+  margin-bottom: 5px;
 }
 
 .ca_game_type {
 }
 
 .ca_win_streak_value {
-  padding: 4px 8px;
-  color: white;
-  margin-left: 4px;
+  padding: 0 2px;
 }
 
 .ca_win_streak_value.ca_negative {
@@ -75,8 +103,14 @@
   border: 2px solid var(--success);
 }
 
+.ca_game_info {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  column-gap: 5px;
+}
+
 .ca_puzzle_rating {
-  font-size: 12px;
 }
 
 .ca_tabs {
@@ -93,6 +127,9 @@
 }
 
 .ca_tab {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   background-color: var(--tab-background-color);
   padding: 6px 8px;
   text-align: center;
@@ -165,7 +202,6 @@
 .ca_elo_range .ca_elo_range_lowest_value,
 .ca_elo_range .ca_elo_range_current_value,
 .ca_elo_range .ca_elo_range_highest_value {
-  font-size: 12px;
   position: absolute;
   top: 17px;
   transform: translateX(-50%);
@@ -194,7 +230,6 @@
   text-align: center;
   text-decoration: none;
   display: inline-block;
-  font-size: 12px;
 }
 
 .ca_button:hover {

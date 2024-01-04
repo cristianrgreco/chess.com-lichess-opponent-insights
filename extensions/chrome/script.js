@@ -227,8 +227,36 @@ function initRealTimeEvaluation(port) {
 
 function renderAnalytics(response) {
   document.querySelector(".ca_opponent_name").innerText = opponent;
+
+  const opponentColourEl = document.querySelector(".ca_opponent_colour");
+  if (opponentColour === "white") {
+    opponentColourEl.classList.add("ca_white");
+  } else {
+    opponentColourEl.classList.add("ca_black");
+  }
+
+  const gameTypeEl = document.querySelector(".ca_game_type");
+  if (gameType === "bullet") {
+    gameTypeEl.title = "Bullet";
+    gameTypeEl.innerHTML = `<span data-icon=""></span>`;
+  } else if (gameType === "blitz") {
+    gameTypeEl.title = "Blitz";
+    gameTypeEl.innerHTML = `<span data-icon=""></span>`;
+  } else {
+    gameTypeEl.title = "Rapid";
+    gameTypeEl.innerHTML = `<span data-icon=""></span>`;
+  }
+
+  const winStreakEl = document.querySelector(".ca_win_streak_value");
+  if (response.performance.currentWinningStreak <= 0) {
+    winStreakEl.innerHTML = `-${response.performance.currentLosingStreak}`;
+    winStreakEl.classList.add("ca_negative");
+  } else {
+    winStreakEl.innerHTML = `+${response.performance.currentWinningStreak}`;
+    winStreakEl.classList.add("ca_positive");
+  }
+
   renderEloSlider(response);
-  renderWinStreak(response);
   document.querySelector(".ca_puzzle_rating").innerHTML = response.latestPuzzleRating?.value ?? "N/A";
   renderStatsChart(response);
   renderMoveTimesChart(response);
@@ -253,25 +281,16 @@ function renderEloSlider(response) {
   document.querySelector(".ca_elo_range_current").style.left = `${percentageIncrease}%`;
 }
 
-function renderWinStreak(response) {
-  const winStreakEl = document.querySelector(".ca_win_streak_value");
-  if (response.performance.currentWinningStreak <= 0) {
-    winStreakEl.innerHTML = `-${response.performance.currentLosingStreak}`;
-    winStreakEl.classList.add("ca_negative");
-  } else {
-    winStreakEl.innerHTML = `+${response.performance.currentWinningStreak}`;
-    winStreakEl.classList.add("ca_positive");
-  }
-}
-
 function renderMoveTimesChart(response) {
   const moveTimesLabels = Array.from(
-      new Set(response.games.moveTimes.flatMap((moveTimesList) => moveTimesList.map((moveTime) => moveTime[0]))),
+    new Set(response.games.moveTimes.flatMap((moveTimesList) => moveTimesList.map((moveTime) => moveTime[0]))),
   );
   moveTimesLabels.sort();
 
   const maxMoveTimeLabel = Math.max(...moveTimesLabels);
-  const maxMoveTimeValue = Math.max(...response.games.moveTimes.flatMap((moveTimesList) => moveTimesList.map((moveTime) => moveTime[1])));
+  const maxMoveTimeValue = Math.max(
+    ...response.games.moveTimes.flatMap((moveTimesList) => moveTimesList.map((moveTime) => moveTime[1])),
+  );
 
   const moveTimesData = response.games.moveTimes.map((moveTimesList, i) => ({
     label: `Game ${i + 1}`,
@@ -280,12 +299,12 @@ function renderMoveTimesChart(response) {
   }));
 
   createScatterChart(
-      document.querySelector("#ca_stats_move_times_chart"),
-      "Move Times",
-      moveTimesLabels,
-      moveTimesData,
-      maxMoveTimeLabel,
-      maxMoveTimeValue
+    document.querySelector("#ca_stats_move_times_chart"),
+    "Move Times",
+    moveTimesLabels,
+    moveTimesData,
+    maxMoveTimeLabel,
+    maxMoveTimeValue,
   );
 }
 
@@ -320,7 +339,7 @@ function createScatterChart(selector, title, labels, data, xAxisMax, yAxisMax) {
           ticks: {
             color: "rgb(186, 186, 186)",
           },
-          max: yAxisMax
+          max: yAxisMax,
         },
       },
       plugins: {
@@ -337,17 +356,23 @@ function createScatterChart(selector, title, labels, data, xAxisMax, yAxisMax) {
         },
         tooltip: {
           enabled: false,
-        }
+        },
       },
     },
   });
 }
 
 function renderStatsChart(response) {
-  const labels = ["Wins", "Losses"]
+  const labels = ["Wins", "Losses"];
 
-  const winsOther = 1 - (response.games.stats.win.mateRate + response.games.stats.win.resignRate + response.games.stats.win.outOfTimeRate);
-  const lossesOther = 1 - (response.games.stats.lose.mateRate + response.games.stats.lose.resignRate + response.games.stats.lose.outOfTimeRate);
+  const winsOther =
+    1 -
+    (response.games.stats.win.mateRate + response.games.stats.win.resignRate + response.games.stats.win.outOfTimeRate);
+  const lossesOther =
+    1 -
+    (response.games.stats.lose.mateRate +
+      response.games.stats.lose.resignRate +
+      response.games.stats.lose.outOfTimeRate);
 
   const data = [
     {
@@ -398,7 +423,7 @@ function renderStatsChart(response) {
             display: false,
             text: "% Outcome",
             font: {
-              size: 12
+              size: 12,
             },
             color: "rgb(186, 186, 186)",
           },
@@ -429,16 +454,18 @@ function renderStatsChart(response) {
           callbacks: {
             label: (tooltipItem) => `${tooltipItem.formattedValue}%`,
           },
-        }
+        },
       },
     },
     plugins: [],
-  })
+  });
 }
 
 function renderOpeningsChart(response) {
-  const calcResultWinRate = (opening, rateName) => ((opening.insights.results.win[rateName] ?? 0) / opening.insights.numberOfGames) * 100;
-  const calcResultLoseRate = (opening, rateName) => ((opening.insights.results.lose[rateName] ?? 0) / opening.insights.numberOfGames) * 100;
+  const calcResultWinRate = (opening, rateName) =>
+    ((opening.insights.results.win[rateName] ?? 0) / opening.insights.numberOfGames) * 100;
+  const calcResultLoseRate = (opening, rateName) =>
+    ((opening.insights.results.lose[rateName] ?? 0) / opening.insights.numberOfGames) * 100;
   const data = response.games.openings.filter((g) => g.insights.numberOfGames > 2);
   const openingLabels = data.map((g) => g.name);
   const openingMateRate = data.map((g) => calcResultWinRate(g, "mate")).slice(0, 10);
@@ -496,7 +523,7 @@ function renderOpeningsChart(response) {
             display: true,
             text: "Number of Games",
             font: {
-              size: 12
+              size: 12,
             },
             color: "rgb(186, 186, 186)",
           },
@@ -537,6 +564,5 @@ function renderOpeningsChart(response) {
       },
     },
     plugins: [ChartDataLabels],
-  })
+  });
 }
-
