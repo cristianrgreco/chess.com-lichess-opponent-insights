@@ -303,21 +303,10 @@ function renderMoveTimesChart(response) {
     pointRadius: 1,
   }));
 
-  createScatterChart(
-    document.querySelector("#ca_stats_move_times_chart"),
-    "Move Times",
-    moveTimesLabels,
-    moveTimesData,
-    maxMoveTimeLabel,
-    maxMoveTimeValue,
-  );
-}
-
-function createScatterChart(selector, title, labels, data, xAxisMax, yAxisMax) {
-  new Chart(selector, {
+  new Chart(document.querySelector("#ca_stats_move_times_chart"), {
     type: "scatter",
     data: {
-      datasets: data,
+      datasets: moveTimesData,
     },
     options: {
       maintainAspectRatio: true,
@@ -332,7 +321,7 @@ function createScatterChart(selector, title, labels, data, xAxisMax, yAxisMax) {
           ticks: {
             color: "rgb(186, 186, 186)",
           },
-          max: xAxisMax,
+          max: maxMoveTimeLabel,
           reverse: true,
         },
         y: {
@@ -344,13 +333,13 @@ function createScatterChart(selector, title, labels, data, xAxisMax, yAxisMax) {
           ticks: {
             color: "rgb(186, 186, 186)",
           },
-          max: yAxisMax,
+          max: maxMoveTimeValue,
         },
       },
       plugins: {
         title: {
           display: true,
-          text: title,
+          text: "Move Times",
           color: "rgb(186, 186, 186)",
         },
         legend: {
