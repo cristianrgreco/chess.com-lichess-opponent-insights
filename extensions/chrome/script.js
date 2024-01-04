@@ -231,6 +231,7 @@ function renderAnalytics(response) {
   renderWinStreak(response);
   document.querySelector(".ca_puzzle_rating").innerHTML = response.latestPuzzleRating?.value ?? "N/A";
   renderStatsChart(response);
+  renderMoveTimesChart(response);
   renderOpeningsChart(response);
 }
 
@@ -263,6 +264,87 @@ function renderWinStreak(response) {
   }
 }
 
+function renderMoveTimesChart(response) {
+  const moveTimesLabels = Array.from(
+      new Set(response.games.moveTimes.flatMap((moveTimesList) => moveTimesList.map((moveTime) => moveTime[0]))),
+  );
+  moveTimesLabels.sort();
+
+  const maxMoveTimeLabel = Math.max(...moveTimesLabels);
+  const maxMoveTimeValue = Math.max(...response.games.moveTimes.flatMap((moveTimesList) => moveTimesList.map((moveTime) => moveTime[1])));
+
+  const moveTimesData = response.games.moveTimes.map((moveTimesList, i) => ({
+    label: `Game ${i + 1}`,
+    data: moveTimesList.map(([x, y]) => ({ x, y })),
+    pointRadius: 1,
+    // showLine: true,
+    // borderWidth: 1
+  }));
+
+  createScatterChart(
+      document.querySelector("#ca_stats_move_times_chart"),
+      "Move Times",
+      moveTimesLabels,
+      moveTimesData,
+      maxMoveTimeLabel,
+      maxMoveTimeValue
+  );
+}
+
+function createScatterChart(selector, title, labels, data, xAxisMax, yAxisMax) {
+  new Chart(selector, {
+    type: "scatter",
+    data: {
+      datasets: data,
+    },
+    options: {
+      maintainAspectRatio: true,
+      responsive: false,
+      scales: {
+        x: {
+          title: {
+            display: true,
+            text: "Time Remaining (s)",
+            color: "rgb(186, 186, 186)",
+          },
+          ticks: {
+            color: "rgb(186, 186, 186)",
+          },
+          max: xAxisMax,
+          reverse: true,
+        },
+        y: {
+          title: {
+            display: true,
+            text: "Time Taken (s)",
+            color: "rgb(186, 186, 186)",
+          },
+          ticks: {
+            color: "rgb(186, 186, 186)",
+          },
+          max: yAxisMax
+        },
+      },
+      plugins: {
+        title: {
+          display: true,
+          text: title,
+          color: "rgb(186, 186, 186)",
+        },
+        legend: {
+          display: false,
+          labels: {
+            color: "rgb(186, 186, 186)",
+          },
+        },
+        tooltip: {
+          enabled: false,
+        }
+      },
+    },
+  });
+}
+
 function renderStatsChart(response) {
   const labels = Object.keys(response.games.stats.win).map((stat) => {
     switch (stat) {
@@ -280,7 +362,6 @@ function renderStatsChart(response) {
         return "Unknown label";
     }
   });
-
   const winData = Object.values(response.games.stats.win).map((stat) => stat * 100);
   createStatsChart(document.querySelector("#ca_stats_win_chart"), "Wins", labels, winData);
   const loseData = Object.values(response.games.stats.lose).map((stat) => stat * 100);
@@ -316,18 +397,18 @@ function createStatsChart(selector, title, labels, data) {
           color: "white",
           font: {
             size: "10px",
-          }
+          },
         },
         tooltip: {
           enabled: false,
           callbacks: {
-            label: tooltipItem => `${tooltipItem.formattedValue}%`
-          }
+            label: (tooltipItem) => `${tooltipItem.formattedValue}%`,
+          },
         },
         title: {
           display: true,
           text: title,
-          color: "rgb(186, 186, 186)"
+          color: "rgb(186, 186, 186)",
         },
         legend: {
           display: false,
@@ -337,8 +418,8 @@ function createStatsChart(selector, title, labels, data) {
         },
       },
     },
-    plugins: [ChartDataLabels]
-  })
+    plugins: [ChartDataLabels],
+  });
 }
 
 function renderOpeningsChart(response) {
