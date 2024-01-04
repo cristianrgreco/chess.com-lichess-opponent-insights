@@ -1,7 +1,13 @@
 {
-  "name": "Chess Analytics",
-  "description": "Get good",
-  "version": "1",
+  "name": "Lichess Opponent Information",
+  "version": "1.0.0",
+  "description": "Professional chess players spend a lot of time researching their opponents before a match, so why is it any different online?",
+  "icons": {
+    "16": "icons/logo_16x16.png",
+    "32": "icons/logo_32x32.png",
+    "48": "icons/logo_48x48.png",
+    "128": "icons/logo_128x128.png"
+  },
   "manifest_version": 2,
   "browser_specific_settings": {
     "gecko": {
