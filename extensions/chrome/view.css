@@ -30,7 +30,14 @@
   justify-content: center;
   align-items: center;
   width: 100%;
-  margin: 5px 0 !important;
+}
+
+.ca_opponent_info_section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  row-gap: 2px;
+  margin-left: 10px;
 }
 
 .ca_container {
@@ -109,6 +116,7 @@
   justify-content: center;
   align-items: center;
   column-gap: 5px;
+  margin-bottom: 10px;
 }
 
 .ca_puzzle_rating {
@@ -170,7 +178,7 @@
 }
 
 .ca_elo_range {
-  margin: 30px 50px 20px 0;
+  margin-right: 20px;
   position: relative;
   height: 1px;
   width: 100px;
@@ -204,7 +212,7 @@
 .ca_elo_range .ca_elo_range_current_value,
 .ca_elo_range .ca_elo_range_highest_value {
   position: absolute;
-  top: 17px;
+  top: 15px;
   transform: translateX(-50%);
 }
 

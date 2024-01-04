@@ -249,15 +249,20 @@ function renderAnalytics(response) {
 
   const winStreakEl = document.querySelector(".ca_win_streak_value");
   if (response.performance.currentWinningStreak <= 0) {
-    winStreakEl.innerHTML = `-${response.performance.currentLosingStreak}`;
+    winStreakEl.innerText = `-${response.performance.currentLosingStreak}`;
     winStreakEl.classList.add("ca_negative");
   } else {
-    winStreakEl.innerHTML = `+${response.performance.currentWinningStreak}`;
+    winStreakEl.innerText = `+${response.performance.currentWinningStreak}`;
     winStreakEl.classList.add("ca_positive");
   }
 
   renderEloSlider(response);
-  document.querySelector(".ca_puzzle_rating").innerHTML = response.latestPuzzleRating?.value ?? "N/A";
+  document.querySelector(".ca_puzzle_rating").innerText = response.latestPuzzleRating?.value ?? "N/A";
+  const disconnectPercentage = (
+    (response.performance.totalNumberOfDisconnects / response.performance.totalNumberOfGames) *
+    100
+  ).toFixed(1);
+  document.querySelector(".ca_disconnects").innerText = `${disconnectPercentage}%`;
   renderStatsChart(response);
   renderMoveTimesChart(response);
   renderOpeningsChart(response);
@@ -365,34 +370,35 @@ function createScatterChart(selector, title, labels, data, xAxisMax, yAxisMax) {
 function renderStatsChart(response) {
   const labels = ["Wins", "Losses"];
 
-  const winsOther =
-    1 -
-    (response.games.stats.win.mateRate + response.games.stats.win.resignRate + response.games.stats.win.outOfTimeRate);
-  const lossesOther =
-    1 -
-    (response.games.stats.lose.mateRate +
-      response.games.stats.lose.resignRate +
-      response.games.stats.lose.outOfTimeRate);
+  const winByMate = response.games.stats.win.mateRate;
+  const winByResign = response.games.stats.win.resignRate;
+  const winByFlag = response.games.stats.win.outOfTimeRate;
+  const winByOther = 1 - (winByMate + winByResign + winByFlag);
+
+  const loseByMate = response.games.stats.lose.mateRate;
+  const loseByResign = response.games.stats.lose.resignRate;
+  const loseByFlag = response.games.stats.lose.outOfTimeRate;
+  const lossesOther = 1 - (loseByMate + loseByResign + loseByFlag);
 
   const data = [
     {
       label: "Mate",
-      data: [response.games.stats.win.mateRate, response.games.stats.lose.mateRate],
+      data: [winByMate, loseByMate],
       backgroundColor: "#68ab5e",
     },
     {
       label: "Resign",
-      data: [response.games.stats.win.resignRate, response.games.stats.lose.resignRate],
+      data: [winByResign, loseByResign],
       backgroundColor: "#AB615E",
     },
     {
       label: "Flag",
-      data: [response.games.stats.win.outOfTimeRate, response.games.stats.lose.outOfTimeRate],
+      data: [winByFlag, loseByFlag],
       backgroundColor: "grey",
     },
     {
       label: "Other",
-      data: [winsOther, lossesOther],
+      data: [winByOther, lossesOther],
       backgroundColor: "#5e62ab",
     },
   ];
