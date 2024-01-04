@@ -277,8 +277,6 @@ function renderMoveTimesChart(response) {
     label: `Game ${i + 1}`,
     data: moveTimesList.map(([x, y]) => ({ x, y })),
     pointRadius: 1,
-    // showLine: true,
-    // borderWidth: 1
   }));
 
   createScatterChart(
@@ -346,57 +344,84 @@ function createScatterChart(selector, title, labels, data, xAxisMax, yAxisMax) {
 }
 
 function renderStatsChart(response) {
-  const labels = Object.keys(response.games.stats.win).map((stat) => {
-    switch (stat) {
-      case "mateRate":
-        return "Mate";
-      case "resignRate":
-        return "Resign";
-      case "drawRate":
-        return "Draw";
-      case "stalemateRate":
-        return "Stalemate";
-      case "outOfTimeRate":
-        return "Flag";
-      default:
-        return "Unknown label";
-    }
-  });
-  const winData = Object.values(response.games.stats.win).map((stat) => stat * 100);
-  createStatsChart(document.querySelector("#ca_stats_win_chart"), "Wins", labels, winData);
-  const loseData = Object.values(response.games.stats.lose).map((stat) => stat * 100);
-  createStatsChart(document.querySelector("#ca_stats_lose_chart"), "Losses", labels, loseData);
-}
+  const labels = ["Wins", "Losses"]
 
-function createStatsChart(selector, title, labels, data) {
-  new Chart(selector, {
-    type: "pie",
+  const winsOther = 1 - (response.games.stats.win.mateRate + response.games.stats.win.resignRate + response.games.stats.win.outOfTimeRate);
+  const lossesOther = 1 - (response.games.stats.lose.mateRate + response.games.stats.lose.resignRate + response.games.stats.lose.outOfTimeRate);
+
+  const data = [
+    {
+      label: "Mate",
+      data: [response.games.stats.win.mateRate, response.games.stats.lose.mateRate],
+      backgroundColor: "#68ab5e",
+    },
+    {
+      label: "Resign",
+      data: [response.games.stats.win.resignRate, response.games.stats.lose.resignRate],
+      backgroundColor: "#AB615E",
+    },
+    {
+      label: "Flag",
+      data: [response.games.stats.win.outOfTimeRate, response.games.stats.lose.outOfTimeRate],
+      backgroundColor: "grey",
+    },
+    {
+      label: "Other",
+      data: [winsOther, lossesOther],
+      backgroundColor: "#5e62ab",
+    },
+  ];
+
+  new Chart(document.querySelector("#ca_stats_chart"), {
+    type: "bar",
     data: {
       labels,
-      datasets: [
-        {
-          data: data,
-          borderWidth: 0,
-          hoverOffset: 4,
-          backgroundColor: ["#68ab5e", "#AB615E", "grey"],
-        },
-      ],
+      datasets: data,
     },
     options: {
       maintainAspectRatio: true,
       responsive: false,
-      plugins: {
-        datalabels: {
-          formatter: (value, context) => {
-            const val = context.chart.data.datasets[0].data[context.dataIndex];
-            if (val === 0) {
-              return "";
-            }
-            return `${context.chart.data.labels[context.dataIndex]}\n${Math.round(val)}%`;
+      scaleShowValues: true,
+      indexAxis: "y",
+      scales: {
+        x: {
+          stacked: true,
+          ticks: {
+            autoSkip: false,
+            color: "rgb(186, 186, 186)",
+            callback: (val) => {
+              return `${val * 100}%`;
+            },
           },
-          color: "white",
-          font: {
-            size: "10px",
+          max: 1,
+          title: {
+            display: false,
+            text: "% Outcome",
+            font: {
+              size: 12
+            },
+            color: "rgb(186, 186, 186)",
+          },
+        },
+        y: {
+          stacked: true,
+          ticks: {
+            autoSkip: false,
+            color: "rgb(186, 186, 186)",
+          },
+        },
+      },
+      plugins: {
+        title: {
+          display: false,
+          text: "Game Results",
+          color: "rgb(186, 186, 186)",
+        },
+        legend: {
+          labels: {
+            color: "rgb(186, 186, 186)",
+            boxWidth: 12,
+            boxHeight: 12,
           },
         },
         tooltip: {
@@ -404,22 +429,11 @@ function createStatsChart(selector, title, labels, data) {
           callbacks: {
             label: (tooltipItem) => `${tooltipItem.formattedValue}%`,
           },
-        },
-        title: {
-          display: true,
-          text: title,
-          color: "rgb(186, 186, 186)",
-        },
-        legend: {
-          display: false,
-          labels: {
-            color: "rgb(186, 186, 186)",
-          },
-        },
+        }
       },
     },
-    plugins: [ChartDataLabels],
-  });
+    plugins: [],
+  })
 }
 
 function renderOpeningsChart(response) {
@@ -459,15 +473,12 @@ function renderOpeningsChart(response) {
       backgroundColor: "#AB615E",
     },
   ];
-  renderBarChart(document.querySelector("#ca_openings_chart"), openingLabels, datasets);
-}
 
-function renderBarChart(selector, labels, data) {
-  new Chart(selector, {
+  new Chart(document.querySelector("#ca_openings_chart"), {
     type: "bar",
     data: {
-      labels,
-      datasets: data,
+      labels: openingLabels,
+      datasets: datasets,
     },
     options: {
       maintainAspectRatio: true,
@@ -483,7 +494,7 @@ function renderBarChart(selector, labels, data) {
           },
           title: {
             display: true,
-            text: "Number of games",
+            text: "Number of Games",
             font: {
               size: 12
             },
@@ -519,31 +530,13 @@ function renderBarChart(selector, labels, data) {
         legend: {
           labels: {
             color: "rgb(186, 186, 186)",
+            boxWidth: 12,
+            boxHeight: 12,
           },
-          // position: "bottom",
         },
-        // tooltip: {
-        //   callbacks: {
-        //     footer: function (ctx) {
-        //       // todo I am not proud of this
-        //       const value = openingNumberOfGames[ctx[0].dataIndex];
-        //       let outofTime = 0;
-        //       let timeout = 0;
-        //       if (ctx[0].dataset.label === "Wins") {
-        //         outofTime = openingWinOutOfTimeRate[ctx[0].dataIndex];
-        //         timeout = openingWinTimeoutRate[ctx[0].dataIndex];
-        //       } else if (ctx[0].dataset.label === "Losses") {
-        //         outofTime = openingLoseOutOfTimeRate[ctx[0].dataIndex];
-        //         timeout = openingLoseTimeoutRate[ctx[0].dataIndex];
-        //       } else {
-        //         return `Games: ${value}`;
-        //       }
-        //       return `Games: ${value}\nTimeouts: ${Math.round(outofTime + timeout)}`;
-        //     },
-        //   },
-        // },
       },
     },
     plugins: [ChartDataLabels],
   })
 }
+
