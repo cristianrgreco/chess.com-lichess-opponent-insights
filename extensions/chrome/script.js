@@ -423,10 +423,8 @@ function createStatsChart(selector, title, labels, data) {
 }
 
 function renderOpeningsChart(response) {
-  const calcResultWinRate = (opening, rateName) =>
-    ((opening.insights.results.win[rateName] ?? 0) / opening.insights.numberOfGames) * 100;
-  const calcResultLoseRate = (opening, rateName) =>
-    ((opening.insights.results.lose[rateName] ?? 0) / opening.insights.numberOfGames) * 100;
+  const calcResultWinRate = (opening, rateName) => ((opening.insights.results.win[rateName] ?? 0) / opening.insights.numberOfGames) * 100;
+  const calcResultLoseRate = (opening, rateName) => ((opening.insights.results.lose[rateName] ?? 0) / opening.insights.numberOfGames) * 100;
   const data = response.games.openings.filter((g) => g.insights.numberOfGames > 2);
   const openingLabels = data.map((g) => g.name);
   const openingMateRate = data.map((g) => calcResultWinRate(g, "mate")).slice(0, 10);
@@ -444,27 +442,32 @@ function renderOpeningsChart(response) {
   const totalDraws = data.map((g) => g.insights.totals.draw);
   const totalLosses = data.map((g) => g.insights.totals.lose);
 
-  new Chart(document.querySelector("#ca_openings_chart"), {
+  const datasets = [
+    {
+      label: "Wins",
+      data: totalWins,
+      backgroundColor: "#68ab5e",
+    },
+    {
+      label: "Draws",
+      data: totalDraws,
+      backgroundColor: "grey",
+    },
+    {
+      label: "Losses",
+      data: totalLosses,
+      backgroundColor: "#AB615E",
+    },
+  ];
+  renderBarChart(document.querySelector("#ca_openings_chart"), openingLabels, datasets);
+}
+
+function renderBarChart(selector, labels, data) {
+  new Chart(selector, {
     type: "bar",
     data: {
-      labels: openingLabels,
-      datasets: [
-        {
-          label: "Wins",
-          data: totalWins,
-          backgroundColor: "#68ab5e",
-        },
-        {
-          label: "Draws",
-          data: totalDraws,
-          backgroundColor: "grey",
-        },
-        {
-          label: "Losses",
-          data: totalLosses,
-          backgroundColor: "#AB615E",
-        },
-      ],
+      labels,
+      datasets: data,
     },
     options: {
       maintainAspectRatio: true,
@@ -479,11 +482,12 @@ function renderOpeningsChart(response) {
             color: "rgb(186, 186, 186)",
           },
           title: {
-            display: false,
+            display: true,
             text: "Number of games",
             font: {
-              size: 15,
+              size: 12
             },
+            color: "rgb(186, 186, 186)",
           },
         },
         y: {
@@ -496,7 +500,7 @@ function renderOpeningsChart(response) {
       },
       plugins: {
         datalabels: {
-          formatter: function (value, context) {
+          formatter: (value, context) => {
             const val = context.dataset.data[context.dataIndex];
             if (val > 0) {
               return val;
@@ -516,30 +520,30 @@ function renderOpeningsChart(response) {
           labels: {
             color: "rgb(186, 186, 186)",
           },
-          position: "bottom",
+          // position: "bottom",
         },
-        tooltip: {
-          callbacks: {
-            footer: function (ctx) {
-              // todo I am not proud of this
-              const value = openingNumberOfGames[ctx[0].dataIndex];
-              let outofTime = 0;
-              let timeout = 0;
-              if (ctx[0].dataset.label === "Wins") {
-                outofTime = openingWinOutOfTimeRate[ctx[0].dataIndex];
-                timeout = openingWinTimeoutRate[ctx[0].dataIndex];
-              } else if (ctx[0].dataset.label === "Losses") {
-                outofTime = openingLoseOutOfTimeRate[ctx[0].dataIndex];
-                timeout = openingLoseTimeoutRate[ctx[0].dataIndex];
-              } else {
-                return `Games: ${value}`;
-              }
-              return `Games: ${value}\nTimeouts: ${Math.round(outofTime + timeout)}`;
-            },
-          },
-        },
+        // tooltip: {
+        //   callbacks: {
+        //     footer: function (ctx) {
+        //       // todo I am not proud of this
+        //       const value = openingNumberOfGames[ctx[0].dataIndex];
+        //       let outofTime = 0;
+        //       let timeout = 0;
+        //       if (ctx[0].dataset.label === "Wins") {
+        //         outofTime = openingWinOutOfTimeRate[ctx[0].dataIndex];
+        //         timeout = openingWinTimeoutRate[ctx[0].dataIndex];
+        //       } else if (ctx[0].dataset.label === "Losses") {
+        //         outofTime = openingLoseOutOfTimeRate[ctx[0].dataIndex];
+        //         timeout = openingLoseTimeoutRate[ctx[0].dataIndex];
+        //       } else {
+        //         return `Games: ${value}`;
+        //       }
+        //       return `Games: ${value}\nTimeouts: ${Math.round(outofTime + timeout)}`;
+        //     },
+        //   },
+        // },
       },
     },
     plugins: [ChartDataLabels],
-  });
+  })
 }
