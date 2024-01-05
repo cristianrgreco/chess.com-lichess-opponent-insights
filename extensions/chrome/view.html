@@ -3,19 +3,18 @@
     <span class="ca_error_message"></span>
   </div>
   <div class="ca_auth_container ca_hidden">
-    <div class="ca_title">Authorise Lichess</div>
-    <div>
-      <p>
-        This extension uses the <a href="https://lichess.org/api" target="_blank">Lichess API</a> to fetch user and
-        opponent information.
-      </p>
-      <p>
-        Authorising with Lichess grants a short-lived access token (typically 1 day) which can make API requests on your
-        behalf.
-      </p>
-      <p>You will be prompted to re-authorise when the access token expires.</p>
+    <div class="ca_title">Lichess Opponent Information</div>
+    <div class="ca_auth_content_container">
+      <img id="ca_logo" alt="Logo" />
+      <div>
+        <p>
+          This extension uses the <a href="https://lichess.org/api" target="_blank">Lichess API</a> to fetch user and
+          opponent information.
+        </p>
+        <p style="margin-bottom: 0">You will be prompted to re-authorise when the access token expires.</p>
+      </div>
     </div>
-    <button id="auth_lichess_btn" class="ca_button ca_btn-win">Authorise</button>
+    <button id="auth_lichess_btn" class="ca_button ca_button_large ca_btn-win">Authorise with Lichess</button>
   </div>
   <div class="ca_container ca_hidden">
     <div class="ca_section" style="display: flex; align-items: center; text-align: center">

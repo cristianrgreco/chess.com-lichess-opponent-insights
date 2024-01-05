@@ -24,6 +24,7 @@ function init() {
   const port = chrome.runtime.connect({ name: "ca-port" });
 
   fetchView().then(() => {
+    document.querySelector("#ca_logo").setAttribute("src", chrome.runtime.getURL(`./icons/logo_128x128.png`));
     initSubTabs();
     fetchOpponentNotes();
     setupSaveOpponentNotes();
