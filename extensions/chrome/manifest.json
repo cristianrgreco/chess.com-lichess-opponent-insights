@@ -34,5 +34,5 @@
     }
   ],
   "web_accessible_resources": ["icons/*.png", "./lib/chart.umd.js.map", "./lib/stockfish-nnue-16.wasm", "view.html"],
-  "permissions": ["https://lichess.org/*", "identity", "storage"]
+  "permissions": ["https://rlabb3msg0.execute-api.eu-west-2.amazonaws.com/prod/*", "identity", "storage"]
 }

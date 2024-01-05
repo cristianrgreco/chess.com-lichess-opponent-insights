@@ -24,22 +24,18 @@ function init() {
   const port = chrome.runtime.connect({ name: "ca-port" });
 
   fetchView().then(() => {
-    document.querySelector("#ca_logo").setAttribute("src", chrome.runtime.getURL(`./icons/logo_128x128.png`));
-    initSubTabs();
-    fetchOpponentNotes();
-    setupSaveOpponentNotes();
-    setupAuthLichessButtonClick(port);
-    initRealTimeEvaluation(port);
     const evaluationElement = document.querySelector(".ca_evaluation");
     port.onMessage.addListener((message) => {
       if (message.action === "GET_LICHESS_ACCESS_TOKEN") {
         if (!message.payload) {
+          setupAuthContainerLogo();
+          setupAuthLichessButtonClick(port);
           setAuthContainerVisibility(true);
         } else {
-          onAccessToken(message.payload.value);
+          onAccessToken(message.payload.value, port);
         }
       } else if (message.action === "AUTH_LICHESS") {
-        onAccessToken(message.payload.value);
+        onAccessToken(message.payload.value, port);
       } else if (message.action === "STOCKFISH_EVALUATION") {
         evaluationElement.innerText = message.payload;
       } else {
@@ -50,12 +46,20 @@ function init() {
   });
 }
 
-function onAccessToken(accessToken) {
+function onAccessToken(accessToken, port) {
   setGameInfo();
+  initSubTabs();
+  initRealTimeEvaluation(port);
+  fetchOpponentNotes();
+  setupSaveOpponentNotes();
   setAuthContainerVisibility(false);
   setLoaderVisibility(true);
   setMainContainerVisibility(true);
   fetchUserAnalytics(accessToken);
+}
+
+function setupAuthContainerLogo() {
+  document.querySelector("#ca_logo").setAttribute("src", chrome.runtime.getURL(`./icons/logo_128x128.png`));
 }
 
 function setGameInfo() {
