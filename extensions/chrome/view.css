@@ -43,6 +43,8 @@
   background-color: var(--placeholder-color) !important;
   animation: fadeIn linear 0.5s, flickerAnimation linear 1s infinite 0.5s;
   pointer-events: none;
+  border-radius: 3px;
+  overflow: hidden;
 }
 
 .ca_container_root {
@@ -181,6 +183,7 @@
   text-align: center;
   margin: 0 1px;
   width: 80px;
+  border-radius: 3px 3px 0 0;
 }
 
 .ca_tab:hover {
