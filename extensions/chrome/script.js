@@ -230,8 +230,10 @@ function renderAnalytics(response) {
 
   const opponentColourEl = document.querySelector(".ca_opponent_colour");
   if (opponentColour === "white") {
+    opponentColourEl.title = "White";
     opponentColourEl.classList.add("ca_white");
   } else {
+    opponentColourEl.title = "Black";
     opponentColourEl.classList.add("ca_black");
   }
 
