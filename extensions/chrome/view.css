@@ -41,7 +41,9 @@
 .ca_placeholder.ca_placeholder_enabled {
   color: transparent !important;
   background-color: var(--placeholder-color) !important;
-  animation: fadeIn linear 0.5s, flickerAnimation linear 1s infinite 0.5s;
+  animation:
+    fadeIn linear 0.5s,
+    flickerAnimation linear 1s infinite 0.5s;
   pointer-events: none;
   border-radius: 3px;
   overflow: hidden;
@@ -56,7 +58,10 @@
   flex-direction: column;
   align-items: center;
   margin-bottom: 2vmin;
-  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, .14), 0 3px 1px -2px rgba(0, 0, 0, .2), 0 1px 5px 0 rgba(0, 0, 0, .12);
+  box-shadow:
+    0 2px 2px 0 rgba(0, 0, 0, 0.14),
+    0 3px 1px -2px rgba(0, 0, 0, 0.2),
+    0 1px 5px 0 rgba(0, 0, 0, 0.12);
   border-radius: 3px;
   min-height: 440px;
 }
@@ -287,6 +292,11 @@
 
 .ca_btn-win {
   background-color: var(--success);
+}
+
+.ca_btn-win[disabled] {
+  background-color: var(--success-dark);
+  pointer-events: none;
 }
 
 .ca_btn-lose {

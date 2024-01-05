@@ -136,6 +136,8 @@ function fetchOpponentNotes() {
 
 function saveOpponentNotes() {
   console.log("Saving opponent notes...");
+  const saveButton = document.querySelector("#ca_save_opponent_notes_form button[type=submit]");
+  saveButton.setAttribute("disabled", "disabled");
   fetch(`${API}/opponent-notes`, {
     method: "POST",
     body: JSON.stringify({
@@ -146,7 +148,10 @@ function saveOpponentNotes() {
   })
     .then((response) => (response.ok ? Promise.resolve() : Promise.reject(response)))
     .then(() => console.log("Saved opponent notes"))
-    .catch((response) => renderError("Failed to save opponent notes", response));
+    .catch((response) => renderError("Failed to save opponent notes", response))
+    .finally(() => {
+      saveButton.removeAttribute("disabled");
+    });
 }
 
 function render(response) {
@@ -179,11 +184,11 @@ function setMainContainerVisibility(visible) {
 }
 
 function setLoaderVisibility(visible) {
-  const placeholderEls = document.querySelectorAll(".ca_placeholder")
+  const placeholderEls = document.querySelectorAll(".ca_placeholder");
   if (visible) {
-    placeholderEls.forEach(el => el.classList.add("ca_placeholder_enabled"));
+    placeholderEls.forEach((el) => el.classList.add("ca_placeholder_enabled"));
   } else {
-    placeholderEls.forEach(el => el.classList.remove("ca_placeholder_enabled"));
+    placeholderEls.forEach((el) => el.classList.remove("ca_placeholder_enabled"));
   }
 }
 
