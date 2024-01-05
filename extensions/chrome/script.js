@@ -24,6 +24,7 @@ function init() {
   const port = chrome.runtime.connect({ name: "ca-port" });
 
   fetchView().then(() => {
+    document.querySelector("#ca_logo").setAttribute("src", chrome.runtime.getURL(`./icons/logo_128x128.png`));
     initSubTabs();
     fetchOpponentNotes();
     setupSaveOpponentNotes();
@@ -50,9 +51,36 @@ function init() {
 }
 
 function onAccessToken(accessToken) {
+  setGameInfo();
   setAuthContainerVisibility(false);
   setLoaderVisibility(true);
+  setMainContainerVisibility(true);
   fetchUserAnalytics(accessToken);
+}
+
+function setGameInfo() {
+  document.querySelector(".ca_opponent_name").innerText = opponent;
+
+  const opponentColourEl = document.querySelector(".ca_opponent_colour");
+  if (opponentColour === "white") {
+    opponentColourEl.title = "White";
+    opponentColourEl.classList.add("ca_white");
+  } else {
+    opponentColourEl.title = "Black";
+    opponentColourEl.classList.add("ca_black");
+  }
+
+  const gameTypeEl = document.querySelector(".ca_game_type");
+  if (gameType === "bullet") {
+    gameTypeEl.title = "Bullet";
+    gameTypeEl.innerHTML = `<span data-icon=""></span>`;
+  } else if (gameType === "blitz") {
+    gameTypeEl.title = "Blitz";
+    gameTypeEl.innerHTML = `<span data-icon=""></span>`;
+  } else {
+    gameTypeEl.title = "Rapid";
+    gameTypeEl.innerHTML = `<span data-icon=""></span>`;
+  }
 }
 
 function setupAuthLichessButtonClick(port) {
@@ -109,6 +137,8 @@ function fetchOpponentNotes() {
 
 function saveOpponentNotes() {
   console.log("Saving opponent notes...");
+  const saveButton = document.querySelector("#ca_save_opponent_notes_form button[type=submit]");
+  saveButton.setAttribute("disabled", "disabled");
   fetch(`${API}/opponent-notes`, {
     method: "POST",
     body: JSON.stringify({
@@ -119,7 +149,10 @@ function saveOpponentNotes() {
   })
     .then((response) => (response.ok ? Promise.resolve() : Promise.reject(response)))
     .then(() => console.log("Saved opponent notes"))
-    .catch((response) => renderError("Failed to save opponent notes", response));
+    .catch((response) => renderError("Failed to save opponent notes", response))
+    .finally(() => {
+      saveButton.removeAttribute("disabled");
+    });
 }
 
 function render(response) {
@@ -152,10 +185,11 @@ function setMainContainerVisibility(visible) {
 }
 
 function setLoaderVisibility(visible) {
+  const placeholderEls = document.querySelectorAll(".ca_placeholder");
   if (visible) {
-    document.querySelector(".ca_loader_container").classList.remove("ca_hidden");
+    placeholderEls.forEach((el) => el.classList.add("ca_placeholder_enabled"));
   } else {
-    document.querySelector(".ca_loader_container").classList.add("ca_hidden");
+    placeholderEls.forEach((el) => el.classList.remove("ca_placeholder_enabled"));
   }
 }
 
@@ -204,29 +238,6 @@ function initRealTimeEvaluation(port) {
 }
 
 function renderAnalytics(response) {
-  document.querySelector(".ca_opponent_name").innerText = opponent;
-
-  const opponentColourEl = document.querySelector(".ca_opponent_colour");
-  if (opponentColour === "white") {
-    opponentColourEl.title = "White";
-    opponentColourEl.classList.add("ca_white");
-  } else {
-    opponentColourEl.title = "Black";
-    opponentColourEl.classList.add("ca_black");
-  }
-
-  const gameTypeEl = document.querySelector(".ca_game_type");
-  if (gameType === "bullet") {
-    gameTypeEl.title = "Bullet";
-    gameTypeEl.innerHTML = `<span data-icon=""></span>`;
-  } else if (gameType === "blitz") {
-    gameTypeEl.title = "Blitz";
-    gameTypeEl.innerHTML = `<span data-icon=""></span>`;
-  } else {
-    gameTypeEl.title = "Rapid";
-    gameTypeEl.innerHTML = `<span data-icon=""></span>`;
-  }
-
   const winStreakEl = document.querySelector(".ca_win_streak_value");
   if (response.performance.currentWinningStreak <= 0) {
     winStreakEl.innerText = `-${response.performance.currentLosingStreak}`;
