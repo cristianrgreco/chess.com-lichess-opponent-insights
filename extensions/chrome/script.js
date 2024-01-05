@@ -534,6 +534,9 @@ function renderOpeningsChart(response) {
         },
       },
       plugins: {
+        tooltip: {
+          enabled: false,
+        },
         datalabels: {
           formatter: (value, context) => {
             const val = context.dataset.data[context.dataIndex];
