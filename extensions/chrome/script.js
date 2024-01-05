@@ -24,7 +24,6 @@ function init() {
   const port = chrome.runtime.connect({ name: "ca-port" });
 
   fetchView().then(() => {
-    initSiteTabs();
     initSubTabs();
     fetchOpponentNotes();
     setupSaveOpponentNotes();
@@ -77,9 +76,7 @@ function fetchView() {
       return response.text();
     })
     .then((responseText) => {
-      const siteHtml = document.querySelector(".round__side").innerHTML;
-      document.querySelector(".round__side").innerHTML = responseText;
-      document.querySelector(".origin_site_container").innerHTML = siteHtml;
+      document.querySelector(".round__side").insertAdjacentHTML("afterbegin", responseText);
     });
 }
 
@@ -160,25 +157,6 @@ function setLoaderVisibility(visible) {
   } else {
     document.querySelector(".ca_loader_container").classList.add("ca_hidden");
   }
-}
-
-function initSiteTabs() {
-  const originSiteContainer = document.querySelector(".origin_site_container");
-  originSiteContainer.classList.add("ca_hidden");
-
-  const analyticsTrigger = document.querySelector(".ca_tabs_ca_trigger");
-  analyticsTrigger.classList.add("ca_active");
-
-  _initTabs({
-    analytics: {
-      trigger: analyticsTrigger,
-      el: document.querySelector(".ca_container"),
-    },
-    origin: {
-      trigger: document.querySelector(".ca_tabs_site_trigger"),
-      el: originSiteContainer,
-    },
-  });
 }
 
 function initSubTabs() {
