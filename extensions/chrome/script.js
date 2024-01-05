@@ -50,9 +50,36 @@ function init() {
 }
 
 function onAccessToken(accessToken) {
+  setGameInfo();
   setAuthContainerVisibility(false);
   setLoaderVisibility(true);
+  setMainContainerVisibility(true);
   fetchUserAnalytics(accessToken);
+}
+
+function setGameInfo() {
+  document.querySelector(".ca_opponent_name").innerText = opponent;
+
+  const opponentColourEl = document.querySelector(".ca_opponent_colour");
+  if (opponentColour === "white") {
+    opponentColourEl.title = "White";
+    opponentColourEl.classList.add("ca_white");
+  } else {
+    opponentColourEl.title = "Black";
+    opponentColourEl.classList.add("ca_black");
+  }
+
+  const gameTypeEl = document.querySelector(".ca_game_type");
+  if (gameType === "bullet") {
+    gameTypeEl.title = "Bullet";
+    gameTypeEl.innerHTML = `<span data-icon=""></span>`;
+  } else if (gameType === "blitz") {
+    gameTypeEl.title = "Blitz";
+    gameTypeEl.innerHTML = `<span data-icon=""></span>`;
+  } else {
+    gameTypeEl.title = "Rapid";
+    gameTypeEl.innerHTML = `<span data-icon=""></span>`;
+  }
 }
 
 function setupAuthLichessButtonClick(port) {
@@ -152,10 +179,11 @@ function setMainContainerVisibility(visible) {
 }
 
 function setLoaderVisibility(visible) {
+  const placeholderEls = document.querySelectorAll(".ca_placeholder")
   if (visible) {
-    document.querySelector(".ca_loader_container").classList.remove("ca_hidden");
+    placeholderEls.forEach(el => el.classList.add("ca_placeholder_enabled"));
   } else {
-    document.querySelector(".ca_loader_container").classList.add("ca_hidden");
+    placeholderEls.forEach(el => el.classList.remove("ca_placeholder_enabled"));
   }
 }
 
@@ -204,29 +232,6 @@ function initRealTimeEvaluation(port) {
 }
 
 function renderAnalytics(response) {
-  document.querySelector(".ca_opponent_name").innerText = opponent;
-
-  const opponentColourEl = document.querySelector(".ca_opponent_colour");
-  if (opponentColour === "white") {
-    opponentColourEl.title = "White";
-    opponentColourEl.classList.add("ca_white");
-  } else {
-    opponentColourEl.title = "Black";
-    opponentColourEl.classList.add("ca_black");
-  }
-
-  const gameTypeEl = document.querySelector(".ca_game_type");
-  if (gameType === "bullet") {
-    gameTypeEl.title = "Bullet";
-    gameTypeEl.innerHTML = `<span data-icon=""></span>`;
-  } else if (gameType === "blitz") {
-    gameTypeEl.title = "Blitz";
-    gameTypeEl.innerHTML = `<span data-icon=""></span>`;
-  } else {
-    gameTypeEl.title = "Rapid";
-    gameTypeEl.innerHTML = `<span data-icon=""></span>`;
-  }
-
   const winStreakEl = document.querySelector(".ca_win_streak_value");
   if (response.performance.currentWinningStreak <= 0) {
     winStreakEl.innerText = `-${response.performance.currentLosingStreak}`;

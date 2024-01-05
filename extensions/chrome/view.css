@@ -11,6 +11,38 @@
   --tab-active-background-color: rgb(64, 64, 64);
   --tab-hover-background-color: #444;
   --tab-border-color: rgb(64, 64, 64);
+  --placeholder-color: rgb(52, 52, 52);
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes flickerAnimation {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.ca_placeholder {
+}
+
+.ca_placeholder.ca_placeholder_enabled {
+  color: transparent !important;
+  background-color: var(--placeholder-color) !important;
+  animation: fadeIn linear 0.5s, flickerAnimation linear 1s infinite 0.5s;
+  pointer-events: none;
 }
 
 .ca_container_root {
@@ -24,6 +56,7 @@
   margin-bottom: 2vmin;
   box-shadow: 0 2px 2px 0 rgba(0, 0, 0, .14), 0 3px 1px -2px rgba(0, 0, 0, .2), 0 1px 5px 0 rgba(0, 0, 0, .12);
   border-radius: 3px;
+  min-height: 440px;
 }
 
 .ca_opponent_info {
@@ -225,6 +258,7 @@
   height: 20px;
   left: 50%;
   width: 5px;
+  transition: left 1s ease;
 }
 
 .ca_elo_range .ca_elo_range_current_value {
@@ -276,24 +310,6 @@
 
 #ca_save_opponent_notes_form {
   width: 100%;
-}
-
-.ca_loader {
-  margin: 15px;
-  width: 48px;
-  height: 48px;
-  border: 5px solid #fff;
-  border-bottom-color: var(--error);
-  border-radius: 50%;
-  display: inline-block;
-  box-sizing: border-box;
-  animation: rotation 1s linear infinite;
-}
-
-.ca_loader_container {
-  display: flex;
-  height: 100%;
-  align-items: center;
 }
 
 .ca_error {
