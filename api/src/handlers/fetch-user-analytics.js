@@ -23,11 +23,9 @@ export async function fetchUserAnalytics(event) {
     };
   }
 
-  const [games, performance, latestPuzzleRating] = await Promise.all([
-    fetchLichessUserGames(authorisation, username, gameType, colour),
-    fetchLichessUserPerformanceStatistics(authorisation, username, gameType),
-    fetchLichessUserRatingHistory(authorisation, username, "Puzzles"),
-  ]);
+  const games = await fetchLichessUserGames(authorisation, username, gameType, colour);
+  const performance = await fetchLichessUserPerformanceStatistics(authorisation, username, gameType);
+  const latestPuzzleRating = await fetchLichessUserRatingHistory(authorisation, username, "Puzzles");
 
   if (!games || !performance) {
     return {
