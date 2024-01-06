@@ -24,7 +24,6 @@ function init() {
   const port = chrome.runtime.connect({ name: "ca-port" });
 
   fetchView().then(() => {
-    const evaluationElement = document.querySelector(".ca_evaluation");
     port.onMessage.addListener((message) => {
       if (message.action === "GET_LICHESS_ACCESS_TOKEN") {
         if (!message.payload) {
@@ -32,12 +31,10 @@ function init() {
           setupAuthLichessButtonClick(port);
           setAuthContainerVisibility(true);
         } else {
-          onAccessToken(message.payload.value, port);
+          onAccessToken(message.payload.value);
         }
       } else if (message.action === "AUTH_LICHESS") {
-        onAccessToken(message.payload.value, port);
-      } else if (message.action === "STOCKFISH_EVALUATION") {
-        evaluationElement.innerText = message.payload;
+        onAccessToken(message.payload.value);
       } else {
         console.log(`Unhandled message received: ${message.action}`);
       }
@@ -46,10 +43,9 @@ function init() {
   });
 }
 
-function onAccessToken(accessToken, port) {
+function onAccessToken(accessToken) {
   setGameInfo();
   initSubTabs();
-  initRealTimeEvaluation(port);
   fetchOpponentNotes();
   setupSaveOpponentNotes();
   setAuthContainerVisibility(false);
@@ -211,33 +207,6 @@ function initSubTabs() {
       trigger: document.querySelector(".ca_notes_tab_trigger"),
       el: document.querySelector(".ca_notes"),
     },
-  });
-}
-
-function initRealTimeEvaluation(port) {
-  const chess = new Chess();
-  const moveElementSelector = "kwdb";
-
-  const observer = new MutationObserver((mutations) => {
-    mutations.forEach((mutation) => {
-      mutation.addedNodes.forEach((addedNode) => {
-        if (addedNode.tagName === moveElementSelector.toUpperCase()) {
-          chess.move(addedNode.textContent);
-          port.postMessage({ action: "STOCKFISH_EVALUATION", payload: chess.fen() });
-        }
-      });
-    });
-  });
-
-  const movesContainerSelector = "rm6 > l4x";
-  _waitForElement(movesContainerSelector).then((movesContainerElement) => {
-    const existingMoves = movesContainerElement.querySelectorAll(moveElementSelector);
-    if (existingMoves) {
-      existingMoves.forEach((el) => chess.move(el.textContent));
-      port.postMessage({ action: "STOCKFISH_EVALUATION", payload: chess.fen() });
-    }
-
-    observer.observe(movesContainerElement, { subtree: false, childList: true });
   });
 }
 
