@@ -8,16 +8,15 @@
     "48": "icons/logo_48x48.png",
     "128": "icons/logo_128x128.png"
   },
-  "manifest_version": 2,
+  "manifest_version": 3,
   "browser_specific_settings": {
     "gecko": {
       "id": "cristianrgreco@gmail.com",
       "strict_min_version": "42.0"
     }
   },
-  "content_security_policy": "script-src 'self' 'unsafe-eval' https://lichess.org/api/token; object-src 'self'",
   "background": {
-    "scripts": ["auth.js"]
+    "service_worker": "./service-worker.js"
   },
   "content_scripts": [
     {
@@ -32,6 +31,12 @@
       "css": ["./view.css"]
     }
   ],
-  "web_accessible_resources": ["icons/*.png", "./lib/chart.umd.js.map", "view.html"],
-  "permissions": ["https://rlabb3msg0.execute-api.eu-west-2.amazonaws.com/prod/*", "identity", "storage"]
+  "web_accessible_resources": [
+    {
+      "resources": ["view.html", "icons/*.png", "./lib/chart.umd.js.map"],
+      "matches": ["https://lichess.org/*"]
+    }
+  ],
+  "permissions": ["identity", "storage"],
+  "host_permissions": ["https://rlabb3msg0.execute-api.eu-west-2.amazonaws.com/prod/*"]
 }

@@ -22,19 +22,13 @@ async function handleGetLichessAccessToken(port) {
 
 async function loadAccessToken() {
   try {
-    const accessToken = await browser.storage.sync.get("lichessAccessToken");
+    const accessToken = await chrome.storage.sync.get("lichessAccessToken");
     if (accessToken && accessToken.lichessAccessToken) {
       return JSON.parse(accessToken.lichessAccessToken);
     }
   } catch (err) {
-    return new Promise((resolve) => {
-      chrome.storage.sync.get("lichessAccessToken", (accessToken) => {
-        if (!accessToken || !accessToken.lichessAccessToken) {
-          return resolve();
-        }
-        return resolve(JSON.parse(accessToken.lichessAccessToken));
-      });
-    });
+    console.warn("Unexpected error when loading access token: ", err);
+    return Promise.resolve();
   }
 }
 
@@ -143,7 +137,7 @@ async function createCodeChallenge(codeVerifier) {
   function sha256(input) {
     const encoder = new TextEncoder();
     const data = encoder.encode(input);
-    return window.crypto.subtle.digest("SHA-256", data);
+    return crypto.subtle.digest("SHA-256", data);
   }
 
   function pkceCompatibleBase64UrlEncode(input) {
