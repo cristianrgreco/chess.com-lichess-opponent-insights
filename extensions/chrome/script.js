@@ -24,24 +24,17 @@ function init() {
   const port = chrome.runtime.connect({ name: "ca-port" });
 
   fetchView().then(() => {
-    initSiteTabs();
-    initSubTabs();
-    fetchOpponentNotes();
-    setupSaveOpponentNotes();
-    setupAuthLichessButtonClick(port);
-    initRealTimeEvaluation(port);
-    const evaluationElement = document.querySelector(".ca_evaluation");
     port.onMessage.addListener((message) => {
       if (message.action === "GET_LICHESS_ACCESS_TOKEN") {
         if (!message.payload) {
+          setupAuthContainerLogo();
+          setupAuthLichessButtonClick(port);
           setAuthContainerVisibility(true);
         } else {
           onAccessToken(message.payload.value);
         }
       } else if (message.action === "AUTH_LICHESS") {
         onAccessToken(message.payload.value);
-      } else if (message.action === "STOCKFISH_EVALUATION") {
-        evaluationElement.innerText = message.payload;
       } else {
         console.log(`Unhandled message received: ${message.action}`);
       }
@@ -51,9 +44,43 @@ function init() {
 }
 
 function onAccessToken(accessToken) {
+  setGameInfo();
+  initSubTabs();
+  fetchOpponentNotes();
+  setupSaveOpponentNotes();
   setAuthContainerVisibility(false);
   setLoaderVisibility(true);
+  setMainContainerVisibility(true);
   fetchUserAnalytics(accessToken);
+}
+
+function setupAuthContainerLogo() {
+  document.querySelector("#ca_logo").setAttribute("src", chrome.runtime.getURL(`./icons/logo_128x128.png`));
+}
+
+function setGameInfo() {
+  document.querySelector(".ca_opponent_name").innerText = opponent;
+
+  const opponentColourEl = document.querySelector(".ca_opponent_colour");
+  if (opponentColour === "white") {
+    opponentColourEl.title = "White";
+    opponentColourEl.classList.add("ca_white");
+  } else {
+    opponentColourEl.title = "Black";
+    opponentColourEl.classList.add("ca_black");
+  }
+
+  const gameTypeEl = document.querySelector(".ca_game_type");
+  if (gameType === "bullet") {
+    gameTypeEl.title = "Bullet";
+    gameTypeEl.innerHTML = `<span data-icon=""></span>`;
+  } else if (gameType === "blitz") {
+    gameTypeEl.title = "Blitz";
+    gameTypeEl.innerHTML = `<span data-icon=""></span>`;
+  } else {
+    gameTypeEl.title = "Rapid";
+    gameTypeEl.innerHTML = `<span data-icon=""></span>`;
+  }
 }
 
 function setupAuthLichessButtonClick(port) {
@@ -77,9 +104,7 @@ function fetchView() {
       return response.text();
     })
     .then((responseText) => {
-      const siteHtml = document.querySelector(".round__side").innerHTML;
-      document.querySelector(".round__side").innerHTML = responseText;
-      document.querySelector(".origin_site_container").innerHTML = siteHtml;
+      document.querySelector(".round__side").insertAdjacentHTML("afterbegin", responseText);
     });
 }
 
@@ -112,6 +137,8 @@ function fetchOpponentNotes() {
 
 function saveOpponentNotes() {
   console.log("Saving opponent notes...");
+  const saveButton = document.querySelector("#ca_save_opponent_notes_form button[type=submit]");
+  saveButton.setAttribute("disabled", "disabled");
   fetch(`${API}/opponent-notes`, {
     method: "POST",
     body: JSON.stringify({
@@ -122,7 +149,10 @@ function saveOpponentNotes() {
   })
     .then((response) => (response.ok ? Promise.resolve() : Promise.reject(response)))
     .then(() => console.log("Saved opponent notes"))
-    .catch((response) => renderError("Failed to save opponent notes", response));
+    .catch((response) => renderError("Failed to save opponent notes", response))
+    .finally(() => {
+      saveButton.removeAttribute("disabled");
+    });
 }
 
 function render(response) {
@@ -155,30 +185,12 @@ function setMainContainerVisibility(visible) {
 }
 
 function setLoaderVisibility(visible) {
+  const placeholderEls = document.querySelectorAll(".ca_placeholder");
   if (visible) {
-    document.querySelector(".ca_loader_container").classList.remove("ca_hidden");
+    placeholderEls.forEach((el) => el.classList.add("ca_placeholder_enabled"));
   } else {
-    document.querySelector(".ca_loader_container").classList.add("ca_hidden");
+    placeholderEls.forEach((el) => el.classList.remove("ca_placeholder_enabled"));
   }
-}
-
-function initSiteTabs() {
-  const originSiteContainer = document.querySelector(".origin_site_container");
-  originSiteContainer.classList.add("ca_hidden");
-
-  const analyticsTrigger = document.querySelector(".ca_tabs_ca_trigger");
-  analyticsTrigger.classList.add("ca_active");
-
-  _initTabs({
-    analytics: {
-      trigger: analyticsTrigger,
-      el: document.querySelector(".ca_container"),
-    },
-    origin: {
-      trigger: document.querySelector(".ca_tabs_site_trigger"),
-      el: originSiteContainer,
-    },
-  });
 }
 
 function initSubTabs() {
@@ -198,55 +210,7 @@ function initSubTabs() {
   });
 }
 
-function initRealTimeEvaluation(port) {
-  const chess = new Chess();
-  const moveElementSelector = "kwdb";
-
-  const observer = new MutationObserver((mutations) => {
-    mutations.forEach((mutation) => {
-      mutation.addedNodes.forEach((addedNode) => {
-        if (addedNode.tagName === moveElementSelector.toUpperCase()) {
-          chess.move(addedNode.textContent);
-          port.postMessage({ action: "STOCKFISH_EVALUATION", payload: chess.fen() });
-        }
-      });
-    });
-  });
-
-  const movesContainerSelector = "rm6 > l4x";
-  _waitForElement(movesContainerSelector).then((movesContainerElement) => {
-    const existingMoves = movesContainerElement.querySelectorAll(moveElementSelector);
-    if (existingMoves) {
-      existingMoves.forEach((el) => chess.move(el.textContent));
-      port.postMessage({ action: "STOCKFISH_EVALUATION", payload: chess.fen() });
-    }
-
-    observer.observe(movesContainerElement, { subtree: false, childList: true });
-  });
-}
-
 function renderAnalytics(response) {
-  document.querySelector(".ca_opponent_name").innerText = opponent;
-
-  const opponentColourEl = document.querySelector(".ca_opponent_colour");
-  if (opponentColour === "white") {
-    opponentColourEl.classList.add("ca_white");
-  } else {
-    opponentColourEl.classList.add("ca_black");
-  }
-
-  const gameTypeEl = document.querySelector(".ca_game_type");
-  if (gameType === "bullet") {
-    gameTypeEl.title = "Bullet";
-    gameTypeEl.innerHTML = `<span data-icon=""></span>`;
-  } else if (gameType === "blitz") {
-    gameTypeEl.title = "Blitz";
-    gameTypeEl.innerHTML = `<span data-icon=""></span>`;
-  } else {
-    gameTypeEl.title = "Rapid";
-    gameTypeEl.innerHTML = `<span data-icon=""></span>`;
-  }
-
   const winStreakEl = document.querySelector(".ca_win_streak_value");
   if (response.performance.currentWinningStreak <= 0) {
     winStreakEl.innerText = `-${response.performance.currentLosingStreak}`;
@@ -532,6 +496,9 @@ function renderOpeningsChart(response) {
         },
       },
       plugins: {
+        tooltip: {
+          enabled: false,
+        },
         datalabels: {
           formatter: (value, context) => {
             const val = context.dataset.data[context.dataIndex];

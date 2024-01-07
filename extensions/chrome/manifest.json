@@ -24,7 +24,6 @@
       "js": [
         "./utils.js",
         "./script.js",
-        "./lib/stockfish-nnue-16.js",
         "./lib/chess.js",
         "./lib/chart.umd.js",
         "./lib/chartjs-plugin-datalabels.min.js"
@@ -34,10 +33,10 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": ["view.html", "./lib/chart.umd.js.map", "./lib/stockfish-nnue-16.wasm"],
+      "resources": ["view.html", "icons/*.png", "./lib/chart.umd.js.map"],
       "matches": ["https://lichess.org/*"]
     }
   ],
   "permissions": ["identity", "storage"],
-  "host_permissions": ["https://lichess.org/*"]
+  "host_permissions": ["https://rlabb3msg0.execute-api.eu-west-2.amazonaws.com/prod/*"]
 }
