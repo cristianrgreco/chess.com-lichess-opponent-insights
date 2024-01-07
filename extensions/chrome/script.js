@@ -279,11 +279,12 @@ function renderMoveTimesChart(response) {
         x: {
           title: {
             display: true,
-            text: "Time Remaining (s)",
+            text: "Time Remaining",
             color: "rgb(186, 186, 186)",
           },
           ticks: {
             color: "rgb(186, 186, 186)",
+            callback: (val) => `${val}s`,
           },
           max: maxMoveTimeLabel,
           reverse: true,
@@ -291,11 +292,12 @@ function renderMoveTimesChart(response) {
         y: {
           title: {
             display: true,
-            text: "Time Taken (s)",
+            text: "Time Taken",
             color: "rgb(186, 186, 186)",
           },
           ticks: {
             color: "rgb(186, 186, 186)",
+            callback: (val) => `${val}s`,
           },
           max: maxMoveTimeValue,
         },
@@ -356,6 +358,8 @@ function renderStatsChart(response) {
     },
   ];
 
+  const valueFormatter = val => `${val * 100}%`;
+
   new Chart(document.querySelector("#ca_stats_chart"), {
     type: "bar",
     data: {
@@ -373,9 +377,7 @@ function renderStatsChart(response) {
           ticks: {
             autoSkip: false,
             color: "rgb(186, 186, 186)",
-            callback: (val) => {
-              return `${val * 100}%`;
-            },
+            callback: (val) => `${val * 100}%`,
           },
           max: 1,
           title: {
@@ -396,6 +398,23 @@ function renderStatsChart(response) {
         },
       },
       plugins: {
+        datalabels: {
+          formatter: (value, context) => {
+            const val = context.dataset.data[context.dataIndex];
+            if (val > 0) {
+              return `${Math.ceil(val * 100)}%`;
+            }
+            return "";
+          },
+          labels: {
+            value: {
+              color: "white",
+              font: {
+                size: 10,
+              },
+            },
+          },
+        },
         title: {
           display: false,
           text: "Game Results",
@@ -416,7 +435,7 @@ function renderStatsChart(response) {
         },
       },
     },
-    plugins: [],
+    plugins: [ChartDataLabels],
   });
 }
 
