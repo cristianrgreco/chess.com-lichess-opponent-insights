@@ -267,6 +267,8 @@ function renderMoveTimesChart(response) {
     pointRadius: 1,
   }));
 
+  const formatTwoDecimalPlacesIfHasDecimals = val => `${val.toFixed(2).replace(/[.,]00$/, "")}s`;
+
   new Chart(document.querySelector("#ca_stats_move_times_chart"), {
     type: "scatter",
     data: {
@@ -284,7 +286,7 @@ function renderMoveTimesChart(response) {
           },
           ticks: {
             color: "rgb(186, 186, 186)",
-            callback: (val) => `${val}s`,
+            callback: formatTwoDecimalPlacesIfHasDecimals,
           },
           max: maxMoveTimeLabel,
           reverse: true,
@@ -297,7 +299,7 @@ function renderMoveTimesChart(response) {
           },
           ticks: {
             color: "rgb(186, 186, 186)",
-            callback: (val) => `${val}s`,
+            callback: formatTwoDecimalPlacesIfHasDecimals,
           },
           max: maxMoveTimeValue,
         },
@@ -328,12 +330,12 @@ function renderStatsChart(response) {
   const winByMate = response.games.stats.win.mateRate;
   const winByResign = response.games.stats.win.resignRate;
   const winByFlag = response.games.stats.win.outOfTimeRate;
-  const winByOther = 1 - (winByMate + winByResign + winByFlag);
+  const winByDisconnect = 1 - (winByMate + winByResign + winByFlag);
 
   const loseByMate = response.games.stats.lose.mateRate;
   const loseByResign = response.games.stats.lose.resignRate;
   const loseByFlag = response.games.stats.lose.outOfTimeRate;
-  const lossesOther = 1 - (loseByMate + loseByResign + loseByFlag);
+  const loseByDisconnect = 1 - (loseByMate + loseByResign + loseByFlag);
 
   const data = [
     {
@@ -352,8 +354,8 @@ function renderStatsChart(response) {
       backgroundColor: "grey",
     },
     {
-      label: "Other",
-      data: [winByOther, lossesOther],
+      label: "Disconnect",
+      data: [winByDisconnect, loseByDisconnect],
       backgroundColor: "#5e62ab",
     },
   ];
