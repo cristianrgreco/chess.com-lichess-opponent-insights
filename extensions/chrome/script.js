@@ -267,7 +267,7 @@ function renderMoveTimesChart(response) {
     pointRadius: 1,
   }));
 
-  const formatTwoDecimalPlacesIfHasDecimals = val => `${val.toFixed(2).replace(/[.,]00$/, "")}s`;
+  const formatTwoDecimalPlacesIfHasDecimals = (val) => `${val.toFixed(2).replace(/[.,]00$/, "")}s`;
 
   new Chart(document.querySelector("#ca_stats_move_times_chart"), {
     type: "scatter",
@@ -359,8 +359,6 @@ function renderStatsChart(response) {
       backgroundColor: "#5e62ab",
     },
   ];
-
-  const valueFormatter = val => `${val * 100}%`;
 
   new Chart(document.querySelector("#ca_stats_chart"), {
     type: "bar",
