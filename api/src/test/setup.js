@@ -10,7 +10,6 @@ export async function setup() {
     process.exit(1);
   }
 
-
   console.log("Starting Localstack container...");
   globalThis.localstackContainer = await new LocalstackContainer().start();
   process.env.LOCALSTACK_URI = globalThis.localstackContainer.getConnectionUri();

@@ -23,6 +23,7 @@ export async function fetchUserAnalytics(event) {
     };
   }
 
+  // Cannot be parallelised as Lichess allows only one request at a time
   const games = await fetchLichessUserGames(authorisation, username, gameType, colour);
   const performance = await fetchLichessUserPerformanceStatistics(authorisation, username, gameType);
   const latestPuzzleRating = await fetchLichessUserRatingHistory(authorisation, username, "Puzzles");
