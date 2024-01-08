@@ -5,6 +5,12 @@ import yaml from "yaml";
 import fs from "fs";
 
 export async function setup() {
+  if (!process.env.LICHESS_PAT) {
+    console.error("LICHESS_PAT environment variable not set");
+    process.exit(1);
+  }
+
+
   console.log("Starting Localstack container...");
   globalThis.localstackContainer = await new LocalstackContainer().start();
   process.env.LOCALSTACK_URI = globalThis.localstackContainer.getConnectionUri();
