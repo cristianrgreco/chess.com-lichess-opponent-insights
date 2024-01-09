@@ -330,12 +330,12 @@ function renderStatsChart(response) {
   const winByMate = response.games.stats.win.mateRate;
   const winByResign = response.games.stats.win.resignRate;
   const winByFlag = response.games.stats.win.outOfTimeRate;
-  const winByDisconnect = 1 - (winByMate + winByResign + winByFlag);
+  const winByOther = 1 - (winByMate + winByResign + winByFlag);
 
   const loseByMate = response.games.stats.lose.mateRate;
   const loseByResign = response.games.stats.lose.resignRate;
   const loseByFlag = response.games.stats.lose.outOfTimeRate;
-  const loseByDisconnect = 1 - (loseByMate + loseByResign + loseByFlag);
+  const loseByOther = 1 - (loseByMate + loseByResign + loseByFlag);
 
   const data = [
     {
@@ -354,8 +354,8 @@ function renderStatsChart(response) {
       backgroundColor: "grey",
     },
     {
-      label: "Disconnect",
-      data: [winByDisconnect, loseByDisconnect],
+      label: "Other",
+      data: [winByOther, loseByOther],
       backgroundColor: "#5e62ab",
     },
   ];
