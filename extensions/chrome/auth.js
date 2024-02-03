@@ -120,7 +120,7 @@ async function requestAccessToken({ user }) {
           .then((responseJson) => {
             return resolve({
               value: responseJson["access_token"],
-              expiresAt: Date.now() + responseJson["expires_in"],
+              expiresAt: Date.now() + (responseJson["expires_in"] * 1000), // `expires_in` is in seconds
             });
           })
           .catch((err) => {
