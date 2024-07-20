@@ -1,6 +1,6 @@
 {
   "name": "Lichess Opponent Information",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "Professional chess players spend a lot of time researching their opponents before a match, so why is it any different online?",
   "icons": {
     "16": "icons/logo_16x16.png",
