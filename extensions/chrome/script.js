@@ -315,7 +315,7 @@ function renderMoveTimesChart(response) {
     pointRadius: 1,
   }));
 
-  const formatTwoDecimalPlacesIfHasDecimals = (val) => `${val.toFixed(2).replace(/[.,]00$/, "")}s`;
+  const formatToDpIfHasDecimals = (dp) => (val) => `${val.toFixed(dp).replace(/[.,]00$/, "")}s`;
 
   new Chart(document.querySelector("#ca_stats_move_times_chart"), {
     type: "scatter",
@@ -334,7 +334,7 @@ function renderMoveTimesChart(response) {
           },
           ticks: {
             color: "rgb(186, 186, 186)",
-            callback: formatTwoDecimalPlacesIfHasDecimals,
+            callback: formatToDpIfHasDecimals(0),
           },
           max: maxMoveTimeLabel,
           reverse: true,
@@ -347,7 +347,7 @@ function renderMoveTimesChart(response) {
           },
           ticks: {
             color: "rgb(186, 186, 186)",
-            callback: formatTwoDecimalPlacesIfHasDecimals,
+            callback: formatToDpIfHasDecimals(0),
           },
           max: maxMoveTimeValue,
         },
@@ -373,7 +373,7 @@ function renderMoveTimesChart(response) {
 }
 
 function renderStatsChart(response) {
-  const labels = ["Wins", "Losses"];
+  const labels = ["Wins (%)", "Losses (%)"];
 
   const winByMate = response.games.stats.win.mateRate;
   const winByResign = response.games.stats.win.resignRate;
@@ -450,7 +450,7 @@ function renderStatsChart(response) {
           formatter: (value, context) => {
             const val = context.dataset.data[context.dataIndex];
             if (val > 0) {
-              return `${Math.ceil(val * 100)}%`;
+              return `${Math.ceil(val * 100)}`;
             }
             return "";
           },
