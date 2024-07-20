@@ -23,7 +23,7 @@ describe("Lichess export games", () => {
     const games = await fetchLichessUserGames(PAT, "Spaghetti_Spoghotti", "blitz", "white");
 
     const { insights } = games.openings.find((game) => game.name === "Queen's Pawn Game");
-    expect(insights.results["win"]?.mate).toBeGreaterThanOrEqual(0);
+    expect(insights.results["lose"]?.mate).toBeGreaterThanOrEqual(0);
     expect(insights.numberOfGames).toBeGreaterThanOrEqual(0);
     expect(insights.accuracy).toBeGreaterThanOrEqual(0);
   });
@@ -33,7 +33,7 @@ describe("Lichess export games", () => {
 
     const openingFamily = games.openings.find((game) => game.name === "Queen's Pawn Game");
     const { insights } = openingFamily.variations.find((variation) => variation.name === "Accelerated London System");
-    expect(insights.results.win.mate).toBeGreaterThanOrEqual(0);
+    expect(insights.results.win.resign).toBeGreaterThanOrEqual(0);
     expect(insights.numberOfGames).toBeGreaterThanOrEqual(0);
     expect(insights.accuracy).toBeGreaterThanOrEqual(0);
   });
