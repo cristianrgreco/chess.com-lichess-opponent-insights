@@ -17,6 +17,12 @@ function init() {
   opponentColour = document.querySelector(".game__meta .player.white").innerHTML.includes(opponent) ? "white" : "black";
   gameType = document.querySelector(".game__meta .header .setup span[title]").innerText.toLowerCase();
 
+  const supportedGameTypes = ["bullet", "blitz", "rapid", "classical"];
+  if (!supportedGameTypes.includes(gameType)) {
+    console.log(`Unsupported game type: ${gameType}`);
+    return;
+  }
+
   console.log(
     `Current user: ${user}, Opponent: ${opponent}, Opponent colour: ${opponentColour}, Game type: ${gameType}`,
   );
