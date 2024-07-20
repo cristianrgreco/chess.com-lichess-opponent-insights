@@ -17,35 +17,71 @@ function init() {
   opponentColour = document.querySelector(".game__meta .player.white").innerHTML.includes(opponent) ? "white" : "black";
   gameType = document.querySelector(".game__meta .header .setup span[title]").innerText.toLowerCase();
 
+  const supportedGameTypes = ["bullet", "blitz", "rapid", "classical"];
+  if (!supportedGameTypes.includes(gameType)) {
+    console.log(`Unsupported game type: ${gameType}`);
+    return;
+  }
+
   console.log(
     `Current user: ${user}, Opponent: ${opponent}, Opponent colour: ${opponentColour}, Game type: ${gameType}`,
   );
 
   const port = chrome.runtime.connect({ name: "ca-port" });
+  const actions = (message) => ( {
+    GET_LICHESS_ACCESS_TOKEN: () => {
+      if (!message.payload) {
+        setupAuthContainerLogo();
+        setupAuthLichessButtonClick(port);
+        setAuthContainerVisibility(true);
+      } else {
+        onAccessToken(port, message.payload.value);
+      }
+    },
+    AUTH_LICHESS: () => {
+      onAccessToken(port, message.payload.value);
+    },
+    GET_PREFERENCES: () => {
+      onPreferences(message.payload);
+    }
+  });
 
   fetchView().then(() => {
     port.onMessage.addListener((message) => {
-      if (message.action === "GET_LICHESS_ACCESS_TOKEN") {
-        if (!message.payload) {
-          setupAuthContainerLogo();
-          setupAuthLichessButtonClick(port);
-          setAuthContainerVisibility(true);
-        } else {
-          onAccessToken(message.payload.value);
-        }
-      } else if (message.action === "AUTH_LICHESS") {
-        onAccessToken(message.payload.value);
+      const action = actions(message)[message.action];
+      if (action) {
+        action();
       } else {
         console.log(`Unhandled message received: ${message.action}`);
       }
     });
+
     port.postMessage({ action: "GET_LICHESS_ACCESS_TOKEN" });
   });
 }
 
-function onAccessToken(accessToken) {
+function onPreferences(preferences) {
+  if (preferences) {
+    console.log("Preferences found", preferences);
+    switch (preferences.currentTab) {
+      case "STATS":
+        document.querySelector(".ca_stats_tab_trigger").click();
+        break;
+      case "OPENINGS":
+        document.querySelector(".ca_openings_tab_trigger").click();
+        break;
+      case "NOTES":
+        document.querySelector(".ca_notes_tab_trigger").click();
+        break;
+    }
+  } else {
+    console.log("No preferences found");
+  }
+}
+
+function onAccessToken(port, accessToken) {
   setGameInfo();
-  initSubTabs();
+  initSubTabs(port);
   fetchOpponentNotes();
   setupSaveOpponentNotes();
   setAuthContainerVisibility(false);
@@ -104,7 +140,7 @@ function fetchView() {
       return response.text();
     })
     .then((responseText) => {
-      document.querySelector(".round__side").insertAdjacentHTML("afterbegin", responseText);
+      document.querySelector(".mchat").insertAdjacentHTML("beforebegin", responseText);
     });
 }
 
@@ -193,31 +229,43 @@ function setLoaderVisibility(visible) {
   }
 }
 
-function initSubTabs() {
+function initSubTabs(port) {
   _initTabs({
     stats: {
       trigger: document.querySelector(".ca_stats_tab_trigger"),
       el: document.querySelector(".ca_stats"),
+      callback: () => {
+        port.postMessage({ action: "SAVE_PREFERENCES", payload: { currentTab: "STATS" } });
+      }
     },
     openings: {
       trigger: document.querySelector(".ca_openings_tab_trigger"),
       el: document.querySelector(".ca_openings"),
+      callback: () => {
+        port.postMessage({ action: "SAVE_PREFERENCES", payload: { currentTab: "OPENINGS" } });
+      }
     },
     notes: {
       trigger: document.querySelector(".ca_notes_tab_trigger"),
       el: document.querySelector(".ca_notes"),
+      callback: () => {
+        port.postMessage({ action: "SAVE_PREFERENCES", payload: { currentTab: "NOTES" } });
+      }
     },
   });
+  port.postMessage({ action: "GET_PREFERENCES" });
 }
 
 function renderAnalytics(response) {
   const winStreakEl = document.querySelector(".ca_win_streak_value");
-  if (response.performance.currentWinningStreak <= 0) {
+  if (response.performance.currentLosingStreak > 0) {
     winStreakEl.innerText = `-${response.performance.currentLosingStreak}`;
     winStreakEl.classList.add("ca_negative");
-  } else {
+  } else if (response.performance.currentWinningStreak > 0) {
     winStreakEl.innerText = `+${response.performance.currentWinningStreak}`;
     winStreakEl.classList.add("ca_positive");
+  } else {
+    winStreakEl.innerText = "0";
   }
 
   renderEloSlider(response);
@@ -267,7 +315,7 @@ function renderMoveTimesChart(response) {
     pointRadius: 1,
   }));
 
-  const formatTwoDecimalPlacesIfHasDecimals = (val) => `${val.toFixed(2).replace(/[.,]00$/, "")}s`;
+  const formatToDpIfHasDecimals = (dp) => (val) => `${val.toFixed(dp).replace(/[.,]00$/, "")}s`;
 
   new Chart(document.querySelector("#ca_stats_move_times_chart"), {
     type: "scatter",
@@ -286,7 +334,7 @@ function renderMoveTimesChart(response) {
           },
           ticks: {
             color: "rgb(186, 186, 186)",
-            callback: formatTwoDecimalPlacesIfHasDecimals,
+            callback: formatToDpIfHasDecimals(0),
           },
           max: maxMoveTimeLabel,
           reverse: true,
@@ -299,7 +347,7 @@ function renderMoveTimesChart(response) {
           },
           ticks: {
             color: "rgb(186, 186, 186)",
-            callback: formatTwoDecimalPlacesIfHasDecimals,
+            callback: formatToDpIfHasDecimals(0),
           },
           max: maxMoveTimeValue,
         },
@@ -402,7 +450,7 @@ function renderStatsChart(response) {
           formatter: (value, context) => {
             const val = context.dataset.data[context.dataIndex];
             if (val > 0) {
-              return `${Math.ceil(val * 100)}%`;
+              return `${Math.ceil(val * 100)}`;
             }
             return "";
           },

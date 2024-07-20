@@ -14,10 +14,17 @@
         <p style="margin-bottom: 0">You will be prompted to re-authorise when the access token expires.</p>
       </div>
     </div>
-    <button id="auth_lichess_btn" class="ca_button ca_button_large ca_btn-win">Authorise with Lichess</button>
+    <button id="auth_lichess_btn" class="ca_button ca_button_large ca_btn-win">
+      <span>
+        Authorise with Lichess
+      </span>
+      <svg width="14px" height="14px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M5 12V6C5 5.44772 5.44772 5 6 5H18C18.5523 5 19 5.44772 19 6V18C19 18.5523 18.5523 19 18 19H12M8.11111 12H12M12 12V15.8889M12 12L5 19" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
   </div>
   <div class="ca_container ca_hidden">
-    <div class="ca_section" style="display: flex; align-items: center; text-align: center">
+    <div class="ca_section" style="display: flex; align-items: center; text-align: center; display: none">
       <div>
         <div class="ca_opponent_name ca_placeholder">???</div>
         <div class="ca_game_info">
@@ -31,23 +38,19 @@
             <span class="ca_opponent_colour"></span>
           </div>
           <span>&bull;</span>
-          <div>
-            <span>Streak: </span>
-            <span class="ca_win_streak_value ca_placeholder">??</span>
-          </div>
         </div>
       </div>
     </div>
     <div class="ca_section ca_opponent_info">
       <div class="ca_elo_range">
         <div class="ca_elo_range_lowest">
-          <div class="ca_elo_range_lowest_value"></div>
+          <div class="ca_elo_range_lowest_value ca_placeholder">????</div>
         </div>
         <div class="ca_elo_range_current">
-          <div class="ca_elo_range_current_value"></div>
+          <div class="ca_elo_range_current_value ca_placeholder">????</div>
         </div>
         <div class="ca_elo_range_highest">
-          <div class="ca_elo_range_highest_value"></div>
+          <div class="ca_elo_range_highest_value ca_placeholder">????</div>
         </div>
       </div>
       <div style="display: flex; align-items: center; font-size: 12px">
@@ -81,6 +84,10 @@
           </svg>
           <span class="ca_disconnects ca_placeholder">????</span>
         </div>
+        <div class="ca_opponent_info_section" title="Streak">
+          <span data-icon=""></span>
+          <span class="ca_win_streak_value ca_placeholder">????</span>
+        </div>
       </div>
     </div>
     <div class="ca_section ca_tabs">
@@ -108,11 +115,11 @@
       </span>
     </div>
     <div class="ca_section ca_tab_section ca_stats" style="margin: 0">
-      <canvas id="ca_stats_chart" class="ca_placeholder" height="100"></canvas>
-      <canvas id="ca_stats_move_times_chart" class="ca_placeholder" height="150"></canvas>
+      <canvas id="ca_stats_chart" class="ca_placeholder" height="90"></canvas>
+      <canvas id="ca_stats_move_times_chart" class="ca_placeholder" height="110"></canvas>
     </div>
     <div class="ca_section ca_tab_section ca_openings ca_hidden" style="margin: 0">
-      <canvas id="ca_openings_chart" class="ca_placeholder" height="250"></canvas>
+      <canvas id="ca_openings_chart" class="ca_placeholder" height="200"></canvas>
     </div>
     <div class="ca_section ca_tab_section ca_notes ca_hidden" style="margin: 0">
       <form action="" id="ca_save_opponent_notes_form">

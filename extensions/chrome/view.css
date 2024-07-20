@@ -35,6 +35,10 @@
   }
 }
 
+canvas {
+  width: 100%;
+}
+
 .ca_placeholder {
 }
 
@@ -57,12 +61,12 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 2vmin;
-  box-shadow:
-    0 2px 2px 0 rgba(0, 0, 0, 0.14),
-    0 3px 1px -2px rgba(0, 0, 0, 0.2),
-    0 1px 5px 0 rgba(0, 0, 0, 0.12);
-  border-radius: 3px;
+  margin-top: var(---block-gap);
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14),
+  0 3px 1px -2px rgba(0, 0, 0, 0.2),
+  0 1px 5px 0 rgba(0, 0, 0, 0.12);
+  border-radius: 6px;
+  overflow: hidden;
 }
 
 .ca_opponent_info {
@@ -92,7 +96,6 @@
   width: 100%;
   height: 100%;
   padding: 10px;
-  min-height: 440px;
 }
 
 .ca_auth_container {
@@ -151,17 +154,14 @@
 }
 
 .ca_win_streak_value {
-  padding: 0 2px;
 }
 
 .ca_win_streak_value.ca_negative {
   background-color: var(--error-dark);
-  border: 2px solid var(--error);
 }
 
 .ca_win_streak_value.ca_positive {
   background-color: var(--success-dark);
-  border: 2px solid var(--success);
 }
 
 .ca_game_info {
@@ -176,7 +176,7 @@
 }
 
 .ca_tabs {
-  margin-top: 20px;
+  margin-top: 10px;
   border-bottom: 1px solid var(--tab-border-color);
   display: flex;
   width: 100%;
@@ -237,17 +237,17 @@
   height: 1px;
   width: 100px;
   background-color: var(--color);
+  font-size: 10px;
 }
 
 .ca_elo_range .ca_elo_range_lowest,
 .ca_elo_range .ca_elo_range_current,
 .ca_elo_range .ca_elo_range_highest {
   position: absolute;
-  bottom: -5px;
   height: 10px;
-  width: 3px;
+  width: 2px;
   background-color: var(--color);
-  border-radius: 2px;
+  border-radius: 1px;
 }
 
 .ca_elo_range .ca_elo_range_lowest {
@@ -255,11 +255,11 @@
 }
 
 .ca_elo_range .ca_elo_range_lowest {
-  transform: translateX(-50%);
+  transform: translateX(-50%)  translateY(-50%);
 }
 
 .ca_elo_range .ca_elo_range_highest {
-  transform: translateX(50%);
+  transform: translateX(50%)  translateY(-50%);
 }
 
 .ca_elo_range .ca_elo_range_lowest_value,
@@ -271,11 +271,11 @@
 }
 
 .ca_elo_range .ca_elo_range_current {
-  bottom: -10px;
-  height: 20px;
+  height: 14px;
   left: 50%;
-  width: 5px;
+  width: 3px;
   transition: left 1s ease;
+  transform:  translateY(-50%);
 }
 
 .ca_elo_range .ca_elo_range_current_value {
@@ -322,7 +322,7 @@
 
 .ca_textarea {
   width: 100%;
-  height: 200px;
+  height: 165px;
   padding: 4px;
 }
 

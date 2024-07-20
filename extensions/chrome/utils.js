@@ -35,6 +35,7 @@ function _initTabs(selectors) {
         if (key === selectorKey) showTab(selectors[key]);
         else hideTab(selectors[key]);
       });
+      selectors[selectorKey].callback();
     });
   };
 
