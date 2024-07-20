@@ -373,7 +373,7 @@ function renderMoveTimesChart(response) {
 }
 
 function renderStatsChart(response) {
-  const labels = ["Wins (%)", "Losses (%)"];
+  const labels = ["Wins", "Losses"];
 
   const winByMate = response.games.stats.win.mateRate;
   const winByResign = response.games.stats.win.resignRate;
