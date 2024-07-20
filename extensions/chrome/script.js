@@ -28,30 +28,60 @@ function init() {
   );
 
   const port = chrome.runtime.connect({ name: "ca-port" });
+  const actions = (message) => ( {
+    GET_LICHESS_ACCESS_TOKEN: () => {
+      if (!message.payload) {
+        setupAuthContainerLogo();
+        setupAuthLichessButtonClick(port);
+        setAuthContainerVisibility(true);
+      } else {
+        onAccessToken(port, message.payload.value);
+      }
+    },
+    AUTH_LICHESS: () => {
+      onAccessToken(port, message.payload.value);
+    },
+    GET_PREFERENCES: () => {
+      onPreferences(message.payload);
+    }
+  });
 
   fetchView().then(() => {
     port.onMessage.addListener((message) => {
-      if (message.action === "GET_LICHESS_ACCESS_TOKEN") {
-        if (!message.payload) {
-          setupAuthContainerLogo();
-          setupAuthLichessButtonClick(port);
-          setAuthContainerVisibility(true);
-        } else {
-          onAccessToken(message.payload.value);
-        }
-      } else if (message.action === "AUTH_LICHESS") {
-        onAccessToken(message.payload.value);
+      const action = actions(message)[message.action];
+      if (action) {
+        action();
       } else {
         console.log(`Unhandled message received: ${message.action}`);
       }
     });
+
     port.postMessage({ action: "GET_LICHESS_ACCESS_TOKEN" });
   });
 }
 
-function onAccessToken(accessToken) {
+function onPreferences(preferences) {
+  if (preferences) {
+    console.log("Preferences found", preferences);
+    switch (preferences.currentTab) {
+      case "STATS":
+        document.querySelector(".ca_stats_tab_trigger").click();
+        break;
+      case "OPENINGS":
+        document.querySelector(".ca_openings_tab_trigger").click();
+        break;
+      case "NOTES":
+        document.querySelector(".ca_notes_tab_trigger").click();
+        break;
+    }
+  } else {
+    console.log("No preferences found");
+  }
+}
+
+function onAccessToken(port, accessToken) {
   setGameInfo();
-  initSubTabs();
+  initSubTabs(port);
   fetchOpponentNotes();
   setupSaveOpponentNotes();
   setAuthContainerVisibility(false);
@@ -199,21 +229,31 @@ function setLoaderVisibility(visible) {
   }
 }
 
-function initSubTabs() {
+function initSubTabs(port) {
   _initTabs({
     stats: {
       trigger: document.querySelector(".ca_stats_tab_trigger"),
       el: document.querySelector(".ca_stats"),
+      callback: () => {
+        port.postMessage({ action: "SAVE_PREFERENCES", payload: { currentTab: "STATS" } });
+      }
     },
     openings: {
       trigger: document.querySelector(".ca_openings_tab_trigger"),
       el: document.querySelector(".ca_openings"),
+      callback: () => {
+        port.postMessage({ action: "SAVE_PREFERENCES", payload: { currentTab: "OPENINGS" } });
+      }
     },
     notes: {
       trigger: document.querySelector(".ca_notes_tab_trigger"),
       el: document.querySelector(".ca_notes"),
+      callback: () => {
+        port.postMessage({ action: "SAVE_PREFERENCES", payload: { currentTab: "NOTES" } });
+      }
     },
   });
+  port.postMessage({ action: "GET_PREFERENCES" });
 }
 
 function renderAnalytics(response) {

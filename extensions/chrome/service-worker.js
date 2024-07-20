@@ -1,1 +1,1 @@
-importScripts("./auth.js");
+importScripts("./auth.js", "./preferences.js");
