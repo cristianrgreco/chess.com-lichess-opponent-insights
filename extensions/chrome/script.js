@@ -269,7 +269,7 @@ function renderAnalytics(response) {
   }
 
   renderEloSlider(response);
-  document.querySelector(".ca_puzzle_rating").innerText = response.latestPuzzleRating?.value ?? "N/A";
+  document.querySelector(".ca_puzzle_rating").innerText = response.latestPuzzleRating?.value ?? "NA";
   const disconnectPercentage = (
     (response.performance.totalNumberOfDisconnects / response.performance.totalNumberOfGames) *
     100
