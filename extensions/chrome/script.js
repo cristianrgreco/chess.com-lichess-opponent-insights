@@ -104,7 +104,7 @@ function fetchView() {
       return response.text();
     })
     .then((responseText) => {
-      document.querySelector(".round__side").insertAdjacentHTML("afterbegin", responseText);
+      document.querySelector(".mchat").insertAdjacentHTML("beforebegin", responseText);
     });
 }
 
@@ -212,12 +212,14 @@ function initSubTabs() {
 
 function renderAnalytics(response) {
   const winStreakEl = document.querySelector(".ca_win_streak_value");
-  if (response.performance.currentWinningStreak <= 0) {
+  if (response.performance.currentLosingStreak > 0) {
     winStreakEl.innerText = `-${response.performance.currentLosingStreak}`;
     winStreakEl.classList.add("ca_negative");
-  } else {
+  } else if (response.performance.currentWinningStreak > 0) {
     winStreakEl.innerText = `+${response.performance.currentWinningStreak}`;
     winStreakEl.classList.add("ca_positive");
+  } else {
+    winStreakEl.innerText = "0";
   }
 
   renderEloSlider(response);

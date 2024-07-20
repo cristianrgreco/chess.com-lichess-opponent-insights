@@ -17,7 +17,7 @@
     <button id="auth_lichess_btn" class="ca_button ca_button_large ca_btn-win">Authorise with Lichess</button>
   </div>
   <div class="ca_container ca_hidden">
-    <div class="ca_section" style="display: flex; align-items: center; text-align: center">
+    <div class="ca_section" style="display: flex; align-items: center; text-align: center; display: none">
       <div>
         <div class="ca_opponent_name ca_placeholder">???</div>
         <div class="ca_game_info">
@@ -31,23 +31,19 @@
             <span class="ca_opponent_colour"></span>
           </div>
           <span>&bull;</span>
-          <div>
-            <span>Streak: </span>
-            <span class="ca_win_streak_value ca_placeholder">??</span>
-          </div>
         </div>
       </div>
     </div>
     <div class="ca_section ca_opponent_info">
       <div class="ca_elo_range">
         <div class="ca_elo_range_lowest">
-          <div class="ca_elo_range_lowest_value"></div>
+          <div class="ca_elo_range_lowest_value ca_placeholder">????</div>
         </div>
         <div class="ca_elo_range_current">
-          <div class="ca_elo_range_current_value"></div>
+          <div class="ca_elo_range_current_value ca_placeholder">????</div>
         </div>
         <div class="ca_elo_range_highest">
-          <div class="ca_elo_range_highest_value"></div>
+          <div class="ca_elo_range_highest_value ca_placeholder">????</div>
         </div>
       </div>
       <div style="display: flex; align-items: center; font-size: 12px">
@@ -80,6 +76,10 @@
             />
           </svg>
           <span class="ca_disconnects ca_placeholder">????</span>
+        </div>
+        <div class="ca_opponent_info_section" title="Streak">
+          <span data-icon=""></span>
+          <span class="ca_win_streak_value ca_placeholder">????</span>
         </div>
       </div>
     </div>
