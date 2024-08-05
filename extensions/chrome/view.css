@@ -153,8 +153,8 @@ canvas {
 }
 
 .ca_win_streak_value {
-  border-radius: 2px;
-  padding: 0 1px;
+  border-radius: 4px;
+  padding: 0 2px;
 }
 
 .ca_win_streak_value.ca_negative {
@@ -178,7 +178,7 @@ canvas {
 
 .ca_tabs {
   margin-top: 10px;
-  border-bottom: 1px solid var(--tab-border-color);
+  border-bottom: 1px solid var(--tab-background-color);
   display: flex;
   width: 100%;
   justify-content: center;
@@ -198,7 +198,9 @@ canvas {
   text-align: center;
   margin: 0 1px;
   width: 80px;
-  border-radius: 3px 3px 0 0;
+  border: 1px solid var(--tab-background-color);
+  border-bottom: none;
+  border-radius: 6px 6px 0 0;
 }
 
 .ca_tab:hover {
@@ -213,8 +215,6 @@ canvas {
 .ca_tab:active,
 .ca_tab.ca_active {
   background-color: var(--tab-active-background-color);
-  border: 1px solid var(--c-border);
-  border-bottom: none;
 }
 
 .ca_tabs.fill_width .ca_tab {
@@ -247,10 +247,10 @@ canvas {
 .ca_elo_range .ca_elo_range_current,
 .ca_elo_range .ca_elo_range_highest {
   position: absolute;
-  height: 10px;
+  height: 6px;
   width: 2px;
   background-color: var(--color);
-  border-radius: 1px;
+  border-radius: 6px;
 }
 
 .ca_elo_range .ca_elo_range_lowest {
@@ -274,7 +274,7 @@ canvas {
 }
 
 .ca_elo_range .ca_elo_range_current {
-  height: 14px;
+  height: 12px;
   left: 50%;
   width: 3px;
   transition: left 1s ease;
@@ -339,6 +339,10 @@ canvas {
 
 #ca_save_opponent_notes_form {
   width: 100%;
+}
+
+.ca_notes_tab_trigger > svg {
+  height: var(--font-size);
 }
 
 .ca_error {
