@@ -3,6 +3,11 @@ let opponent;
 let opponentColour;
 let gameType;
 
+let fontColour;
+let backgroundColour;
+let successColour;
+let errorColour;
+
 const API = "https://rlabb3msg0.execute-api.eu-west-2.amazonaws.com/prod";
 
 if (document.title.includes("Play ")) {
@@ -26,6 +31,12 @@ function init() {
   console.log(
     `Current user: ${user}, Opponent: ${opponent}, Opponent colour: ${opponentColour}, Game type: ${gameType}`,
   );
+
+  const style = getComputedStyle(document.body);
+  fontColour = style.getPropertyValue('--color');
+  backgroundColour = style.getPropertyValue('--background-color');
+  successColour = style.getPropertyValue('--success');
+  errorColour = style.getPropertyValue('--error');
 
   const port = chrome.runtime.connect({ name: "ca-port" });
   const actions = (message) => ( {
@@ -330,10 +341,10 @@ function renderMoveTimesChart(response) {
           title: {
             display: true,
             text: "Time Remaining",
-            color: "rgb(186, 186, 186)",
+            color: fontColour,
           },
           ticks: {
-            color: "rgb(186, 186, 186)",
+            color: fontColour,
             callback: formatToDpIfHasDecimals(0),
           },
           max: maxMoveTimeLabel,
@@ -343,10 +354,10 @@ function renderMoveTimesChart(response) {
           title: {
             display: true,
             text: "Time Taken",
-            color: "rgb(186, 186, 186)",
+            color: fontColour,
           },
           ticks: {
-            color: "rgb(186, 186, 186)",
+            color: fontColour,
             callback: formatToDpIfHasDecimals(0),
           },
           max: maxMoveTimeValue,
@@ -356,12 +367,12 @@ function renderMoveTimesChart(response) {
         title: {
           display: true,
           text: "Move Times",
-          color: "rgb(186, 186, 186)",
+          color: fontColour,
         },
         legend: {
           display: false,
           labels: {
-            color: "rgb(186, 186, 186)",
+            color: fontColour,
           },
         },
         tooltip: {
@@ -389,12 +400,12 @@ function renderStatsChart(response) {
     {
       label: "Mate",
       data: [winByMate, loseByMate],
-      backgroundColor: "#68ab5e",
+      backgroundColor: successColour,
     },
     {
       label: "Resign",
       data: [winByResign, loseByResign],
-      backgroundColor: "#AB615E",
+      backgroundColor: errorColour,
     },
     {
       label: "Flag",
@@ -424,7 +435,7 @@ function renderStatsChart(response) {
           stacked: true,
           ticks: {
             autoSkip: false,
-            color: "rgb(186, 186, 186)",
+            color: fontColour,
             callback: (val) => `${val * 100}%`,
           },
           max: 1,
@@ -434,14 +445,14 @@ function renderStatsChart(response) {
             font: {
               size: 12,
             },
-            color: "rgb(186, 186, 186)",
+            color: fontColour,
           },
         },
         y: {
           stacked: true,
           ticks: {
             autoSkip: false,
-            color: "rgb(186, 186, 186)",
+            color: fontColour,
           },
         },
       },
@@ -466,11 +477,11 @@ function renderStatsChart(response) {
         title: {
           display: false,
           text: "Game Results",
-          color: "rgb(186, 186, 186)",
+          color: fontColour,
         },
         legend: {
           labels: {
-            color: "rgb(186, 186, 186)",
+            color: fontColour,
             boxWidth: 12,
             boxHeight: 12,
           },
@@ -513,7 +524,7 @@ function renderOpeningsChart(response) {
     {
       label: "Wins",
       data: totalWins,
-      backgroundColor: "#68ab5e",
+      backgroundColor: successColour,
     },
     {
       label: "Draws",
@@ -523,7 +534,7 @@ function renderOpeningsChart(response) {
     {
       label: "Losses",
       data: totalLosses,
-      backgroundColor: "#AB615E",
+      backgroundColor: errorColour,
     },
   ];
 
@@ -543,7 +554,7 @@ function renderOpeningsChart(response) {
           stacked: true,
           ticks: {
             autoSkip: false,
-            color: "rgb(186, 186, 186)",
+            color: fontColour,
           },
           title: {
             display: true,
@@ -551,14 +562,14 @@ function renderOpeningsChart(response) {
             font: {
               size: 12,
             },
-            color: "rgb(186, 186, 186)",
+            color: fontColour,
           },
         },
         y: {
           stacked: true,
           ticks: {
             autoSkip: false,
-            color: "rgb(186, 186, 186)",
+            color: fontColour,
           },
         },
       },
@@ -585,7 +596,7 @@ function renderOpeningsChart(response) {
         },
         legend: {
           labels: {
-            color: "rgb(186, 186, 186)",
+            color: fontColour,
             boxWidth: 12,
             boxHeight: 12,
           },
