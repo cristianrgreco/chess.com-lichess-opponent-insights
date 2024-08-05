@@ -239,7 +239,7 @@ canvas {
   position: relative;
   height: 1px;
   width: 100px;
-  background-color: var(--color);
+  background-color: var(--tab-border-color);
   font-size: 10px;
 }
 

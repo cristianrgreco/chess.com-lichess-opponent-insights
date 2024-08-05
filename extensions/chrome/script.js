@@ -365,7 +365,7 @@ function renderMoveTimesChart(response) {
       },
       plugins: {
         title: {
-          display: true,
+          display: false,
           text: "Move Times",
           color: fontColour,
         },
