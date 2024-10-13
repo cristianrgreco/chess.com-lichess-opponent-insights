@@ -1,0 +1,151 @@
+= Chess.com API Notes
+
+== Stats
+
+https://api.chess.com/pub/player/leanbeansteenmachine/stats
+
+.Example response
+[%collapsible]
+====
+[source,json]
+----
+{
+  "chess_rapid": { <1>
+    "last": {
+      "rating": 1176,
+      "date": 1656963999,
+      "rd": 77
+    },
+    "best": {
+      "rating": 1196,
+      "date": 1656951163,
+      "game": "https://www.chess.com/game/live/50689821209"
+    },
+    "record": {
+      "win": 587,
+      "loss": 543,
+      "draw": 44
+    }
+  },
+  "chess_blitz": {
+    "last": {
+      "rating": 1284,
+      "date": 1726599068,
+      "rd": 98
+    },
+    "best": {
+      "rating": 1346,
+      "date": 1726171613,
+      "game": "https://www.chess.com/game/live/84229755459"
+    },
+    "record": {
+      "win": 99,
+      "loss": 45,
+      "draw": 2
+    }
+  },
+  "fide": 0,
+  "tactics": { <2>
+    "highest": {
+      "rating": 570,
+      "date": 1656235930
+    },
+    "lowest": {
+      "rating": 412,
+      "date": 1613765585
+    }
+  },
+  "puzzle_rush": {
+    "best": {
+      "total_attempts": 15,
+      "score": 14
+    }
+  }
+}
+----
+<1> Game type.
+<2> Puzzle score.
+====
+
+== Games
+
+=== Fetch list of games by year/month
+
+https://api.chess.com/pub/player/leanbeansteenmachine/games/archives
+
+.Example response
+[%collapsible]
+====
+[source,json]
+----
+{
+  "archives": [
+    "https://api.chess.com/pub/player/leanbeansteenmachine/games/2021/01",
+    "https://api.chess.com/pub/player/leanbeansteenmachine/games/2021/02",
+    "https://api.chess.com/pub/player/leanbeansteenmachine/games/2021/03",
+    "https://api.chess.com/pub/player/leanbeansteenmachine/games/2021/06",
+    "https://api.chess.com/pub/player/leanbeansteenmachine/games/2021/07",
+    "https://api.chess.com/pub/player/leanbeansteenmachine/games/2021/12",
+    "https://api.chess.com/pub/player/leanbeansteenmachine/games/2022/01",
+    "https://api.chess.com/pub/player/leanbeansteenmachine/games/2022/06",
+    "https://api.chess.com/pub/player/leanbeansteenmachine/games/2022/07",
+    "https://api.chess.com/pub/player/leanbeansteenmachine/games/2023/04",
+    "https://api.chess.com/pub/player/leanbeansteenmachine/games/2023/07",
+    "https://api.chess.com/pub/player/leanbeansteenmachine/games/2023/08",
+    "https://api.chess.com/pub/player/leanbeansteenmachine/games/2024/09" <1>
+  ]
+}
+----
+<1> Use the latest set of games.
++
+NOTE: It may be worth fetching a few months worth, but note that Chess.com API has concurrency limits. It's also unclear what game types are contained within the archive. For example if the user is currently playing blitz, perhaps all the games in the archive are classic. Does this matter?
+====
+
+=== Fetch games for a specific year/month
+
+https://api.chess.com/pub/player/leanbeansteenmachine/games/2024/09
+
+.Example response
+[%collapsible]
+====
+[source,json]
+----
+{
+  "games": [
+    {
+      "url": "https://www.chess.com/game/live/119612392669",
+      "pgn": "[Event \"Live Chess\"]\n[Site \"Chess.com\"]\n[Date \"2024.09.09\"]\n[Round \"-\"]\n[White \"leanbeansteenmachine\"]\n[Black \"Juma8476\"]\n[Result \"0-1\"]\n[CurrentPosition \"3k2nr/1p4pp/2p1Bp2/3p4/1q1b4/8/PPP3PP/1K1R3R w - -\"]\n[Timezone \"UTC\"]\n[ECO \"A40\"]\n[ECOUrl \"https://www.chess.com/openings/Queens-Pawn-Opening-Mikenas-Defense-2.d5-Ne5\"]\n[UTCDate \"2024.09.09\"]\n[UTCTime \"09:15:47\"]\n[WhiteElo \"1240\"]\n[BlackElo \"1256\"]\n[TimeControl \"300\"]\n[Termination \"Juma8476 won - game abandoned\"]\n[StartTime \"09:15:47\"]\n[EndDate \"2024.09.09\"]\n[EndTime \"09:23:26\"]\n[Link \"https://www.chess.com/game/live/119612392669\"]\n\n1. d4 {[%clk 0:04:59.5]} 1... Nc6 {[%clk 0:04:56.5]} 2. d5 {[%clk 0:04:55.3]} 2... Ne5 {[%clk 0:04:54.3]} 3. f4 {[%clk 0:04:49.8]} 3... Ng6 {[%clk 0:04:52.7]} 4. f5 {[%clk 0:04:47.5]} 4... Ne5 {[%clk 0:04:43]} 5. Bf4 {[%clk 0:04:44]} 5... d6 {[%clk 0:04:28.2]} 6. Qd4 {[%clk 0:04:39.3]} 6... Bxf5 {[%clk 0:04:08]} 7. Bxe5 {[%clk 0:04:37]} 7... dxe5 {[%clk 0:04:06.9]} 8. Qxe5 {[%clk 0:04:36.1]} 8... Bg6 {[%clk 0:03:58.9]} 9. e4 {[%clk 0:04:24.2]} 9... Qd6 {[%clk 0:03:57.2]} 10. Nf3 {[%clk 0:04:13.2]} 10... O-O-O {[%clk 0:03:37.4]} 11. Nc3 {[%clk 0:04:02.1]} 11... f6 {[%clk 0:03:03.2]} 12. Qd4 {[%clk 0:03:54.7]} 12... e6 {[%clk 0:02:40]} 13. Qxa7 {[%clk 0:03:47.6]} 13... exd5 {[%clk 0:02:37]} 14. O-O-O {[%clk 0:03:36.6]} 14... Qf4+ {[%clk 0:02:23.6]} 15. Kb1 {[%clk 0:03:33.4]} 15... Bxe4 {[%clk 0:02:02.9]} 16. Nxe4 {[%clk 0:03:25.5]} 16... Qxe4 {[%clk 0:01:58.6]} 17. Bb5 {[%clk 0:03:19.1]} 17... c6 {[%clk 0:01:53.1]} 18. Bd3 {[%clk 0:03:10.2]} 18... Qb4 {[%clk 0:01:42.5]} 19. Bf5+ {[%clk 0:03:03.2]} 19... Kc7 {[%clk 0:01:35.9]} 20. Nd4 {[%clk 0:02:55.5]} 20... Rd6 {[%clk 0:00:59.2]} 21. Ne6+ {[%clk 0:02:48.7]} 21... Rxe6 {[%clk 0:00:53.9]} 22. Bxe6 {[%clk 0:02:47]} 22... Bc5 {[%clk 0:00:50.8]} 23. Qa8 {[%clk 0:02:39.1]} 23... Bd4 {[%clk 0:00:34.6]} 24. Qd8+ {[%clk 0:02:30]} 24... Kxd8 {[%clk 0:00:27.2]} 0-1\n", <1>
+      "time_control": "300",
+      "end_time": 1725873806,
+      "rated": true,
+      "tcn": "lB5QBJQKnDKUDLUKcDZRdB6LDKRKBKLUmC7Rgv86bs1TKB0SBWSJecRDcbUCsCDCfHYQHtCztL6YvB7RBSRSLS9IW4IB47Y7",
+      "uuid": "194d07af-6e8c-11ef-96c6-6cfe544c0428",
+      "initial_setup": "",
+      "fen": "3k2nr/1p4pp/2p1Bp2/3p4/1q1b4/8/PPP3PP/1K1R3R w - -",
+      "time_class": "blitz", <2>
+      "rules": "chess",
+      "white": {
+        "rating": 1240,
+        "result": "abandoned", <3>
+        "@id": "https://api.chess.com/pub/player/leanbeansteenmachine", <4>
+        "username": "leanbeansteenmachine",
+        "uuid": "b15cacce-4dc3-11eb-9922-031db97d75f9"
+      },
+      "black": {
+        "rating": 1256,
+        "result": "win",
+        "@id": "https://api.chess.com/pub/player/juma8476",
+        "username": "Juma8476",
+        "uuid": "a55d386e-96a7-11ee-8a17-f3d024d67d31"
+      },
+      "eco": "https://www.chess.com/openings/Queens-Pawn-Opening-Mikenas-Defense-2.d5-Ne5" <5>
+    }
+  ]
+}
+----
+<1> Can find move times here.
+<2> Need to find games that match the same game type. Does this matter?
+<3> Game result from the perspective of the current user.
+<4> Knowing who the current user is, we can determine which colour they played as by finding the matching ID.
+<5> Can find opening name by getting everything before the first number. For example `Queens-Pawn-Opening-Mikenas-Defense-2.d5-Ne5` becomes `Queens-Pawn-Opening-Mikenas-Defense`
+====
