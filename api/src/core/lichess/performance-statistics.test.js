@@ -1,5 +1,5 @@
 import { fetchLichessUserPerformanceStatistics } from "./performance-statistics.js";
-import { PAT } from "../../../test/conf.js";
+import { PAT } from "../../test/conf.js";
 
 describe("Lichess performance statistics", () => {
   it("should return total number of games", async () => {
