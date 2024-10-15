@@ -33,13 +33,13 @@ function init() {
   );
 
   const style = getComputedStyle(document.body);
-  fontColour = style.getPropertyValue('--color');
-  backgroundColour = style.getPropertyValue('--background-color');
-  successColour = style.getPropertyValue('--success');
-  errorColour = style.getPropertyValue('--error');
+  fontColour = style.getPropertyValue("--color");
+  backgroundColour = style.getPropertyValue("--background-color");
+  successColour = style.getPropertyValue("--success");
+  errorColour = style.getPropertyValue("--error");
 
   const port = chrome.runtime.connect({ name: "ca-port" });
-  const actions = (message) => ( {
+  const actions = (message) => ({
     GET_LICHESS_ACCESS_TOKEN: () => {
       if (!message.payload) {
         setupAuthContainerLogo();
@@ -54,7 +54,7 @@ function init() {
     },
     GET_PREFERENCES: () => {
       onPreferences(message.payload);
-    }
+    },
   });
 
   fetchView().then(() => {
@@ -247,21 +247,21 @@ function initSubTabs(port) {
       el: document.querySelector(".ca_stats"),
       callback: () => {
         port.postMessage({ action: "SAVE_PREFERENCES", payload: { currentTab: "STATS" } });
-      }
+      },
     },
     openings: {
       trigger: document.querySelector(".ca_openings_tab_trigger"),
       el: document.querySelector(".ca_openings"),
       callback: () => {
         port.postMessage({ action: "SAVE_PREFERENCES", payload: { currentTab: "OPENINGS" } });
-      }
+      },
     },
     notes: {
       trigger: document.querySelector(".ca_notes_tab_trigger"),
       el: document.querySelector(".ca_notes"),
       callback: () => {
         port.postMessage({ action: "SAVE_PREFERENCES", payload: { currentTab: "NOTES" } });
-      }
+      },
     },
   });
   port.postMessage({ action: "GET_PREFERENCES" });
