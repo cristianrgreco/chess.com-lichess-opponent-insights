@@ -24,28 +24,31 @@ test("should return latest puzzle rating", async () => {
   });
 });
 
+test("should return game stats", async () => {
+  expect(machineAnalytics.games.stats).toEqual({
+    numberOfGames: 60,
+    win: {
+      mateRate: 0.7,
+      outOfTimeRate: 0,
+      resignRate: 0.16666666666666666,
+    },
+    lose: {
+      mateRate: 0.3,
+      outOfTimeRate: 0.13333333333333333,
+      resignRate: 0.3,
+    },
+  });
+});
+
 /*
 {
     "performance": {
-        "totalNumberOfDisconnects": 466,
-        "currentLosingStreak": 4,
+        "totalNumberOfDisconnects": 466, // todo where the game result is "abandoned"
+        "currentLosingStreak": 4, // todo can be calculated by order of game results, same for below
         "currentWinningStreak": 0,
         "tilt": true
     },
     "games": {
-        "stats": {
-            "numberOfGames": 60,
-            "win": {
-                "mateRate": 0.1,
-                "resignRate": 0.6666666666666666,
-                "outOfTimeRate": 0.16666666666666666
-            },
-            "lose": {
-                "mateRate": 0.27586206896551724,
-                "resignRate": 0.7241379310344828,
-                "outOfTimeRate": 0
-            }
-        },
         "openings": [
             {
                 "name": "Queen's Gambit Accepted",
@@ -129,9 +132,5 @@ test("should return latest puzzle rating", async () => {
             ]
         ]
     },
-    "latestPuzzleRating": {
-        "date": "2024-09-10T00:00:00.000Z",
-        "value": 2052
-    }
 }
  */
