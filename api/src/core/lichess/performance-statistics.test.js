@@ -2,43 +2,43 @@ import { fetchLichessUserPerformanceStatistics } from "./performance-statistics.
 import { PAT } from "../../test/conf.js";
 
 describe("Lichess performance statistics", () => {
+  let tmevansGames;
+  let codeGames;
+
+  beforeAll(async () => {
+    tmevansGames = await fetchLichessUserPerformanceStatistics(PAT, "tmevans", "blitz");
+    codeGames = await fetchLichessUserPerformanceStatistics(PAT, "iwishicouldcode", "blitz");
+  });
+
   it("should return total number of games", async () => {
-    const stats = await fetchLichessUserPerformanceStatistics(PAT, "tmevans", "blitz");
-    expect(stats.totalNumberOfGames).toBeGreaterThanOrEqual(3900);
+    expect(tmevansGames.totalNumberOfGames).toBeGreaterThanOrEqual(3900);
   });
 
   it("should return a user's lowest rating", async () => {
-    const stats = await fetchLichessUserPerformanceStatistics(PAT, "tmevans", "blitz");
-    expect(stats.lowestRating).toBeLessThan(1400);
+    expect(tmevansGames.lowestRating).toBeLessThan(1400);
   });
 
   it("should return a user's highest rating", async () => {
-    const stats = await fetchLichessUserPerformanceStatistics(PAT, "tmevans", "blitz");
-    expect(stats.highestRating).toBeGreaterThan(1400);
+    expect(tmevansGames.highestRating).toBeGreaterThan(1400);
   });
 
   it("should return a user's current rating", async () => {
-    const stats = await fetchLichessUserPerformanceStatistics(PAT, "tmevans", "blitz");
-    expect(stats.currentRating).toBeGreaterThan(1400);
+    expect(tmevansGames.currentRating).toBeGreaterThan(1400);
   });
 
   it("should return a user's current losing streak", async () => {
-    const stats = await fetchLichessUserPerformanceStatistics(PAT, "tmevans", "blitz");
-    expect(stats.currentLosingStreak).toBeGreaterThanOrEqual(0);
+    expect(tmevansGames.currentLosingStreak).toBeGreaterThanOrEqual(0);
   });
 
   it("should return a user's current winning streak", async () => {
-    const stats = await fetchLichessUserPerformanceStatistics(PAT, "tmevans", "blitz");
-    expect(stats.currentWinningStreak).toBeGreaterThanOrEqual(0);
+    expect(tmevansGames.currentWinningStreak).toBeGreaterThanOrEqual(0);
   });
 
   it("should return tilt mode true if loss greater gte 3", async () => {
-    const stats = await fetchLichessUserPerformanceStatistics(PAT, "iwishicouldcode", "blitz");
-    expect(stats.tilt).toBe(true);
+    expect(codeGames.tilt).toBe(true);
   });
 
   it("should return total number of disconnects", async () => {
-    const stats = await fetchLichessUserPerformanceStatistics(PAT, "tmevans", "blitz");
-    expect(stats.totalNumberOfDisconnects).toBeGreaterThan(5);
+    expect(tmevansGames.totalNumberOfDisconnects).toBeGreaterThan(5);
   });
 });

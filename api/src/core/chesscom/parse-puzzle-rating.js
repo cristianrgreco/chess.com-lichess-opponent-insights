@@ -1,4 +1,4 @@
-import {chesscomDateToString} from "./utils.js";
+import { chesscomDateToString } from "./utils.js";
 
 export function parsePuzzleRating({ tactics }) {
   const { lowest, highest } = tactics;

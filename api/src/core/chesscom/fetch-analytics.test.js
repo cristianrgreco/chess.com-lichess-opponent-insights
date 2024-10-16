@@ -1,8 +1,13 @@
-import {fetchAnalytics} from "./fetch-analytics.js";
+import { fetchAnalytics } from "./fetch-analytics.js";
+
+let machineAnalytics;
+
+beforeAll(async () => {
+  machineAnalytics = await fetchAnalytics("leanbeansteenmachine", "blitz", "white");
+});
 
 test("should return performance rating history", async () => {
-  const analytics = await fetchAnalytics("leanbeansteenmachine", "blitz", "white");
-  expect(analytics.performance).toEqual({
+  expect(machineAnalytics.performance).toEqual({
     lowestRating: 1186,
     lowestRatingDateTime: null,
     highestRating: 1346,
@@ -13,27 +18,15 @@ test("should return performance rating history", async () => {
 });
 
 test("should return latest puzzle rating", async () => {
-  const analytics = await fetchAnalytics("leanbeansteenmachine", "blitz", "white");
-  expect(analytics.latestPuzzleRating).toEqual({
+  expect(machineAnalytics.latestPuzzleRating).toEqual({
     date: "2022-06-26T09:32:10.000Z",
     value: 570,
   });
 });
 
-
-
-
-
-
 /*
 {
     "performance": {
-        "lowestRating": 1355,
-        "lowestRatingDateTime": "2023-04-18T04:25:38.804Z",
-        "highestRating": 1694,
-        "highestRatingDateTime": "2021-06-05T13:08:24.985Z",
-        "currentRating": 1474.43,
-        "totalNumberOfGames": 22577,
         "totalNumberOfDisconnects": 466,
         "currentLosingStreak": 4,
         "currentWinningStreak": 0,

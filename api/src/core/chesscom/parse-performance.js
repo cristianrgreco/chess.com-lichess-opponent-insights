@@ -1,4 +1,4 @@
-import {chesscomDateToString} from "./utils.js";
+import { chesscomDateToString } from "./utils.js";
 
 export function parsePerformance(response, gameType) {
   const performance = response[`chess_${gameType}`];
