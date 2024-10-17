@@ -5,19 +5,19 @@ import { fetchLichessUserRatingHistory } from "../core/lichess/user-rating-histo
 import {fetchAnalytics} from "../core/chesscom/fetch-analytics.js";
 
 export async function fetchUserAnalytics(event) {
-  const authorisation = event.headers?.Authorization;
-  if (!authorisation) {
-    return {
-      statusCode: 401,
-      headers: corsHeaders,
-    };
-  }
-
   console.log(`Request received: ${JSON.stringify(event.queryStringParameters)}`);
 
   const { platform, username, colour, gameType } = event.queryStringParameters;
 
   if (platform === "lichess") {
+    const authorisation = event.headers?.Authorization;
+    if (!authorisation) {
+      return {
+        statusCode: 401,
+        headers: corsHeaders,
+      };
+    }
+
     // Cannot be parallelised as Lichess allows only one request at a time
     const games = await fetchLichessUserGames(authorisation, username, gameType, colour);
     const performance = await fetchLichessUserPerformanceStatistics(authorisation, username, gameType);
@@ -38,7 +38,7 @@ export async function fetchUserAnalytics(event) {
   } else if (platform === "chesscom") {
     return {
       statusCode: 200,
-      body: JSON.stringify(fetchAnalytics(username, gameType, colour)),
+      body: JSON.stringify(await fetchAnalytics(username, gameType, colour)),
       headers: corsHeaders,
     };
   }
