@@ -1,8 +1,8 @@
 export function parseMoveTimes(games, colour) {
   return games.map((game) => {
     const moveTimes = parseMoveTimesFromPgn(game.pgn);
-    const moveTimesForWhite = extractMoveTimesForOpponent(moveTimes, colour);
-    const moveTimesInSeconds = convertMoveTimesToSeconds(moveTimesForWhite);
+    const moveTimesForColour = extractMoveTimesForOpponent(moveTimes, colour);
+    const moveTimesInSeconds = convertMoveTimesToSeconds(moveTimesForColour);
 
     return calculateMoveTimeDurations(moveTimesInSeconds);
   });
