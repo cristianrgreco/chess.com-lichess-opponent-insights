@@ -2,6 +2,7 @@ import { fetchLichessUserGames } from "../core/lichess/export-games.js";
 import { fetchLichessUserPerformanceStatistics } from "../core/lichess/performance-statistics.js";
 import corsHeaders from "./cors-headers.js";
 import { fetchLichessUserRatingHistory } from "../core/lichess/user-rating-history.js";
+import {fetchAnalytics} from "../core/chesscom/fetch-analytics.js";
 
 export async function fetchUserAnalytics(event) {
   const authorisation = event.headers?.Authorization;
@@ -16,28 +17,29 @@ export async function fetchUserAnalytics(event) {
 
   const { platform, username, colour, gameType } = event.queryStringParameters;
 
-  if (platform !== "lichess") {
+  if (platform === "lichess") {
+    // Cannot be parallelised as Lichess allows only one request at a time
+    const games = await fetchLichessUserGames(authorisation, username, gameType, colour);
+    const performance = await fetchLichessUserPerformanceStatistics(authorisation, username, gameType);
+    const latestPuzzleRating = await fetchLichessUserRatingHistory(authorisation, username, "Puzzles");
+
+    if (!games || !performance) {
+      return {
+        statusCode: 404,
+        headers: corsHeaders,
+      };
+    }
+
     return {
-      statusCode: 501,
+      statusCode: 200,
+      body: JSON.stringify({ performance, games, latestPuzzleRating }),
+      headers: corsHeaders,
+    };
+  } else if (platform === "chesscom") {
+    return {
+      statusCode: 200,
+      body: JSON.stringify(fetchAnalytics(username, gameType, colour)),
       headers: corsHeaders,
     };
   }
-
-  // Cannot be parallelised as Lichess allows only one request at a time
-  const games = await fetchLichessUserGames(authorisation, username, gameType, colour);
-  const performance = await fetchLichessUserPerformanceStatistics(authorisation, username, gameType);
-  const latestPuzzleRating = await fetchLichessUserRatingHistory(authorisation, username, "Puzzles");
-
-  if (!games || !performance) {
-    return {
-      statusCode: 404,
-      headers: corsHeaders,
-    };
-  }
-
-  return {
-    statusCode: 200,
-    body: JSON.stringify({ performance, games, latestPuzzleRating }),
-    headers: corsHeaders,
-  };
 }
