@@ -24,6 +24,22 @@ test("should return the last X games", async () => {
   expect(games).toEqual(expectedGames);
 });
 
+test("should return the last X games where opponent name is case insensitive", async () => {
+  const expectedGames = [
+    createGame("win", "blitz", "white"),
+    createGame("resigned", "blitz", "white"),
+    createGame("timeout", "blitz", "white"),
+  ];
+  scope.get("/pub/player/OPPONENT/games/archives").reply(200, {
+    archives: ["https://api.chess.com/pub/player/OPPONENT/games/2024/10"],
+  });
+  scope.get("/pub/player/OPPONENT/games/2024/10").reply(200, { games: expectedGames });
+
+  const games = await fetchGames(3, "OPPONENT", "blitz", "white");
+
+  expect(games).toEqual(expectedGames);
+});
+
 test("should fetch from multiple archives until last X games returned in descending chronological order", async () => {
   const expectedGames = [
     createGame("win", "blitz", "white"),
