@@ -12,8 +12,8 @@ const pgn = `[Event \"Live Chess\"]\n[Site \"Chess.com\"]\n[Date \"2024.09.12\"]
 test("should parse move times from PGN", () => {
   const moveTimes = parseMoveTimesFromPgn(pgn);
 
-  expect(moveTimes).toContain("0:05:00");
-  expect(moveTimes).toContain("0:04:56.4");
+  expect(moveTimes[0]).toEqual("0:05:00");
+  expect(moveTimes[1]).toEqual("0:04:56.4");
 });
 
 test("should extract move times for a given colour", () => {
