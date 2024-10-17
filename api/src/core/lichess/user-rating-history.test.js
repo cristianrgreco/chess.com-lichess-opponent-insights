@@ -1,5 +1,5 @@
 import { fetchLichessUserRatingHistory } from "./user-rating-history.js";
-import { PAT } from "../../../test/conf.js";
+import { PAT } from "../../test/conf.js";
 
 describe("Lichess user rating history", () => {
   it("should return latest puzzle rating", async () => {
