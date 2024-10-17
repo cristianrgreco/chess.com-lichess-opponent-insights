@@ -115,9 +115,9 @@ describe("streaks", () => {
 
   test("should set tilt to true if lost >= 3 games in a row", () => {
     const games = [
-      createGame("lose", "blitz", "white", TEST_TIMESTAMP),
-      createGame("lose", "blitz", "white", TEST_TIMESTAMP - 1),
-      createGame("lose", "blitz", "white", TEST_TIMESTAMP - 2),
+      createGame("checkmated", "blitz", "white", TEST_TIMESTAMP),
+      createGame("checkmated", "blitz", "white", TEST_TIMESTAMP - 1),
+      createGame("checkmated", "blitz", "white", TEST_TIMESTAMP - 2),
     ];
 
     const performance = parsePerformance(statsResponse, games, "blitz", "white");
@@ -127,8 +127,8 @@ describe("streaks", () => {
 
   test("should set tilt to false if lost < 3 games in a row", () => {
     const games = [
-      createGame("lose", "blitz", "white", TEST_TIMESTAMP),
-      createGame("lose", "blitz", "white", TEST_TIMESTAMP - 1),
+      createGame("checkmated", "blitz", "white", TEST_TIMESTAMP),
+      createGame("checkmated", "blitz", "white", TEST_TIMESTAMP - 1),
       createGame("win", "blitz", "white", TEST_TIMESTAMP - 2),
     ];
 

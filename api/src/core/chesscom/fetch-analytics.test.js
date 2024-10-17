@@ -44,85 +44,39 @@ test("should return game stats", async () => {
   });
 });
 
+test("should return game openings", async () => {
+  const opening = machineAnalytics.games.openings.find(
+    (opening) => opening.name === "Queens Pawn Opening Accelerated London System",
+  );
+
+  expect(opening).toEqual({
+    name: "Queens Pawn Opening Accelerated London System",
+    insights: {
+      numberOfGames: 10,
+      results: {
+        win: {
+          resigned: 4,
+          checkmated: 3,
+          timeout: 2,
+        },
+        lose: {
+          resigned: 1,
+        },
+        draw: {},
+      },
+      totals: {
+        win: 9,
+        lose: 1,
+        draw: 0,
+      },
+    },
+    variations: [],
+  });
+});
+
 /*
 {
     "games": {
-        "openings": [
-            {
-                "name": "Queen's Gambit Accepted",
-                "insights": {
-                    "numberOfGames": 12,
-                    "results": {
-                        "win": {
-                            "outoftime": 1,
-                            "mate": 2,
-                            "timeout": 2,
-                            "resign": 3
-                        },
-                        "lose": {
-                            "resign": 3
-                        },
-                        "draw": {
-                            "stalemate": 1
-                        }
-                    },
-                    "totals": {
-                        "win": 8,
-                        "lose": 3,
-                        "draw": 1
-                    }
-                },
-                "variations": []
-            },
-            {
-                "name": "Slav Defense",
-                "insights": {
-                    "numberOfGames": 7,
-                    "results": {
-                        "win": {
-                            "resign": 3
-                        },
-                        "lose": {
-                            "mate": 2,
-                            "resign": 2
-                        },
-                        "draw": {}
-                    },
-                    "totals": {
-                        "win": 3,
-                        "lose": 4,
-                        "draw": 0
-                    }
-                },
-                "variations": [
-                    {
-                        "name": "Old Variation",
-                        "insights": {
-                            "numberOfGames": 11,
-                            "results": {
-                                "win": {
-                                    "outoftime": 1,
-                                    "mate": 2,
-                                    "timeout": 2,
-                                    "resign": 2
-                                },
-                                "lose": {
-                                    "resign": 3
-                                },
-                                "draw": {
-                                    "stalemate": 1
-                                }
-                            },
-                            "totals": {
-                                "win": 7,
-                                "lose": 3,
-                                "draw": 1
-                            }
-                        }
-                    }
-                ]
-            }
-        ],
         "moveTimes": [
             [
                 302.35,

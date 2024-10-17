@@ -3,6 +3,7 @@ import { parsePerformance } from "./parse-performance.js";
 import { parsePuzzleRating } from "./parse-puzzle-rating.js";
 import { fetchGames } from "./fetch-games.js";
 import { parseGameStats } from "./parse-game-stats.js";
+import { parseOpenings } from "./parse-openings.js";
 
 export async function fetchAnalytics(username, gameType, colour) {
   const statsResponse = await fetch(`https://api.chess.com/pub/player/${username}/stats`);
@@ -13,6 +14,8 @@ export async function fetchAnalytics(username, gameType, colour) {
   return {
     games: {
       stats: parseGameStats(games, colour),
+      openings: parseOpenings(games, colour),
+      moveTimes: [],
     },
     performance: parsePerformance(statsResponseJson, games, gameType, colour),
     latestPuzzleRating: parsePuzzleRating(statsResponseJson),
