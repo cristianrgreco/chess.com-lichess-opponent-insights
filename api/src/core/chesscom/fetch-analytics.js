@@ -14,7 +14,7 @@ export async function fetchAnalytics(username, gameType, colour) {
     games: {
       stats: parseGameStats(games, colour),
     },
-    performance: parsePerformance(statsResponseJson, gameType),
+    performance: parsePerformance(statsResponseJson, games, gameType, colour),
     latestPuzzleRating: parsePuzzleRating(statsResponseJson),
   };
 }

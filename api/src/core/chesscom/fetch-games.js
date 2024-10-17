@@ -22,5 +22,8 @@ export async function fetchGames(numberOfGames, username, gameType, colour) {
     games.push(...gamesToAdd);
   }
 
+  const sortByEndTimeDesc = (a, b) => b["end_time"] - a["end_time"];
+  games.sort(sortByEndTimeDesc);
+
   return games;
 }

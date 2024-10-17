@@ -6,7 +6,7 @@ beforeAll(async () => {
   machineAnalytics = await fetchAnalytics("leanbeansteenmachine", "blitz", "white");
 });
 
-test("should return performance rating history", async () => {
+test("should return performance", async () => {
   expect(machineAnalytics.performance).toEqual({
     lowestRating: 1186,
     lowestRatingDateTime: null,
@@ -14,6 +14,10 @@ test("should return performance rating history", async () => {
     highestRatingDateTime: "2024-09-12T20:06:53.000Z",
     currentRating: 1284,
     totalNumberOfGames: 146,
+    totalNumberOfDisconnects: 1,
+    currentLosingStreak: 1,
+    currentWinningStreak: 0,
+    tilt: false,
   });
 });
 
@@ -42,12 +46,6 @@ test("should return game stats", async () => {
 
 /*
 {
-    "performance": {
-        "totalNumberOfDisconnects": 466, // todo where the game result is "abandoned"
-        "currentLosingStreak": 4, // todo can be calculated by order of game results, same for below
-        "currentWinningStreak": 0,
-        "tilt": true
-    },
     "games": {
         "openings": [
             {
