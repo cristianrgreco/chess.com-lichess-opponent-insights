@@ -15,7 +15,8 @@ export function parseOpenings(games, colour) {
   }
 
   const results = Array.from(openings.values());
-  results.sort((a, b) => b.insights.numberOfGames - a.insights.numberOfGames);
+  const sortByNumberOfGamesDesc = (a, b) => b.insights.numberOfGames - a.insights.numberOfGames;
+  results.sort(sortByNumberOfGamesDesc);
 
   return results;
 }

@@ -1,7 +1,7 @@
 import {
   calculateMoveTimeDurations,
   convertMoveTimesToSeconds,
-  extractMoveTimesForOpponent,
+  extractMoveTimesForColour,
   parseMoveTimes,
   parseMoveTimesFromPgn,
 } from "./parse-move-times.js";
@@ -19,17 +19,17 @@ test("should parse move times from PGN", () => {
 test("should extract move times for a given colour", () => {
   const moveTimes = parseMoveTimesFromPgn(pgn);
 
-  const moveTimesForWhite = extractMoveTimesForOpponent(moveTimes, "white");
+  const moveTimesForWhite = extractMoveTimesForColour(moveTimes, "white");
   expect(moveTimesForWhite[0]).toEqual("0:05:00");
   expect(moveTimesForWhite[1]).toEqual("0:04:59");
-  const moveTimesForBlack = extractMoveTimesForOpponent(moveTimes, "black");
+  const moveTimesForBlack = extractMoveTimesForColour(moveTimes, "black");
   expect(moveTimesForBlack[0]).toEqual("0:04:56.4");
   expect(moveTimesForBlack[1]).toEqual("0:04:54.3");
 });
 
 test("should convert move times to seconds", () => {
   const moveTimes = parseMoveTimesFromPgn(pgn);
-  const moveTimesForWhite = extractMoveTimesForOpponent(moveTimes, "white");
+  const moveTimesForWhite = extractMoveTimesForColour(moveTimes, "white");
 
   const moveTimesInSeconds = convertMoveTimesToSeconds(moveTimesForWhite);
 
@@ -39,7 +39,7 @@ test("should convert move times to seconds", () => {
 
 test("should calculate the durations between moves", () => {
   const moveTimes = parseMoveTimesFromPgn(pgn);
-  const moveTimesForWhite = extractMoveTimesForOpponent(moveTimes, "white");
+  const moveTimesForWhite = extractMoveTimesForColour(moveTimes, "white");
   const moveTimesInSeconds = convertMoveTimesToSeconds(moveTimesForWhite);
 
   const moveTimeDurations = calculateMoveTimeDurations(moveTimesInSeconds);

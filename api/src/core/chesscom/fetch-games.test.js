@@ -62,6 +62,27 @@ test("should fetch from multiple archives until last X games returned in descend
   expect(games).toEqual(expectedGames);
 });
 
+test("should not return more than X games", async () => {
+  const expectedGames = [
+    createGame("win", "blitz", "white"),
+    createGame("resigned", "blitz", "white"),
+  ];
+  scope.get("/pub/player/opponent/games/archives").reply(200, {
+    archives: [
+      "https://api.chess.com/pub/player/opponent/games/2024/10",
+      "https://api.chess.com/pub/player/opponent/games/2024/11",
+      "https://api.chess.com/pub/player/opponent/games/2024/12",
+    ],
+  });
+  scope.get("/pub/player/opponent/games/2024/10").reply(200, { games: [createGame("timeout", "blitz", "white")] });
+  scope.get("/pub/player/opponent/games/2024/11").reply(200, { games: [expectedGames[1]] });
+  scope.get("/pub/player/opponent/games/2024/12").reply(200, { games: [expectedGames[0]] });
+
+  const games = await fetchGames(2, "opponent", "blitz", "white");
+
+  expect(games).toEqual(expectedGames);
+});
+
 test("should return games by type", async () => {
   const expectedGames = [
     createGame("win", "blitz", "white"),
