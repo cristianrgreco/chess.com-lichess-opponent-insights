@@ -1,5 +1,5 @@
-import { fetchLichessUserGames } from "./export-games.js";
-import { PAT } from "../../test/conf.js";
+import { fetchLichessUserGames } from "@/core/lichess/export-games.js";
+import { PAT } from "../../conf.js";
 
 describe("Lichess export games", () => {
   let spaghettiGames;

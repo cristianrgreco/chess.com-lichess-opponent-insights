@@ -2,7 +2,7 @@ import { fetchLichessUserGames } from "../core/lichess/export-games.js";
 import { fetchLichessUserPerformanceStatistics } from "../core/lichess/performance-statistics.js";
 import corsHeaders from "./cors-headers.js";
 import { fetchLichessUserRatingHistory } from "../core/lichess/user-rating-history.js";
-import {fetchAnalytics} from "../core/chesscom/fetch-analytics.js";
+import { fetchAnalytics } from "../core/chesscom/fetch-analytics.js";
 
 export async function fetchUserAnalytics(event) {
   console.log(`Request received: ${JSON.stringify(event.queryStringParameters)}`);

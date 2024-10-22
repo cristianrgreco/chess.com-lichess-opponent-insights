@@ -1,8 +1,9 @@
 import { LocalstackContainer } from "@testcontainers/localstack";
-import { getDocClient } from "../core/dynamodb.js";
+import { getDocClient } from "../../src/core/dynamodb.js";
 import { CreateTableCommand } from "@aws-sdk/client-dynamodb";
 import yaml from "yaml";
 import fs from "fs";
+import path from "path";
 
 export async function setup() {
   if (!process.env.LICHESS_PAT) {
@@ -15,8 +16,9 @@ export async function setup() {
   process.env.LOCALSTACK_URI = globalThis.localstackContainer.getConnectionUri();
 
   console.log("Creating DynamoDB tables...");
+  const serverlessYamlPath = path.resolve(__dirname, "..", "..", "serverless.yml");
   await Promise.all(
-    Object.values(yaml.parse(fs.readFileSync("serverless.yml", "utf8")).resources.Resources).map((tableDefinition) =>
+    Object.values(yaml.parse(fs.readFileSync(serverlessYamlPath, "utf8")).resources.Resources).map((tableDefinition) =>
       getDocClient().send(new CreateTableCommand(tableDefinition.Properties)),
     ),
   );

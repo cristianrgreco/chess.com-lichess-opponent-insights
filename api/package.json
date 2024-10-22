@@ -5,8 +5,8 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "vitest run src",
-    "format": "npx prettier --write --print-width 120 src ../extensions/chrome/{manifest.json,*.js,*.html,*.css}"
+    "test": "vitest run",
+    "format": "npx prettier --write --print-width 120 src test ../extensions/chrome/{manifest.json,*.js,*.html,*.css}"
   },
   "author": "",
   "license": "ISC",

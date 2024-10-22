@@ -1,4 +1,4 @@
-import { fetchAnalytics } from "./fetch-analytics.js";
+import { fetchAnalytics } from "@/core/chesscom/fetch-analytics.js";
 
 let machineAnalytics;
 

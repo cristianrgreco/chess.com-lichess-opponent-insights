@@ -1,5 +1,5 @@
 import { createGame } from "./test-utils.js";
-import { parseOpenings } from "./parse-openings.js";
+import { parseOpenings } from "@/core/chesscom/parse-openings.js";
 
 test("should parse opening names", () => {
   const games = [

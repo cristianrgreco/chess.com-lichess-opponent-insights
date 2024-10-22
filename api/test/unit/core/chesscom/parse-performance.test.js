@@ -1,4 +1,4 @@
-import { parsePerformance } from "./parse-performance.js";
+import { parsePerformance } from "@/core/chesscom/parse-performance.js";
 import { createGame, TEST_TIMESTAMP } from "./test-utils.js";
 
 test("should parse stats performance", () => {

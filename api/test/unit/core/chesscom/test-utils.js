@@ -1,4 +1,4 @@
-import { flipColour } from "./utils.js";
+import { flipColour } from "@/core/chesscom/utils.js";
 
 export const TEST_TIMESTAMP = 1704067200;
 export const TEST_OPENING = "Queens-Pawn-Opening-Mikenas-Defense-2.d5-Ne5";

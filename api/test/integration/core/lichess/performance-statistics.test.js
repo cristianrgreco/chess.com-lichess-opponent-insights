@@ -1,5 +1,5 @@
-import { fetchLichessUserPerformanceStatistics } from "./performance-statistics.js";
-import { PAT } from "../../test/conf.js";
+import { fetchLichessUserPerformanceStatistics } from "@/core/lichess/performance-statistics.js";
+import { PAT } from "../../conf.js";
 
 describe("Lichess performance statistics", () => {
   let tmevansGames;
