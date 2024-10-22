@@ -1,4 +1,4 @@
-import { parseGameStats } from "./parse-game-stats.js";
+import { parseGameStats } from "@/core/chesscom/parse-game-stats.js";
 import { createGame } from "./test-utils.js";
 
 test("should return number of games", () => {

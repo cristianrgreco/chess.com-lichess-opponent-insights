@@ -1,4 +1,4 @@
-import { parsePuzzleRating } from "./parse-puzzle-rating.js";
+import { parsePuzzleRating } from "@/core/chesscom/parse-puzzle-rating.js";
 
 test("should parse puzzle rating", () => {
   const input = {

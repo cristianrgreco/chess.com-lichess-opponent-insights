@@ -1,4 +1,8 @@
-import { calculateMoveTimeDurations, convertMoveTimesToSeconds, extractOpponentMoveTimes } from "./move-times.js";
+import {
+  calculateMoveTimeDurations,
+  convertMoveTimesToSeconds,
+  extractOpponentMoveTimes,
+} from "@/core/lichess/move-times.js";
 
 describe("extract opponent move times", () => {
   it("should extract move times when opponent colour is white", () => {

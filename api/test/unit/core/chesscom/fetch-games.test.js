@@ -1,10 +1,11 @@
 import nock from "nock";
-import { fetchGames } from "./fetch-games.js";
 import { createGame } from "./test-utils.js";
+import { fetchGames } from "@/core/chesscom/fetch-games.js";
 
 let scope;
 
 beforeEach(() => {
+  nock.cleanAll();
   scope = nock("https://api.chess.com");
 });
 
@@ -63,10 +64,7 @@ test("should fetch from multiple archives until last X games returned in descend
 });
 
 test("should not return more than X games", async () => {
-  const expectedGames = [
-    createGame("win", "blitz", "white"),
-    createGame("resigned", "blitz", "white"),
-  ];
+  const expectedGames = [createGame("win", "blitz", "white"), createGame("resigned", "blitz", "white")];
   scope.get("/pub/player/opponent/games/archives").reply(200, {
     archives: [
       "https://api.chess.com/pub/player/opponent/games/2024/10",
