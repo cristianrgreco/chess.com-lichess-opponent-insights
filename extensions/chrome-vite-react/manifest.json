@@ -1,0 +1,11 @@
+{
+  "manifest_version": 3,
+  "name": "CRXJS React Vite Example",
+  "version": "1.0.0",
+  "content_scripts": [
+    {
+      "js": ["src/main.jsx"],
+      "matches": ["https://www.google.com/*"]
+    }
+  ]
+}
