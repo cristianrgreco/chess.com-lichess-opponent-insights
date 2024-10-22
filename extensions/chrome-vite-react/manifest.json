@@ -4,8 +4,16 @@
   "version": "1.0.0",
   "content_scripts": [
     {
-      "js": ["src/main.jsx"],
-      "matches": ["https://www.google.com/*"]
+      "js": [
+        "src/main.jsx"
+      ],
+      "matches": [
+        "https://www.google.com/*"
+      ]
     }
-  ]
+  ],
+  "background": {
+    "service_worker": "src/background/main.js",
+    "type": "module"
+  }
 }
