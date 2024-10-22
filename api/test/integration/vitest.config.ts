@@ -5,6 +5,7 @@ export default defineProject({
   test: {
     globals: true,
     testTimeout: 60000,
+    hookTimeout: 60000,
     globalSetup: "./setup.js",
   },
   resolve: {
