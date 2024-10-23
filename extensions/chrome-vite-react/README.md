@@ -3,7 +3,9 @@
 Developed using [Vite + React](https://crxjs.dev/vite-plugin/).
 
 ## Development
+
 Start the development server locally:
+
 ```bash
 npm run dev
 ```
