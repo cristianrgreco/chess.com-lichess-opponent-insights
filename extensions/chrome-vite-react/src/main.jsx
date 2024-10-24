@@ -3,8 +3,6 @@ import ReactDOM from "react-dom/client";
 import LichessApp from "./lichess/LichessApp";
 import "./index.css";
 
-const port = chrome.runtime.connect({ name: "ca-port" });
-
 if (document.location.hostname === "lichess.org" && document.title.includes("Play ")) {
   renderLichessApp();
 }

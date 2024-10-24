@@ -9,6 +9,8 @@
     "format": "npx prettier --write --print-width 120 manifest.json src"
   },
   "dependencies": {
+    "chart.js": "^4.4.5",
+    "chartjs-plugin-datalabels": "^2.2.0",
     "react": "^18.0.0",
     "react-dom": "^18.0.0"
   },
