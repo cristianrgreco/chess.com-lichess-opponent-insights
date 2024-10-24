@@ -1,2 +1,2 @@
-import "./auth.js"
-import "./preferences.js"
+import "./preferences.js";
+import "./lichess-auth";

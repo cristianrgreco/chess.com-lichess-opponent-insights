@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "format": "npx prettier --write --print-width 120 manifest.json src"
   },
   "dependencies": {
     "react": "^18.0.0",

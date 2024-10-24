@@ -11,12 +11,8 @@
   },
   "content_scripts": [
     {
-      "js": [
-        "src/main.jsx"
-      ],
-      "matches": [
-        "https://www.google.com/*"
-      ]
+      "js": ["src/main.jsx"],
+      "matches": ["https://lichess.org/*"]
     }
   ],
   "background": {

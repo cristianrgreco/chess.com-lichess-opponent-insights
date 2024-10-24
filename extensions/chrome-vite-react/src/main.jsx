@@ -1,14 +1,20 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App'
-import './index.css'
+import React from "react";
+import ReactDOM from "react-dom/client";
+import LichessApp from "./lichess/LichessApp";
+import "./index.css";
 
-const root = document.createElement("div");
-root.id = "crx-root";
-document.body.appendChild(root);
+const port = chrome.runtime.connect({ name: "ca-port" });
 
-ReactDOM.createRoot(root).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-)
+if (document.location.hostname === "lichess.org" && document.title.includes("Play ")) {
+  renderLichessApp();
+}
+
+function renderLichessApp() {
+  const rootDiv = document.createElement("div");
+  document.querySelector(".mchat").insertAdjacentElement("beforebegin", rootDiv);
+  ReactDOM.createRoot(rootDiv).render(
+    <React.StrictMode>
+      <LichessApp />
+    </React.StrictMode>,
+  );
+}
