@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import * as api from "./api.js";
+import "./LichessApp.css";
 import "chart.js/auto";
 import AuthComponent from "./components/AuthComponent";
 import EloRangeComponent from "./components/EloRangeComponent";
