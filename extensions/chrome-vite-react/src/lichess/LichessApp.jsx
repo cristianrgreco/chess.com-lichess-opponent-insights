@@ -1,16 +1,18 @@
 import logo from "../logo_128x128.png";
 import Chart from "chart.js/auto";
-import ChartDataLabels from 'chartjs-plugin-datalabels';
-import {useEffect} from "react";
+import ChartDataLabels from "chartjs-plugin-datalabels";
+import { useEffect } from "react";
 
 function LichessApp({ port }) {
   useEffect(() => {
     const API = "https://rlabb3msg0.execute-api.eu-west-2.amazonaws.com/prod";
     const user = document.querySelector("#user_tag").innerText;
     const opponent = Array.from(document.querySelectorAll(".game__meta .player .user-link"))
-    .map((playerElement) => playerElement.getAttribute("href").split("/").pop())
-    .filter((player) => player !== user)[0];
-    const opponentColour = document.querySelector(".game__meta .player.white").innerHTML.includes(opponent) ? "white" : "black";
+      .map((playerElement) => playerElement.getAttribute("href").split("/").pop())
+      .filter((player) => player !== user)[0];
+    const opponentColour = document.querySelector(".game__meta .player.white").innerHTML.includes(opponent)
+      ? "white"
+      : "black";
     const gameType = document.querySelector(".game__meta .header .setup span[title]").innerText.toLowerCase();
 
     const supportedGameTypes = ["bullet", "blitz", "rapid", "classical"];
@@ -20,7 +22,7 @@ function LichessApp({ port }) {
     }
 
     console.log(
-        `Current user: ${user}, Opponent: ${opponent}, Opponent colour: ${opponentColour}, Game type: ${gameType}`,
+      `Current user: ${user}, Opponent: ${opponent}, Opponent colour: ${opponentColour}, Game type: ${gameType}`,
     );
 
     const style = getComputedStyle(document.body);
@@ -132,43 +134,34 @@ function LichessApp({ port }) {
       });
     }
 
-    function fetchView() {
-      console.log("Fetching HTML...");
-      return fetch(chrome.runtime.getURL(`./view.html`))
-      .then((response) => {
-        console.log("Fetched HTML");
-        return response.text();
-      })
-      .then((responseText) => {
-        document.querySelector(".mchat").insertAdjacentHTML("beforebegin", responseText);
-      });
-    }
-
     function fetchUserAnalytics(accessToken) {
       console.log("Fetching user analytics...");
-      fetch(`${API}/user-analytics?platform=lichess&username=${opponent}&gameType=${gameType}&colour=${opponentColour}`, {
-        headers: { Authorization: `Bearer ${accessToken}` },
-      })
-      .then((response) => (response.ok ? response.json() : Promise.reject(response)))
-      .then((response) => {
-        console.log("Fetched user analytics");
-        render(response);
-      })
-      .catch((response) => renderError("Failed to fetch user analytics", response));
+      fetch(
+        `${API}/user-analytics?platform=lichess&username=${opponent}&gameType=${gameType}&colour=${opponentColour}`,
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        },
+      )
+        .then((response) => (response.ok ? response.json() : Promise.reject(response)))
+        .then((response) => {
+          console.log("Fetched user analytics");
+          render(response);
+        })
+        .catch((response) => renderError("Failed to fetch user analytics", response));
     }
 
     function fetchOpponentNotes() {
       console.log("Fetching opponent notes...");
       fetch(`${API}/opponent-notes?username=${user}&opponentName=${opponent}`)
-      .then((response) => (response.ok ? response.json() : Promise.reject(response)))
-      .then((responseJson) => {
-        console.log("Fetched opponent notes");
-        if (responseJson.notes) {
-          document.querySelector(".ca_notes_tab_trigger").classList.add("ca_green_colour");
-          document.querySelector("#ca_opponent_notes").value = responseJson.notes;
-        }
-      })
-      .catch((response) => renderError("Failed to fetch opponent notes", response));
+        .then((response) => (response.ok ? response.json() : Promise.reject(response)))
+        .then((responseJson) => {
+          console.log("Fetched opponent notes");
+          if (responseJson.notes) {
+            document.querySelector(".ca_notes_tab_trigger").classList.add("ca_green_colour");
+            document.querySelector("#ca_opponent_notes").value = responseJson.notes;
+          }
+        })
+        .catch((response) => renderError("Failed to fetch opponent notes", response));
     }
 
     function saveOpponentNotes() {
@@ -183,12 +176,12 @@ function LichessApp({ port }) {
           notes: document.querySelector("#ca_opponent_notes").value,
         }),
       })
-      .then((response) => (response.ok ? Promise.resolve() : Promise.reject(response)))
-      .then(() => console.log("Saved opponent notes"))
-      .catch((response) => renderError("Failed to save opponent notes", response))
-      .finally(() => {
-        saveButton.removeAttribute("disabled");
-      });
+        .then((response) => (response.ok ? Promise.resolve() : Promise.reject(response)))
+        .then(() => console.log("Saved opponent notes"))
+        .catch((response) => renderError("Failed to save opponent notes", response))
+        .finally(() => {
+          saveButton.removeAttribute("disabled");
+        });
     }
 
     function render(response) {
@@ -228,7 +221,6 @@ function LichessApp({ port }) {
         placeholderEls.forEach((el) => el.classList.remove("ca_placeholder_enabled"));
       }
     }
-
 
     function _initTabs(selectors) {
       const hideTab = (selector) => {
@@ -296,8 +288,8 @@ function LichessApp({ port }) {
       renderEloSlider(response);
       document.querySelector(".ca_puzzle_rating").innerText = response.latestPuzzleRating?.value ?? "NA";
       const disconnectPercentage = (
-          (response.performance.totalNumberOfDisconnects / response.performance.totalNumberOfGames) *
-          100
+        (response.performance.totalNumberOfDisconnects / response.performance.totalNumberOfGames) *
+        100
       ).toFixed(1);
       document.querySelector(".ca_disconnects").innerText = `${disconnectPercentage}%`;
       renderStatsChart(response);
@@ -325,13 +317,13 @@ function LichessApp({ port }) {
 
     function renderMoveTimesChart(response) {
       const moveTimesLabels = Array.from(
-          new Set(response.games.moveTimes.flatMap((moveTimesList) => moveTimesList.map((moveTime) => moveTime[0]))),
+        new Set(response.games.moveTimes.flatMap((moveTimesList) => moveTimesList.map((moveTime) => moveTime[0]))),
       );
       moveTimesLabels.sort();
 
       const maxMoveTimeLabel = Math.max(...moveTimesLabels);
       const maxMoveTimeValue = Math.max(
-          ...response.games.moveTimes.flatMap((moveTimesList) => moveTimesList.map((moveTime) => moveTime[1])),
+        ...response.games.moveTimes.flatMap((moveTimesList) => moveTimesList.map((moveTime) => moveTime[1])),
       );
 
       const moveTimesData = response.games.moveTimes.map((moveTimesList, i) => ({
@@ -513,23 +505,8 @@ function LichessApp({ port }) {
     }
 
     function renderOpeningsChart(response) {
-      const calcResultWinRate = (opening, rateName) =>
-          ((opening.insights.results.win[rateName] ?? 0) / opening.insights.numberOfGames) * 100;
-      const calcResultLoseRate = (opening, rateName) =>
-          ((opening.insights.results.lose[rateName] ?? 0) / opening.insights.numberOfGames) * 100;
       const data = response.games.openings.filter((g) => g.insights.numberOfGames > 2);
       const openingLabels = data.map((g) => g.name);
-      const openingMateRate = data.map((g) => calcResultWinRate(g, "mate")).slice(0, 10);
-      const openingResignRate = data.map((g) => calcResultWinRate(g, "resign")).slice(0, 10);
-      const openingDrawRate = data.map((g) => calcResultWinRate(g, "draw")).slice(0, 10);
-      const openingStalemateRate = data.map((g) => calcResultWinRate(g, "stalemate"));
-      const openingWinOutOfTimeRate = data.map((g) => calcResultWinRate(g, "outoftime"));
-      const openingLoseOutOfTimeRate = data.map((g) => calcResultLoseRate(g, "outoftime"));
-      const openingWinTimeoutRate = data.map((g) => calcResultWinRate(g, "timeout"));
-      const openingLoseTimeoutRate = data.map((g) => calcResultLoseRate(g, "timeout"));
-
-      const openingNumberOfGames = data.map((g) => g.insights.numberOfGames);
-
       const totalWins = data.map((g) => g.insights.totals.win);
       const totalDraws = data.map((g) => g.insights.totals.draw);
       const totalLosses = data.map((g) => g.insights.totals.lose);
@@ -622,7 +599,7 @@ function LichessApp({ port }) {
     }
 
     return () => {
-      console.log("Disconnecting port")
+      console.log("Disconnecting port");
       port.disconnect();
     };
   }, []);
