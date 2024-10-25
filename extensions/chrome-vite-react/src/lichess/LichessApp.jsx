@@ -546,7 +546,7 @@ export default function LichessApp({ port, gameInfo: { user, opponent, opponentC
                 <textarea
                   id="ca_opponent_notes"
                   className={`ca_textarea ca_placeholder ${userAnalytics ? "" : "ca_placeholder_enabled"}`}
-                  value={`${opponentNotes}` ?? ""}
+                  value={opponentNotes ? opponentNotes : ""}
                   onChange={(e) => setOpponentNotes(e.target.value)}
                 ></textarea>
               </div>

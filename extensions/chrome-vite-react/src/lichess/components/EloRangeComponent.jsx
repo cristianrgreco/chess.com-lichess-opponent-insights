@@ -25,15 +25,15 @@ export default function EloRangeComponent({ isLoading, userAnalytics }) {
 
   return (
     <div className="ca_elo_range">
-      <div className="ca_elo_range_lowest">
+      <div className="ca_elo_range_lowest" data-testid="elo-lowest">
         <div className={`ca_elo_range_lowest_value ca_placeholder ${placeholderClass}`} title={lowestTitle}>
           {lowestText}
         </div>
       </div>
-      <div className="ca_elo_range_current" style={{ left: `${percentageIncrease}%` }}>
+      <div className="ca_elo_range_current" data-testid="elo-current" style={{ left: `${percentageIncrease}%` }}>
         <div className={`ca_elo_range_current_value ca_placeholder ${placeholderClass}`}>{currentText}</div>
       </div>
-      <div className="ca_elo_range_highest">
+      <div className="ca_elo_range_highest" data-testid="elo-highest">
         <div className={`ca_elo_range_highest_value ca_placeholder ${placeholderClass}`} title={highestTitle}>
           {highestText}
         </div>
