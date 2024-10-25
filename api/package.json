@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "test": "vitest run",
-    "format": "npx prettier --write --print-width 120 src test ../extensions/chrome/{manifest.json,*.js,*.html,*.css}"
+    "format": "npx prettier --write --print-width 120 src tests ../extensions/chrome/{manifest.json,*.js,*.html,*.css}"
   },
   "author": "",
   "license": "ISC",
