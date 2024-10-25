@@ -1,0 +1,55 @@
+.ca_elo_range {
+  margin-right: 20px;
+  position: relative;
+  height: 1px;
+  width: 100px;
+  background-color: var(--tab-border-color);
+  font-size: 10px;
+}
+
+.ca_elo_range .ca_elo_range_lowest,
+.ca_elo_range .ca_elo_range_current,
+.ca_elo_range .ca_elo_range_highest {
+  position: absolute;
+  height: 6px;
+  width: 2px;
+  background-color: var(--color);
+  border-radius: 6px;
+}
+
+.ca_elo_range .ca_elo_range_lowest {
+  left: 0;
+}
+
+.ca_elo_range .ca_elo_range_lowest {
+  transform: translateX(-50%) translateY(-50%);
+}
+
+.ca_elo_range .ca_elo_range_highest {
+  transform: translateX(50%) translateY(-50%);
+}
+
+.ca_elo_range .ca_elo_range_lowest_value,
+.ca_elo_range .ca_elo_range_current_value,
+.ca_elo_range .ca_elo_range_highest_value {
+  position: absolute;
+  top: 15px;
+  transform: translateX(-50%);
+}
+
+.ca_elo_range .ca_elo_range_current {
+  height: 12px;
+  left: 50%;
+  width: 3px;
+  transition: left 1s ease;
+  transform: translateY(-50%);
+}
+
+.ca_elo_range .ca_elo_range_current_value {
+  top: -15px;
+  left: 50%;
+}
+
+.ca_elo_range .ca_elo_range_highest {
+  right: 0;
+}

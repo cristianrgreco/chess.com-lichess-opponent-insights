@@ -4,7 +4,7 @@ import "./AuthComponent.css";
 export default function AuthComponent({ onClickAuthorise }) {
   return (
     <div className="ca_auth_container">
-      <div className="ca_title">Lichess Opponent Information</div>
+      <div className="ca_auth_container_title">Lichess Opponent Information</div>
       <div className="ca_auth_content_container">
         <img id="ca_logo" alt="Logo" src={chrome.runtime.getURL(logo)} />
         <div>
