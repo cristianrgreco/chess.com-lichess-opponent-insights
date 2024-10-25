@@ -356,7 +356,6 @@ canvas {
   text-align: center;
   padding: 12px;
   background-color: var(--error);
-  margin-bottom: 20px;
   color: white;
 }
 
