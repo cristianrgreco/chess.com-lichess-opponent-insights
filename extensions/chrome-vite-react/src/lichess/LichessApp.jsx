@@ -6,9 +6,12 @@ import AuthComponent from "./components/AuthComponent";
 import EloRangeComponent from "./components/EloRangeComponent";
 import StatsChartComponent from "./components/StatsChartComponent";
 import { PageStylesProvider } from "./PageStylesContext.js";
-import OpeningsChartComponent from "./components/OpeningsChartComponent.jsx";
-import MoveTimesChartComponent from "./components/MoveTimesChartComponent.jsx";
-import { DisconnectIcon, NotesIcon, PuzzleIcon } from "@/Icons.jsx";
+import OpeningsChartComponent from "./components/OpeningsChartComponent";
+import MoveTimesChartComponent from "./components/MoveTimesChartComponent";
+import { DisconnectIcon, NotesIcon, PuzzleIcon } from "../Icons";
+import ErrorComponent from "./components/ErrorComponent";
+import OpponentNotesComponent from "./components/OpponentNotesComponent";
+import Tab from "./components/Tab";
 
 export default function LichessApp({ port, gameInfo: { user, opponent, opponentColour, gameType } }) {
   const [currentTab, setCurrentTab] = useState("STATS");
@@ -24,66 +27,74 @@ export default function LichessApp({ port, gameInfo: { user, opponent, opponentC
   const errorColour = style.getPropertyValue("--error");
 
   useEffect(() => {
-    port.onMessage.addListener((message) => {
-      const action = actions(message)[message.action];
-      if (action) {
-        action();
-      } else {
-        console.log(`Unhandled message received: ${message.action}`);
+    function listener(message) {
+      switch (message.action) {
+        case "GET_LICHESS_ACCESS_TOKEN":
+          if (message.payload) {
+            setAccessToken(message.payload.value);
+          } else {
+            setAccessToken(undefined);
+          }
+          break;
+        case "AUTH_LICHESS":
+          setAccessToken(message.payload.value);
+          break;
+        case "GET_PREFERENCES":
+          onPreferences(message.payload);
+          break;
+        default:
+          console.log(`Unhandled message received: ${message.action}`);
       }
-    });
+    }
+
+    console.log("Adding listener to port");
+    port.onMessage.addListener(listener);
+
+    console.log("Fetching access token");
     port.postMessage({ action: "GET_LICHESS_ACCESS_TOKEN" });
+
+    return () => {
+      console.log("Removing listener from port");
+      port.onMessage.removeListener(listener);
+    };
   }, []);
 
   useEffect(() => {
     if (accessToken) {
+      console.log("Found access token");
+      console.log("Fetching preferences");
       port.postMessage({ action: "GET_PREFERENCES" });
       fetchUserAnalytics();
       fetchOpponentNotes();
     }
   }, [accessToken]);
 
-  const actions = (message) => ({
-    GET_LICHESS_ACCESS_TOKEN: () => {
-      if (message.payload) {
-        setAccessToken(message.payload.value);
-      } else {
-        setAccessToken(undefined);
-      }
-    },
-    AUTH_LICHESS: () => {
-      setAccessToken(message.payload.value);
-    },
-    GET_PREFERENCES: () => {
-      onRetrievePreferences(message.payload);
-    },
-  });
-
-  function onClickAuthoriseWithLichess() {
+  function onClickAuthorise() {
     port.postMessage({ action: "AUTH_LICHESS", payload: { user } });
   }
 
-  function onSubmitSaveOpponentNotes(e) {
+  function onSaveOpponentNotes(e) {
     e.preventDefault();
     saveOpponentNotes();
   }
 
-  function onRetrievePreferences(preferences) {
+  function onPreferences(preferences) {
     if (preferences) {
-      console.log("Setting current tab from preferences", preferences.currentTab);
+      console.log(`Setting current tab from preferences: ${preferences.currentTab}`);
       setCurrentTab(preferences.currentTab);
     } else {
-      console.log("No preferences found");
+      console.log("Preferences not found");
     }
   }
 
   function setAndSaveCurrentTab(currentTab) {
     setCurrentTab(currentTab);
+    console.log("Saving preferences");
     port.postMessage({ action: "SAVE_PREFERENCES", payload: { currentTab } });
   }
 
   function fetchUserAnalytics() {
-    console.log("Fetching user analytics...");
+    console.log("Fetching user analytics");
     api
       .fetchUserAnalytics(opponent, opponentColour, gameType, accessToken)
       .then((response) => {
@@ -94,20 +105,22 @@ export default function LichessApp({ port, gameInfo: { user, opponent, opponentC
   }
 
   function fetchOpponentNotes() {
-    console.log("Fetching opponent notes...");
+    console.log("Fetching opponent notes");
     api
       .fetchOpponentNotes(user, opponent)
       .then((responseJson) => {
         console.log("Fetched opponent notes");
         if (responseJson.notes) {
           setOpponentNotes(responseJson.notes);
+        } else {
+          setOpponentNotes(undefined);
         }
       })
       .catch((response) => setError("Failed to fetch opponent notes."));
   }
 
   function saveOpponentNotes() {
-    console.log("Saving opponent notes...");
+    console.log("Saving opponent notes");
     setSavingOpponentNotes(true);
     api
       .saveOpponentNotes(user, opponent, opponentNotes)
@@ -116,89 +129,78 @@ export default function LichessApp({ port, gameInfo: { user, opponent, opponentC
       .finally(() => setSavingOpponentNotes(false));
   }
 
-  const supportedGameTypes = ["bullet", "blitz", "rapid", "classical"];
-  if (!supportedGameTypes.includes(gameType)) {
-    console.log(`Unsupported game type ${gameType}. Not rendering.`);
+  if (!["bullet", "blitz", "rapid", "classical"].includes(gameType)) {
+    console.log(`Skipping unsupported game type ${gameType}`);
     return null;
   }
 
   if (accessToken === undefined) {
     return (
       <div className="ca_container_root">
-        <AuthComponent onClickAuthorise={onClickAuthoriseWithLichess} />
+        <AuthComponent onClickAuthorise={onClickAuthorise} />
       </div>
     );
   }
 
+  const placeholderClass = userAnalytics ? "" : "ca_placeholder_enabled";
+  const puzzleRatingText = userAnalytics ? (userAnalytics.latestPuzzleRating?.value ?? "NA") : "????";
+  const disconnectsText = userAnalytics
+    ? `${((userAnalytics.performance.totalNumberOfDisconnects / userAnalytics.performance.totalNumberOfGames) * 100).toFixed(1)}%`
+    : "????";
+  const streakClass = userAnalytics
+    ? userAnalytics.performance.currentLosingStreak > 0
+      ? "ca_negative"
+      : userAnalytics.performance.currentWinningStreak > 0
+        ? "ca_positive"
+        : ""
+    : "";
+  const streakText = userAnalytics
+    ? userAnalytics.performance.currentLosingStreak > 0
+      ? `-${userAnalytics.performance.currentLosingStreak}`
+      : userAnalytics.performance.currentWinningStreak > 0
+        ? `+${userAnalytics.performance.currentWinningStreak}`
+        : "0"
+    : "???";
+
   if (accessToken) {
     return (
       <div className="ca_container_root">
-        {error ? (
-          <div className="ca_error">
-            <span className="ca_error_message">{error}</span>
-          </div>
-        ) : null}
+        {error ? <ErrorComponent error={error} /> : null}
         <div className="ca_container">
           <div className="ca_section ca_opponent_info">
             <EloRangeComponent isLoading={!userAnalytics} userAnalytics={userAnalytics} />
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                fontSize: "12px",
-              }}
-            >
+            <div className="ca_opponent_info_sections">
               <div className="ca_opponent_info_section" title="Puzzle Rating">
                 <PuzzleIcon width="16" height="16" />
-                <span className={`ca_puzzle_rating ca_placeholder ${userAnalytics ? "" : "ca_placeholder_enabled"}`}>
-                  {userAnalytics ? (userAnalytics.latestPuzzleRating?.value ?? "NA") : "????"}
-                </span>
+                <span className={`ca_puzzle_rating ca_placeholder ${placeholderClass}`}>{puzzleRatingText}</span>
               </div>
               <div className="ca_opponent_info_section" title="Disconnects">
                 <DisconnectIcon width="16" height="16" />
-                <span className={`ca_disconnects ca_placeholder ${userAnalytics ? "" : "ca_placeholder_enabled"}`}>
-                  {userAnalytics
-                    ? `${((userAnalytics.performance.totalNumberOfDisconnects / userAnalytics.performance.totalNumberOfGames) * 100).toFixed(1)}%`
-                    : "????"}
-                </span>
+                <span className={`ca_disconnects ca_placeholder ${placeholderClass}`}>{disconnectsText}</span>
               </div>
               <div className="ca_opponent_info_section" title="Streak">
                 <span data-icon=""></span>
-                <span
-                  className={`${userAnalytics ? (userAnalytics.performance.currentLosingStreak > 0 ? "ca_negative" : userAnalytics.performance.currentWinningStreak > 0 ? "ca_positive" : "") : ""} ca_win_streak_value ca_placeholder ${userAnalytics ? "" : "ca_placeholder_enabled"}`}
-                >
-                  {userAnalytics
-                    ? userAnalytics.performance.currentLosingStreak > 0
-                      ? `-${userAnalytics.performance.currentLosingStreak}`
-                      : userAnalytics.performance.currentWinningStreak > 0
-                        ? `+${userAnalytics.performance.currentWinningStreak}`
-                        : "0"
-                    : "???"}
+                <span className={`${streakClass} ca_win_streak_value ca_placeholder ${placeholderClass}`}>
+                  {streakText}
                 </span>
               </div>
             </div>
           </div>
           <div className="ca_section ca_tabs">
-            <span
-              className={`ca_tab ca_stats_tab_trigger ${currentTab === "STATS" ? "ca_active" : ""}`}
-              onClick={(e) => setAndSaveCurrentTab("STATS")}
-            >
+            <Tab label="STATS" currentTab={currentTab} setCurrentTab={setAndSaveCurrentTab}>
               Stats
-            </span>
-            <span
-              className={`ca_tab ca_openings_tab_trigger ${currentTab === "OPENINGS" ? "ca_active" : ""}`}
-              onClick={(e) => setAndSaveCurrentTab("OPENINGS")}
-            >
+            </Tab>
+            <Tab label="OPENINGS" currentTab={currentTab} setCurrentTab={setAndSaveCurrentTab}>
               Openings
-            </span>
-            <span
-              className={`ca_tab ca_tab_icon ca_notes_tab_trigger ${currentTab === "NOTES" ? "ca_active" : ""} ${
-                opponentNotes ? "ca_green_colour" : ""
-              }`}
-              onClick={(e) => setAndSaveCurrentTab("NOTES")}
+            </Tab>
+            <Tab
+              label="NOTES"
+              currentTab={currentTab}
+              setCurrentTab={setAndSaveCurrentTab}
+              additionalClasses={`ca_tab_icon ${opponentNotes ? "ca_green_colour" : ""}`}
             >
               <NotesIcon width="16" height="16" />
-            </span>
+            </Tab>
           </div>
           {currentTab !== "STATS" ? null : (
             <div className={`ca_section ca_tab_section ca_stats`} style={{ margin: 0 }}>
@@ -217,25 +219,13 @@ export default function LichessApp({ port, gameInfo: { user, opponent, opponentC
           )}
           {currentTab !== "NOTES" ? null : (
             <div className={`ca_section ca_tab_section ca_notes}`} style={{ margin: 0 }}>
-              <form action="" id="ca_save_opponent_notes_form" onSubmit={onSubmitSaveOpponentNotes}>
-                <div style={{ marginBottom: "10px" }}>
-                  <textarea
-                    id="ca_opponent_notes"
-                    className={`ca_textarea ca_placeholder ${userAnalytics ? "" : "ca_placeholder_enabled"}`}
-                    value={opponentNotes ? opponentNotes : ""}
-                    onChange={(e) => setOpponentNotes(e.target.value)}
-                  ></textarea>
-                </div>
-                <div>
-                  <button
-                    type="submit"
-                    disabled={savingOpponentNotes}
-                    className={`ca_button ca_btn-win ca_placeholder ${userAnalytics ? "" : "ca_placeholder_enabled"}`}
-                  >
-                    Save
-                  </button>
-                </div>
-              </form>
+              <OpponentNotesComponent
+                notes={opponentNotes}
+                setNotes={setOpponentNotes}
+                isLoading={opponentNotes === null}
+                onSave={onSaveOpponentNotes}
+                isSaving={savingOpponentNotes}
+              />
             </div>
           )}
         </div>

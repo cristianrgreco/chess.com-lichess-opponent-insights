@@ -1,0 +1,7 @@
+.ca_error {
+  width: 100%;
+  text-align: center;
+  padding: 12px;
+  background-color: var(--error);
+  color: white;
+}

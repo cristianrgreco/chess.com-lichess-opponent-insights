@@ -34,8 +34,8 @@ function renderLichessApp() {
   const rootDiv = document.createElement("div");
   document.querySelector(".mchat").insertAdjacentElement("beforebegin", rootDiv);
   ReactDOM.createRoot(rootDiv).render(
-    <React.Fragment>
+    <React.StrictMode>
       <LichessApp port={port} gameInfo={getLichessGameInfoFromPage()} />
-    </React.Fragment>,
+    </React.StrictMode>,
   );
 }

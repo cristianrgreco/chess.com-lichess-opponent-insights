@@ -53,6 +53,12 @@
   margin: 5px 0 !important;
 }
 
+.ca_opponent_info_sections {
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+}
+
 .ca_opponent_info_section {
   display: flex;
   flex-direction: column;
@@ -136,46 +142,11 @@
   width: 100%;
   justify-content: center;
   flex-wrap: wrap;
+  /*text-transform: capitalize;*/
 }
 
 .ca_tabs.left_align {
   justify-content: flex-start;
-}
-
-.ca_tab {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: var(--tab-background-color);
-  padding: 4px 8px;
-  text-align: center;
-  margin: 0 1px;
-  width: 80px;
-  border: 1px solid var(--tab-background-color);
-  border-bottom: none;
-  border-radius: 6px 6px 0 0;
-}
-
-.ca_tab:hover {
-  cursor: pointer;
-  background-color: var(--tab-hover-background-color);
-}
-
-.ca_tab.ca_active:hover {
-  cursor: default;
-}
-
-.ca_tab:active,
-.ca_tab.ca_active {
-  background-color: var(--tab-active-background-color);
-}
-
-.ca_tabs.fill_width .ca_tab {
-  flex-grow: 1;
-}
-
-.ca_tab.ca_tab_icon {
-  width: 50px;
 }
 
 .ca_tab_section {
@@ -244,14 +215,6 @@
 
 .ca_notes_tab_trigger > svg {
   height: var(--font-size);
-}
-
-.ca_error {
-  width: 100%;
-  text-align: center;
-  padding: 12px;
-  background-color: var(--error);
-  color: white;
 }
 
 .ca_green_colour {
