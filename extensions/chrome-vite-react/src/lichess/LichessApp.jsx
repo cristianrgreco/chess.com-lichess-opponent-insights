@@ -2,10 +2,10 @@ import logo from "../logo_128x128.png";
 import Chart from "chart.js/auto";
 import ChartDataLabels from "chartjs-plugin-datalabels";
 import { useEffect } from "react";
+import * as api from "./api.js";
 
-function LichessApp({ port }) {
+function LichessApp() {
   useEffect(() => {
-    const API = "https://rlabb3msg0.execute-api.eu-west-2.amazonaws.com/prod";
     const user = document.querySelector("#user_tag").innerText;
     const opponent = Array.from(document.querySelectorAll(".game__meta .player .user-link"))
       .map((playerElement) => playerElement.getAttribute("href").split("/").pop())
@@ -27,7 +27,6 @@ function LichessApp({ port }) {
 
     const style = getComputedStyle(document.body);
     const fontColour = style.getPropertyValue("--color");
-    const backgroundColour = style.getPropertyValue("--background-color");
     const successColour = style.getPropertyValue("--success");
     const errorColour = style.getPropertyValue("--error");
 
@@ -136,13 +135,8 @@ function LichessApp({ port }) {
 
     function fetchUserAnalytics(accessToken) {
       console.log("Fetching user analytics...");
-      fetch(
-        `${API}/user-analytics?platform=lichess&username=${opponent}&gameType=${gameType}&colour=${opponentColour}`,
-        {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        },
-      )
-        .then((response) => (response.ok ? response.json() : Promise.reject(response)))
+      api
+        .fetchUserAnalytics(opponent, opponentColour, gameType, accessToken)
         .then((response) => {
           console.log("Fetched user analytics");
           render(response);
@@ -152,8 +146,8 @@ function LichessApp({ port }) {
 
     function fetchOpponentNotes() {
       console.log("Fetching opponent notes...");
-      fetch(`${API}/opponent-notes?username=${user}&opponentName=${opponent}`)
-        .then((response) => (response.ok ? response.json() : Promise.reject(response)))
+      api
+        .fetchOpponentNotes(user, opponent)
         .then((responseJson) => {
           console.log("Fetched opponent notes");
           if (responseJson.notes) {
@@ -168,20 +162,11 @@ function LichessApp({ port }) {
       console.log("Saving opponent notes...");
       const saveButton = document.querySelector("#ca_save_opponent_notes_form button[type=submit]");
       saveButton.setAttribute("disabled", "disabled");
-      fetch(`${API}/opponent-notes`, {
-        method: "POST",
-        body: JSON.stringify({
-          username: user,
-          opponentName: opponent,
-          notes: document.querySelector("#ca_opponent_notes").value,
-        }),
-      })
-        .then((response) => (response.ok ? Promise.resolve() : Promise.reject(response)))
+      api
+        .saveOpponentNotes(user, opponent, document.querySelector("#ca_opponent_notes").value)
         .then(() => console.log("Saved opponent notes"))
         .catch((response) => renderError("Failed to save opponent notes", response))
-        .finally(() => {
-          saveButton.removeAttribute("disabled");
-        });
+        .finally(() => saveButton.removeAttribute("disabled"));
     }
 
     function render(response) {
