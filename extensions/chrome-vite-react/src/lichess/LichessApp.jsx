@@ -1,9 +1,11 @@
-import Chart from "chart.js/auto";
-import ChartDataLabels from "chartjs-plugin-datalabels";
 import { useEffect, useState } from "react";
 import * as api from "./api.js";
 import AuthComponent from "./components/AuthComponent";
 import EloRangeComponent from "./components/EloRangeComponent";
+import StatsChartComponent from "./components/StatsChartComponent";
+import { PageStylesProvider } from "./PageStylesContext.js";
+import OpeningsChartComponent from "./components/OpeningsChartComponent.jsx";
+import MoveTimesChartComponent from "./components/MoveTimesChartComponent.jsx";
 
 export default function LichessApp({ port, gameInfo: { user, opponent, opponentColour, gameType } }) {
   const [currentTab, setCurrentTab] = useState("STATS");
@@ -17,6 +19,26 @@ export default function LichessApp({ port, gameInfo: { user, opponent, opponentC
   const fontColour = style.getPropertyValue("--color");
   const successColour = style.getPropertyValue("--success");
   const errorColour = style.getPropertyValue("--error");
+
+  useEffect(() => {
+    port.onMessage.addListener((message) => {
+      const action = actions(message)[message.action];
+      if (action) {
+        action();
+      } else {
+        console.log(`Unhandled message received: ${message.action}`);
+      }
+    });
+    port.postMessage({ action: "GET_LICHESS_ACCESS_TOKEN" });
+  }, []);
+
+  useEffect(() => {
+    if (accessToken) {
+      port.postMessage({ action: "GET_PREFERENCES" });
+      fetchUserAnalytics();
+      fetchOpponentNotes();
+    }
+  }, [accessToken]);
 
   const actions = (message) => ({
     GET_LICHESS_ACCESS_TOKEN: () => {
@@ -41,11 +63,6 @@ export default function LichessApp({ port, gameInfo: { user, opponent, opponentC
     saveOpponentNotes();
   }
 
-  function setAndSaveCurrentTab(currentTab) {
-    setCurrentTab(currentTab);
-    port.postMessage({ action: "SAVE_PREFERENCES", payload: { currentTab } });
-  }
-
   function onRetrievePreferences(preferences) {
     if (preferences) {
       console.log("Setting current tab from preferences", preferences.currentTab);
@@ -55,6 +72,11 @@ export default function LichessApp({ port, gameInfo: { user, opponent, opponentC
     }
   }
 
+  function setAndSaveCurrentTab(currentTab) {
+    setCurrentTab(currentTab);
+    port.postMessage({ action: "SAVE_PREFERENCES", payload: { currentTab } });
+  }
+
   function fetchUserAnalytics() {
     console.log("Fetching user analytics...");
     api
@@ -62,7 +84,6 @@ export default function LichessApp({ port, gameInfo: { user, opponent, opponentC
       .then((response) => {
         console.log("Fetched user analytics");
         setUserAnalytics(response);
-        renderAnalytics(response);
       })
       .catch((response) => setError("Failed to fetch user analytics."));
   }
@@ -89,315 +110,6 @@ export default function LichessApp({ port, gameInfo: { user, opponent, opponentC
       .catch((response) => setError("Failed to save opponent notes."))
       .finally(() => setSavingOpponentNotes(false));
   }
-
-  function renderAnalytics(response) {
-    renderStatsChart(response);
-    renderMoveTimesChart(response);
-    renderOpeningsChart(response);
-  }
-
-  function renderMoveTimesChart(response) {
-    const moveTimesLabels = Array.from(
-      new Set(response.games.moveTimes.flatMap((moveTimesList) => moveTimesList.map((moveTime) => moveTime[0]))),
-    );
-    moveTimesLabels.sort();
-
-    const maxMoveTimeLabel = Math.max(...moveTimesLabels);
-    const maxMoveTimeValue = Math.max(
-      ...response.games.moveTimes.flatMap((moveTimesList) => moveTimesList.map((moveTime) => moveTime[1])),
-    );
-
-    const moveTimesData = response.games.moveTimes.map((moveTimesList, i) => ({
-      label: `Game ${i + 1}`,
-      data: moveTimesList.map(([x, y]) => ({ x, y })),
-      pointRadius: 1,
-    }));
-
-    const formatToDpIfHasDecimals = (dp) => (val) => `${val.toFixed(dp).replace(/[.,]00$/, "")}s`;
-
-    new Chart(document.querySelector("#ca_stats_move_times_chart"), {
-      type: "scatter",
-      data: {
-        datasets: moveTimesData,
-      },
-      options: {
-        maintainAspectRatio: true,
-        responsive: false,
-        scales: {
-          x: {
-            title: {
-              display: true,
-              text: "Time Remaining",
-              color: fontColour,
-            },
-            ticks: {
-              color: fontColour,
-              callback: formatToDpIfHasDecimals(0),
-            },
-            max: maxMoveTimeLabel,
-            reverse: true,
-          },
-          y: {
-            title: {
-              display: true,
-              text: "Time Taken",
-              color: fontColour,
-            },
-            ticks: {
-              color: fontColour,
-              callback: formatToDpIfHasDecimals(0),
-            },
-            max: maxMoveTimeValue,
-          },
-        },
-        plugins: {
-          title: {
-            display: false,
-            text: "Move Times",
-            color: fontColour,
-          },
-          legend: {
-            display: false,
-            labels: {
-              color: fontColour,
-            },
-          },
-          tooltip: {
-            enabled: false,
-          },
-        },
-      },
-    });
-  }
-
-  function renderStatsChart(response) {
-    const labels = ["Wins", "Losses"];
-
-    const winByMate = response.games.stats.win.mateRate;
-    const winByResign = response.games.stats.win.resignRate;
-    const winByFlag = response.games.stats.win.outOfTimeRate;
-    const winByOther = 1 - (winByMate + winByResign + winByFlag);
-
-    const loseByMate = response.games.stats.lose.mateRate;
-    const loseByResign = response.games.stats.lose.resignRate;
-    const loseByFlag = response.games.stats.lose.outOfTimeRate;
-    const loseByOther = 1 - (loseByMate + loseByResign + loseByFlag);
-
-    const data = [
-      {
-        label: "Mate",
-        data: [winByMate, loseByMate],
-        backgroundColor: successColour,
-      },
-      {
-        label: "Resign",
-        data: [winByResign, loseByResign],
-        backgroundColor: errorColour,
-      },
-      {
-        label: "Flag",
-        data: [winByFlag, loseByFlag],
-        backgroundColor: "grey",
-      },
-      {
-        label: "Other",
-        data: [winByOther, loseByOther],
-        backgroundColor: "#5e62ab",
-      },
-    ];
-
-    new Chart(document.querySelector("#ca_stats_chart"), {
-      type: "bar",
-      data: {
-        labels,
-        datasets: data,
-      },
-      options: {
-        maintainAspectRatio: true,
-        responsive: false,
-        scaleShowValues: true,
-        indexAxis: "y",
-        scales: {
-          x: {
-            stacked: true,
-            ticks: {
-              autoSkip: false,
-              color: fontColour,
-              callback: (val) => `${val * 100}%`,
-            },
-            max: 1,
-            title: {
-              display: false,
-              text: "% Outcome",
-              font: {
-                size: 12,
-              },
-              color: fontColour,
-            },
-          },
-          y: {
-            stacked: true,
-            ticks: {
-              autoSkip: false,
-              color: fontColour,
-            },
-          },
-        },
-        plugins: {
-          datalabels: {
-            formatter: (value, context) => {
-              const val = context.dataset.data[context.dataIndex];
-              if (val > 0) {
-                return `${Math.ceil(val * 100)}`;
-              }
-              return "";
-            },
-            labels: {
-              value: {
-                color: "white",
-                font: {
-                  size: 10,
-                },
-              },
-            },
-          },
-          title: {
-            display: false,
-            text: "Game Results",
-            color: fontColour,
-          },
-          legend: {
-            labels: {
-              color: fontColour,
-              boxWidth: 12,
-              boxHeight: 12,
-            },
-          },
-          tooltip: {
-            enabled: false,
-            callbacks: {
-              label: (tooltipItem) => `${tooltipItem.formattedValue}%`,
-            },
-          },
-        },
-      },
-      plugins: [ChartDataLabels],
-    });
-  }
-
-  function renderOpeningsChart(response) {
-    const data = response.games.openings.filter((g) => g.insights.numberOfGames > 2);
-    const openingLabels = data.map((g) => g.name);
-    const totalWins = data.map((g) => g.insights.totals.win);
-    const totalDraws = data.map((g) => g.insights.totals.draw);
-    const totalLosses = data.map((g) => g.insights.totals.lose);
-
-    const datasets = [
-      {
-        label: "Wins",
-        data: totalWins,
-        backgroundColor: successColour,
-      },
-      {
-        label: "Draws",
-        data: totalDraws,
-        backgroundColor: "grey",
-      },
-      {
-        label: "Losses",
-        data: totalLosses,
-        backgroundColor: errorColour,
-      },
-    ];
-
-    new Chart(document.querySelector("#ca_openings_chart"), {
-      type: "bar",
-      data: {
-        labels: openingLabels,
-        datasets: datasets,
-      },
-      options: {
-        maintainAspectRatio: true,
-        responsive: false,
-        scaleShowValues: true,
-        indexAxis: "y",
-        scales: {
-          x: {
-            stacked: true,
-            ticks: {
-              autoSkip: false,
-              color: fontColour,
-            },
-            title: {
-              display: true,
-              text: "Number of Games",
-              font: {
-                size: 12,
-              },
-              color: fontColour,
-            },
-          },
-          y: {
-            stacked: true,
-            ticks: {
-              autoSkip: false,
-              color: fontColour,
-            },
-          },
-        },
-        plugins: {
-          tooltip: {
-            enabled: false,
-          },
-          datalabels: {
-            formatter: (value, context) => {
-              const val = context.dataset.data[context.dataIndex];
-              if (val > 0) {
-                return val;
-              }
-              return "";
-            },
-            labels: {
-              value: {
-                color: "white",
-                font: {
-                  size: 10,
-                },
-              },
-            },
-          },
-          legend: {
-            labels: {
-              color: fontColour,
-              boxWidth: 12,
-              boxHeight: 12,
-            },
-          },
-        },
-      },
-      plugins: [ChartDataLabels],
-    });
-  }
-
-  useEffect(() => {
-    port.onMessage.addListener((message) => {
-      const action = actions(message)[message.action];
-      if (action) {
-        action();
-      } else {
-        console.log(`Unhandled message received: ${message.action}`);
-      }
-    });
-    port.postMessage({ action: "GET_LICHESS_ACCESS_TOKEN" });
-  }, []);
-
-  useEffect(() => {
-    if (accessToken) {
-      port.postMessage({ action: "GET_PREFERENCES" });
-      fetchUserAnalytics();
-      fetchOpponentNotes();
-    }
-  }, [accessToken]);
 
   const supportedGameTypes = ["bullet", "blitz", "rapid", "classical"];
   if (!supportedGameTypes.includes(gameType)) {
@@ -516,26 +228,18 @@ export default function LichessApp({ port, gameInfo: { user, opponent, opponentC
             className={`ca_section ca_tab_section ca_stats ${currentTab === "STATS" ? "" : "ca_hidden"}`}
             style={{ margin: 0 }}
           >
-            <canvas
-              id="ca_stats_chart"
-              className={`ca_placeholder ${userAnalytics ? "" : "ca_placeholder_enabled"}`}
-              height="90"
-            ></canvas>
-            <canvas
-              id="ca_stats_move_times_chart"
-              className={`ca_placeholder ${userAnalytics ? "" : "ca_placeholder_enabled"}`}
-              height="110"
-            ></canvas>
+            <PageStylesProvider value={{ fontColour, successColour, errorColour }}>
+              <StatsChartComponent isLoading={!userAnalytics} userAnalytics={userAnalytics} />
+              <MoveTimesChartComponent isLoading={!userAnalytics} userAnalytics={userAnalytics} />
+            </PageStylesProvider>
           </div>
           <div
             className={`ca_section ca_tab_section ca_openings ${currentTab === "OPENINGS" ? "" : "ca_hidden"}`}
             style={{ margin: 0 }}
           >
-            <canvas
-              id="ca_openings_chart"
-              className={`ca_placeholder ${userAnalytics ? "" : "ca_placeholder_enabled"}`}
-              height="200"
-            ></canvas>
+            <PageStylesProvider value={{ fontColour, successColour, errorColour }}>
+              <OpeningsChartComponent isLoading={!userAnalytics} userAnalytics={userAnalytics} />
+            </PageStylesProvider>
           </div>
           <div
             className={`ca_section ca_tab_section ca_notes ${currentTab === "NOTES" ? "" : "ca_hidden"}`}
