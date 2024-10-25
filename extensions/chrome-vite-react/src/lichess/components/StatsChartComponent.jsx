@@ -4,12 +4,15 @@ import ChartDataLabels from "chartjs-plugin-datalabels";
 import PageStylesContext from "../PageStylesContext.js";
 
 export default function StatsChartComponent({ isLoading, userAnalytics }) {
+  const height = 90;
+
   if (isLoading) {
-    return <Bar className="ca_placeholder ca_placeholder_enabled" height={90} data={{ labels: [], datasets: [] }} />;
+    return (
+      <Bar className="ca_placeholder ca_placeholder_enabled" height={height} data={{ labels: [], datasets: [] }} />
+    );
   }
 
   const { fontColour, successColour, errorColour } = useContext(PageStylesContext);
-
   const { win, lose } = userAnalytics.games.stats;
 
   const winByMate = win.mateRate;
@@ -24,7 +27,7 @@ export default function StatsChartComponent({ isLoading, userAnalytics }) {
 
   return (
     <Bar
-      height={90}
+      height={height}
       plugins={[ChartDataLabels]}
       data={{
         labels: ["Wins", "Losses"],

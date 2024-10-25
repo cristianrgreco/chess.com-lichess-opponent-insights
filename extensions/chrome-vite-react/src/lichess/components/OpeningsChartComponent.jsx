@@ -4,8 +4,12 @@ import ChartDataLabels from "chartjs-plugin-datalabels";
 import PageStylesContext from "../PageStylesContext.js";
 
 export default function OpeningsChartComponent({ isLoading, userAnalytics }) {
+  const height = 200;
+
   if (isLoading) {
-    return <Bar className="ca_placeholder ca_placeholder_enabled" height={200} data={{ labels: [], datasets: [] }} />;
+    return (
+      <Bar className="ca_placeholder ca_placeholder_enabled" height={height} data={{ labels: [], datasets: [] }} />
+    );
   }
 
   const { fontColour, successColour, errorColour } = useContext(PageStylesContext);
@@ -18,7 +22,7 @@ export default function OpeningsChartComponent({ isLoading, userAnalytics }) {
 
   return (
     <Bar
-      height={200}
+      height={height}
       plugins={[ChartDataLabels]}
       data={{
         labels,

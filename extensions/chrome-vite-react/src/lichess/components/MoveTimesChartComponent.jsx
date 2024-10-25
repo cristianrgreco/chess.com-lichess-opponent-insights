@@ -3,9 +3,11 @@ import { Scatter } from "react-chartjs-2";
 import PageStylesContext from "../PageStylesContext.js";
 
 export default function MoveTimesChartComponent({ isLoading, userAnalytics }) {
+  const height = 110;
+
   if (isLoading) {
     return (
-      <Scatter className="ca_placeholder ca_placeholder_enabled" height={110} data={{ labels: [], datasets: [] }} />
+      <Scatter className="ca_placeholder ca_placeholder_enabled" height={height} data={{ labels: [], datasets: [] }} />
     );
   }
 
@@ -24,7 +26,7 @@ export default function MoveTimesChartComponent({ isLoading, userAnalytics }) {
 
   return (
     <Scatter
-      height={110}
+      height={height}
       data={{
         datasets: moveTimes.map((moveTimesList, i) => ({
           label: `Game ${i + 1}`,
