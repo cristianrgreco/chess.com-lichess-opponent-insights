@@ -16,3 +16,15 @@ HMR is enabled, so you can edit the files in the `src` folder and the extension 
 
 > [!NOTE]
 > If you make changes to the `manifest.json`, you need to restart the development server and refresh the extension in Chrome.
+
+Run tests with:
+
+```bash
+npm test
+```
+
+Format your code with:
+
+```bash
+npm run format
+```
