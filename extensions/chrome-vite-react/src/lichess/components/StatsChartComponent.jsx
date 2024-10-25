@@ -1,56 +1,57 @@
 import { useContext } from "react";
-import Chart from "chart.js/auto";
+import { Bar } from "react-chartjs-2";
 import ChartDataLabels from "chartjs-plugin-datalabels";
 import PageStylesContext from "../PageStylesContext.js";
 
 export default function StatsChartComponent({ isLoading, userAnalytics }) {
+  if (isLoading) {
+    return <Bar className="ca_placeholder ca_placeholder_enabled" height={90} data={{ labels: [], datasets: [] }} />;
+  }
+
   const { fontColour, successColour, errorColour } = useContext(PageStylesContext);
 
-  if (!isLoading) {
-    const labels = ["Wins", "Losses"];
+  const { win, lose } = userAnalytics.games.stats;
 
-    const { win, lose } = userAnalytics.games.stats;
+  const winByMate = win.mateRate;
+  const winByResign = win.resignRate;
+  const winByFlag = win.outOfTimeRate;
+  const winByOther = 1 - (winByMate + winByResign + winByFlag);
 
-    const winByMate = win.mateRate;
-    const winByResign = win.resignRate;
-    const winByFlag = win.outOfTimeRate;
-    const winByOther = 1 - (winByMate + winByResign + winByFlag);
+  const loseByMate = lose.mateRate;
+  const loseByResign = lose.resignRate;
+  const loseByFlag = lose.outOfTimeRate;
+  const loseByOther = 1 - (loseByMate + loseByResign + loseByFlag);
 
-    const loseByMate = lose.mateRate;
-    const loseByResign = lose.resignRate;
-    const loseByFlag = lose.outOfTimeRate;
-    const loseByOther = 1 - (loseByMate + loseByResign + loseByFlag);
-
-    const data = [
-      {
-        label: "Mate",
-        data: [winByMate, loseByMate],
-        backgroundColor: successColour,
-      },
-      {
-        label: "Resign",
-        data: [winByResign, loseByResign],
-        backgroundColor: errorColour,
-      },
-      {
-        label: "Flag",
-        data: [winByFlag, loseByFlag],
-        backgroundColor: "grey",
-      },
-      {
-        label: "Other",
-        data: [winByOther, loseByOther],
-        backgroundColor: "#5e62ab",
-      },
-    ];
-
-    new Chart(document.querySelector("#ca_stats_chart"), {
-      type: "bar",
-      data: {
-        labels,
-        datasets: data,
-      },
-      options: {
+  return (
+    <Bar
+      height={90}
+      plugins={[ChartDataLabels]}
+      data={{
+        labels: ["Wins", "Losses"],
+        datasets: [
+          {
+            label: "Mate",
+            data: [winByMate, loseByMate],
+            backgroundColor: successColour,
+          },
+          {
+            label: "Resign",
+            data: [winByResign, loseByResign],
+            backgroundColor: errorColour,
+          },
+          {
+            label: "Flag",
+            data: [winByFlag, loseByFlag],
+            backgroundColor: "grey",
+          },
+          {
+            label: "Other",
+            data: [winByOther, loseByOther],
+            backgroundColor: "#5e62ab",
+          },
+        ],
+      }}
+      options={{
         maintainAspectRatio: true,
         responsive: false,
         scaleShowValues: true,
@@ -118,16 +119,7 @@ export default function StatsChartComponent({ isLoading, userAnalytics }) {
             },
           },
         },
-      },
-      plugins: [ChartDataLabels],
-    });
-  }
-
-  return (
-    <canvas
-      id="ca_stats_chart"
-      className={`ca_placeholder ${isLoading ? "ca_placeholder_enabled" : ""}`}
-      height="90"
-    ></canvas>
+      }}
+    />
   );
 }

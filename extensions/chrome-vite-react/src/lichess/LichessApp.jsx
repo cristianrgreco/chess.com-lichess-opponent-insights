@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import * as api from "./api.js";
+import "chart.js/auto";
 import AuthComponent from "./components/AuthComponent";
 import EloRangeComponent from "./components/EloRangeComponent";
 import StatsChartComponent from "./components/StatsChartComponent";
@@ -44,6 +45,8 @@ export default function LichessApp({ port, gameInfo: { user, opponent, opponentC
     GET_LICHESS_ACCESS_TOKEN: () => {
       if (message.payload) {
         setAccessToken(message.payload.value);
+      } else {
+        setAccessToken(undefined);
       }
     },
     AUTH_LICHESS: () => {
@@ -117,7 +120,7 @@ export default function LichessApp({ port, gameInfo: { user, opponent, opponentC
     return null;
   }
 
-  if (!accessToken) {
+  if (accessToken === undefined) {
     return (
       <div className="ca_container_root">
         <AuthComponent onClickAuthorise={onClickAuthoriseWithLichess} />
@@ -224,47 +227,44 @@ export default function LichessApp({ port, gameInfo: { user, opponent, opponentC
               </svg>
             </span>
           </div>
-          <div
-            className={`ca_section ca_tab_section ca_stats ${currentTab === "STATS" ? "" : "ca_hidden"}`}
-            style={{ margin: 0 }}
-          >
-            <PageStylesProvider value={{ fontColour, successColour, errorColour }}>
-              <StatsChartComponent isLoading={!userAnalytics} userAnalytics={userAnalytics} />
-              <MoveTimesChartComponent isLoading={!userAnalytics} userAnalytics={userAnalytics} />
-            </PageStylesProvider>
-          </div>
-          <div
-            className={`ca_section ca_tab_section ca_openings ${currentTab === "OPENINGS" ? "" : "ca_hidden"}`}
-            style={{ margin: 0 }}
-          >
-            <PageStylesProvider value={{ fontColour, successColour, errorColour }}>
-              <OpeningsChartComponent isLoading={!userAnalytics} userAnalytics={userAnalytics} />
-            </PageStylesProvider>
-          </div>
-          <div
-            className={`ca_section ca_tab_section ca_notes ${currentTab === "NOTES" ? "" : "ca_hidden"}`}
-            style={{ margin: 0 }}
-          >
-            <form action="" id="ca_save_opponent_notes_form" onSubmit={onSubmitSaveOpponentNotes}>
-              <div style={{ marginBottom: "10px" }}>
-                <textarea
-                  id="ca_opponent_notes"
-                  className={`ca_textarea ca_placeholder ${userAnalytics ? "" : "ca_placeholder_enabled"}`}
-                  value={opponentNotes ? opponentNotes : ""}
-                  onChange={(e) => setOpponentNotes(e.target.value)}
-                ></textarea>
-              </div>
-              <div>
-                <button
-                  type="submit"
-                  disabled={savingOpponentNotes}
-                  className={`ca_button ca_btn-win ca_placeholder ${userAnalytics ? "" : "ca_placeholder_enabled"}`}
-                >
-                  Save
-                </button>
-              </div>
-            </form>
-          </div>
+          {currentTab !== "STATS" ? null : (
+            <div className={`ca_section ca_tab_section ca_stats`} style={{ margin: 0 }}>
+              <PageStylesProvider value={{ fontColour, successColour, errorColour }}>
+                <StatsChartComponent isLoading={!userAnalytics} userAnalytics={userAnalytics} />
+                <MoveTimesChartComponent isLoading={!userAnalytics} userAnalytics={userAnalytics} />
+              </PageStylesProvider>
+            </div>
+          )}
+          {currentTab !== "OPENINGS" ? null : (
+            <div className={`ca_section ca_tab_section ca_openings`} style={{ margin: 0 }}>
+              <PageStylesProvider value={{ fontColour, successColour, errorColour }}>
+                <OpeningsChartComponent isLoading={!userAnalytics} userAnalytics={userAnalytics} />
+              </PageStylesProvider>
+            </div>
+          )}
+          {currentTab !== "NOTES" ? null : (
+            <div className={`ca_section ca_tab_section ca_notes}`} style={{ margin: 0 }}>
+              <form action="" id="ca_save_opponent_notes_form" onSubmit={onSubmitSaveOpponentNotes}>
+                <div style={{ marginBottom: "10px" }}>
+                  <textarea
+                    id="ca_opponent_notes"
+                    className={`ca_textarea ca_placeholder ${userAnalytics ? "" : "ca_placeholder_enabled"}`}
+                    value={opponentNotes ? opponentNotes : ""}
+                    onChange={(e) => setOpponentNotes(e.target.value)}
+                  ></textarea>
+                </div>
+                <div>
+                  <button
+                    type="submit"
+                    disabled={savingOpponentNotes}
+                    className={`ca_button ca_btn-win ca_placeholder ${userAnalytics ? "" : "ca_placeholder_enabled"}`}
+                  >
+                    Save
+                  </button>
+                </div>
+              </form>
+            </div>
+          )}
         </div>
       </div>
     );
