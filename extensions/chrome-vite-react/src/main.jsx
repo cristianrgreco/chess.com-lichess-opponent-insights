@@ -14,12 +14,12 @@ function renderLichessApp() {
     const user = document.querySelector("#user_tag").innerText;
 
     const opponent = Array.from(document.querySelectorAll(".game__meta .player .user-link"))
-    .map((playerElement) => playerElement.getAttribute("href").split("/").pop())
-    .filter((player) => player !== user)[0];
+      .map((playerElement) => playerElement.getAttribute("href").split("/").pop())
+      .filter((player) => player !== user)[0];
 
     const opponentColour = document.querySelector(".game__meta .player.white").innerHTML.includes(opponent)
-        ? "white"
-        : "black";
+      ? "white"
+      : "black";
 
     const gameType = document.querySelector(".game__meta .header .setup span[title]").innerText.toLowerCase();
 
