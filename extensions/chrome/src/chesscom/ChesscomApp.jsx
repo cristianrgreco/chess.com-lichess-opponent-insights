@@ -1,31 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import "./ChesscomApp.css";
-import * as api from "@/shared/api.js";
 import StatsChartComponent from "@/shared/components/StatsChartComponent.jsx";
 import MoveTimesChartComponent from "@/shared/components/MoveTimesChartComponent.jsx";
 import OpeningsChartComponent from "@/shared/components/OpeningsChartComponent.jsx";
 import ChesscomPageStylesWrapper from "@/chesscom/ChesscomPageStylesWrapper.jsx";
 import DebugOutput from "@/chesscom/DebugOutput.jsx";
+import useChesscomData from "@/chesscom/useChesscomData.js";
 
 export default function ChesscomApp({ port, gameInfo }) {
   const [userAnalytics, setUserAnalytics] = useState(null);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    fetchUserAnalytics();
-  }, [gameInfo]);
-
-  function fetchUserAnalytics() {
-    console.log("Fetching user analytics");
-    setUserAnalytics(null);
-    api
-      .fetchUserAnalytics("chesscom", gameInfo.opponent, gameInfo.opponentColour, gameInfo.gameType)
-      .then((response) => {
-        console.log("Fetched user analytics");
-        setUserAnalytics(response);
-      })
-      .catch((response) => setError("Failed to fetch user analytics."));
-  }
+  useChesscomData({ gameInfo, setUserAnalytics, setError });
 
   return (
     <React.Fragment>
