@@ -1,0 +1,23 @@
+.ca_auth_container {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--background-color);
+  padding: 20px;
+  row-gap: 20px;
+  justify-content: center;
+  align-items: center;
+  font-size: 14px;
+}
+
+.ca_auth_content_container {
+  display: flex;
+  align-items: center;
+  column-gap: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--tab-border-color);
+}
+
+.ca_auth_container_title {
+  font-size: var(--title-font-size);
+  font-weight: bold;
+}

@@ -1,6 +1,7 @@
 {
+  "manifest_version": 3,
   "name": "Lichess Opponent Information",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "Professional chess players spend a lot of time researching their opponents before a match, so why is it any different online?",
   "icons": {
     "16": "icons/logo_16x16.png",
@@ -8,29 +9,16 @@
     "48": "icons/logo_48x48.png",
     "128": "icons/logo_128x128.png"
   },
-  "manifest_version": 3,
-  "background": {
-    "service_worker": "./service-worker.js"
-  },
   "content_scripts": [
     {
-      "matches": ["https://lichess.org/*"],
-      "js": [
-        "./utils.js",
-        "./script.js",
-        "./lib/chess.js",
-        "./lib/chart.umd.js",
-        "./lib/chartjs-plugin-datalabels.min.js"
-      ],
-      "css": ["./view.css"]
-    }
-  ],
-  "web_accessible_resources": [
-    {
-      "resources": ["view.html", "icons/*.png", "./lib/chart.umd.js.map"],
+      "js": ["src/main.jsx"],
       "matches": ["https://lichess.org/*"]
     }
   ],
+  "background": {
+    "service_worker": "src/background/main.js",
+    "type": "module"
+  },
   "permissions": ["identity", "storage"],
   "host_permissions": ["https://rlabb3msg0.execute-api.eu-west-2.amazonaws.com/prod/*"]
 }

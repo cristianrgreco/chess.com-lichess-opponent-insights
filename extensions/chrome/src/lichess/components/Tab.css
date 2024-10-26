@@ -1,0 +1,35 @@
+.ca_tab {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--tab-background-color);
+  padding: 4px 8px;
+  text-align: center;
+  margin: 0 1px;
+  width: 80px;
+  border: 1px solid var(--tab-background-color);
+  border-bottom: none;
+  border-radius: 6px 6px 0 0;
+}
+
+.ca_tab:hover {
+  cursor: pointer;
+  background-color: var(--tab-hover-background-color);
+}
+
+.ca_tab.ca_active:hover {
+  cursor: default;
+}
+
+.ca_tab:active,
+.ca_tab.ca_active {
+  background-color: var(--tab-active-background-color);
+}
+
+.ca_tabs.fill_width .ca_tab {
+  flex-grow: 1;
+}
+
+.ca_tab.ca_tab_icon {
+  width: 50px;
+}
