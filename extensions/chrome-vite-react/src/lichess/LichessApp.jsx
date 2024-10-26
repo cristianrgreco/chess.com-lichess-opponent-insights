@@ -4,16 +4,16 @@ import "./LichessApp.css";
 import "chart.js/auto";
 import { Chart } from "chart.js/auto";
 import ChartDataLabels from "chartjs-plugin-datalabels";
-import AuthComponent from "./components/AuthComponent";
+import { PageStylesProvider } from "./PageStylesContext.js";
 import EloRangeComponent from "./components/EloRangeComponent";
 import StatsChartComponent from "./components/StatsChartComponent";
-import { PageStylesProvider } from "./PageStylesContext.js";
 import OpeningsChartComponent from "./components/OpeningsChartComponent";
 import MoveTimesChartComponent from "./components/MoveTimesChartComponent";
 import { DisconnectIcon, NotesIcon, PuzzleIcon } from "../Icons";
 import ErrorComponent from "./components/ErrorComponent";
 import OpponentNotesComponent from "./components/OpponentNotesComponent";
 import Tab from "./components/Tab";
+import AuthWrapper from "./components/AuthWrapper.jsx";
 
 export default function LichessApp({ port, gameInfo: { user, opponent, opponentColour, gameType } }) {
   Chart.register(ChartDataLabels);
@@ -139,14 +139,6 @@ export default function LichessApp({ port, gameInfo: { user, opponent, opponentC
     return null;
   }
 
-  if (accessToken === undefined) {
-    return (
-      <div className="ca_container_root">
-        <AuthComponent onClickAuthorise={onClickAuthorise} />
-      </div>
-    );
-  }
-
   const placeholderClass = userAnalytics ? "" : "ca_placeholder_enabled";
   const puzzleRatingText = userAnalytics ? (userAnalytics.latestPuzzleRating?.value ?? "NA") : "????";
   const disconnectsText = userAnalytics
@@ -167,74 +159,72 @@ export default function LichessApp({ port, gameInfo: { user, opponent, opponentC
         : "0"
     : "???";
 
-  if (accessToken) {
-    return (
-      <div className="ca_container_root">
-        {error ? <ErrorComponent error={error} /> : null}
-        <div className="ca_container">
-          <div className="ca_section ca_opponent_info">
-            <EloRangeComponent isLoading={!userAnalytics} userAnalytics={userAnalytics} />
-            <div className="ca_opponent_info_sections">
-              <div className="ca_opponent_info_section" title="Puzzle Rating">
-                <PuzzleIcon width="16" height="16" />
-                <span className={`ca_puzzle_rating ca_placeholder ${placeholderClass}`}>{puzzleRatingText}</span>
-              </div>
-              <div className="ca_opponent_info_section" title="Disconnects">
-                <DisconnectIcon width="16" height="16" />
-                <span className={`ca_disconnects ca_placeholder ${placeholderClass}`}>{disconnectsText}</span>
-              </div>
-              <div className="ca_opponent_info_section" title="Streak">
-                <span data-icon=""></span>
-                <span className={`${streakClass} ca_win_streak_value ca_placeholder ${placeholderClass}`}>
-                  {streakText}
-                </span>
+  return (
+    <div className="ca_container_root">
+      {error ? <ErrorComponent error={error} /> : null}
+      <AuthWrapper accessToken={accessToken} onClickAuthorise={onClickAuthorise}>
+        <PageStylesProvider value={{ fontColour, successColour, errorColour }}>
+          <div className="ca_container">
+            <div className="ca_section ca_opponent_info">
+              <EloRangeComponent isLoading={!userAnalytics} userAnalytics={userAnalytics} />
+              <div className="ca_opponent_info_sections">
+                <div className="ca_opponent_info_section" title="Puzzle Rating">
+                  <PuzzleIcon width="16" height="16" />
+                  <span className={`ca_puzzle_rating ca_placeholder ${placeholderClass}`}>{puzzleRatingText}</span>
+                </div>
+                <div className="ca_opponent_info_section" title="Disconnects">
+                  <DisconnectIcon width="16" height="16" />
+                  <span className={`ca_disconnects ca_placeholder ${placeholderClass}`}>{disconnectsText}</span>
+                </div>
+                <div className="ca_opponent_info_section" title="Streak">
+                  <span data-icon=""></span>
+                  <span className={`${streakClass} ca_win_streak_value ca_placeholder ${placeholderClass}`}>
+                    {streakText}
+                  </span>
+                </div>
               </div>
             </div>
-          </div>
-          <div className="ca_section ca_tabs">
-            <Tab label="STATS" currentTab={currentTab} setCurrentTab={setAndSaveCurrentTab}>
-              Stats
-            </Tab>
-            <Tab label="OPENINGS" currentTab={currentTab} setCurrentTab={setAndSaveCurrentTab}>
-              Openings
-            </Tab>
-            <Tab
-              label="NOTES"
-              currentTab={currentTab}
-              setCurrentTab={setAndSaveCurrentTab}
-              additionalClasses={`ca_tab_icon ${opponentNotes ? "ca_green_colour" : ""}`}
-            >
-              <NotesIcon width="16" height="16" />
-            </Tab>
-          </div>
-          {currentTab !== "STATS" ? null : (
-            <div className={`ca_section ca_tab_section ca_stats`} style={{ margin: 0 }}>
-              <PageStylesProvider value={{ fontColour, successColour, errorColour }}>
+            <div className="ca_section ca_tabs">
+              <Tab label="STATS" currentTab={currentTab} setCurrentTab={setAndSaveCurrentTab}>
+                Stats
+              </Tab>
+              <Tab label="OPENINGS" currentTab={currentTab} setCurrentTab={setAndSaveCurrentTab}>
+                Openings
+              </Tab>
+              <Tab
+                label="NOTES"
+                currentTab={currentTab}
+                setCurrentTab={setAndSaveCurrentTab}
+                additionalClasses={`ca_tab_icon ${opponentNotes ? "ca_green_colour" : ""}`}
+              >
+                <NotesIcon width="16" height="16" />
+              </Tab>
+            </div>
+            {currentTab !== "STATS" ? null : (
+              <div className={`ca_section ca_tab_section ca_stats`} style={{ margin: 0 }}>
                 <StatsChartComponent isLoading={!userAnalytics} userAnalytics={userAnalytics} />
                 <MoveTimesChartComponent isLoading={!userAnalytics} userAnalytics={userAnalytics} />
-              </PageStylesProvider>
-            </div>
-          )}
-          {currentTab !== "OPENINGS" ? null : (
-            <div className={`ca_section ca_tab_section ca_openings`} style={{ margin: 0 }}>
-              <PageStylesProvider value={{ fontColour, successColour, errorColour }}>
+              </div>
+            )}
+            {currentTab !== "OPENINGS" ? null : (
+              <div className={`ca_section ca_tab_section ca_openings`} style={{ margin: 0 }}>
                 <OpeningsChartComponent isLoading={!userAnalytics} userAnalytics={userAnalytics} />
-              </PageStylesProvider>
-            </div>
-          )}
-          {currentTab !== "NOTES" ? null : (
-            <div className={`ca_section ca_tab_section ca_notes}`} style={{ margin: 0 }}>
-              <OpponentNotesComponent
-                notes={opponentNotes}
-                setNotes={setOpponentNotes}
-                isLoading={opponentNotes === null}
-                onSave={onSaveOpponentNotes}
-                isSaving={savingOpponentNotes}
-              />
-            </div>
-          )}
-        </div>
-      </div>
-    );
-  }
+              </div>
+            )}
+            {currentTab !== "NOTES" ? null : (
+              <div className={`ca_section ca_tab_section ca_notes}`} style={{ margin: 0 }}>
+                <OpponentNotesComponent
+                  notes={opponentNotes}
+                  setNotes={setOpponentNotes}
+                  isLoading={opponentNotes === null}
+                  onSave={onSaveOpponentNotes}
+                  isSaving={savingOpponentNotes}
+                />
+              </div>
+            )}
+          </div>
+        </PageStylesProvider>
+      </AuthWrapper>
+    </div>
+  );
 }
