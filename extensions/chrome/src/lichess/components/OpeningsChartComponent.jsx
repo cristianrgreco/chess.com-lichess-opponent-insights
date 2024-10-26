@@ -6,6 +6,7 @@ import ChartPlaceholderComponent from "./ChartPlaceholderComponent.jsx";
 
 export default function OpeningsChartComponent({ isLoading, userAnalytics }) {
   const height = 200;
+  const openingNameTruncateLength = 20;
 
   if (isLoading) {
     return <ChartPlaceholderComponent height={height} />;
@@ -14,13 +15,7 @@ export default function OpeningsChartComponent({ isLoading, userAnalytics }) {
   const { fontColour, successColour, errorColour } = useContext(PageStylesContext);
 
   const data = userAnalytics.games.openings.filter((game) => game.insights.numberOfGames > 2);
-  const labels = data.map((game) => {
-    if (game.name.length > 20) {
-      return `${game.name.substring(0, 20).trim()}...`;
-    } else {
-      return game.name;
-    }
-  });
+  const labels = data.map((game) => game.name);
   const totalWins = data.map((game) => game.insights.totals.win);
   const totalDraws = data.map((game) => game.insights.totals.draw);
   const totalLosses = data.map((game) => game.insights.totals.lose);
@@ -75,6 +70,7 @@ export default function OpeningsChartComponent({ isLoading, userAnalytics }) {
             ticks: {
               autoSkip: false,
               color: fontColour,
+              callback: (value) => `${labels[value].substring(0, openingNameTruncateLength)}...`,
             },
           },
         },
