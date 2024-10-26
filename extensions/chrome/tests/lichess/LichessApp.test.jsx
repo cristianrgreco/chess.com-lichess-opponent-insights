@@ -60,6 +60,19 @@ const mockUserAnalytics = {
         outOfTimeRate: 0.2,
       },
     },
+    openings: [
+      {
+        name: "Sicilian Defense",
+        insights: {
+          numberOfGames: 10,
+          totals: {
+            win: 5,
+            draw: 2,
+            lose: 3,
+          },
+        },
+      },
+    ],
     moveTimes: [
       [
         [10, 5],
@@ -121,7 +134,10 @@ test("renders user analytics when accessToken is provided", async () => {
     expect(screen.getByText("2000")).toBeInTheDocument(); // Puzzle Rating
     expect(screen.getByText("30.0%")).toBeInTheDocument(); // Disconnects
     expect(screen.getByText("-3")).toBeInTheDocument(); // Losing Streak
-    expect(screen.getByTestId("bar-chart")).toBeInTheDocument(); // Bar chart is rendered
+    const barCharts = screen.getAllByTestId("bar-chart");
+    expect(barCharts.length).toBe(2); // Ensure there are 2 bar charts
+    expect(barCharts[0]).toBeInTheDocument(); // Check if the first bar chart is present
+    expect(barCharts[1]).toBeInTheDocument(); // Check if the second bar chart is present
     expect(screen.getByTestId("scatter-chart")).toBeInTheDocument(); // Scatter chart is rendered
   });
 });

@@ -196,28 +196,31 @@ export default function LichessApp({ port, gameInfo: { user, opponent, opponentC
                 <NotesIcon width="16" height="16" />
               </Tab>
             </div>
-            {currentTab !== "STATS" ? null : (
-              <div className={`ca_section ca_tab_section ca_stats`} style={{ margin: 0 }}>
-                <StatsChartComponent isLoading={!userAnalytics} userAnalytics={userAnalytics} />
-                <MoveTimesChartComponent isLoading={!userAnalytics} userAnalytics={userAnalytics} />
-              </div>
-            )}
-            {currentTab !== "OPENINGS" ? null : (
-              <div className={`ca_section ca_tab_section ca_openings`} style={{ margin: 0 }}>
-                <OpeningsChartComponent isLoading={!userAnalytics} userAnalytics={userAnalytics} />
-              </div>
-            )}
-            {currentTab !== "NOTES" ? null : (
-              <div className={`ca_section ca_tab_section ca_notes}`} style={{ margin: 0 }}>
-                <OpponentNotesComponent
-                  notes={opponentNotes}
-                  setNotes={setOpponentNotes}
-                  isLoading={opponentNotes === null}
-                  onSave={onSaveOpponentNotes}
-                  isSaving={savingOpponentNotes}
-                />
-              </div>
-            )}
+            <div
+              className={`ca_section ca_tab_section ca_stats ${currentTab !== "STATS" ? "ca_hidden" : ""}`}
+              style={{ margin: 0 }}
+            >
+              <StatsChartComponent isLoading={!userAnalytics} userAnalytics={userAnalytics} />
+              <MoveTimesChartComponent isLoading={!userAnalytics} userAnalytics={userAnalytics} />
+            </div>
+            <div
+              className={`ca_section ca_tab_section ca_openings ${currentTab !== "OPENINGS" ? "ca_hidden" : ""}`}
+              style={{ margin: 0 }}
+            >
+              <OpeningsChartComponent isLoading={!userAnalytics} userAnalytics={userAnalytics} />
+            </div>
+            <div
+              className={`ca_section ca_tab_section ca_notes ${currentTab !== "NOTES" ? "ca_hidden" : ""}`}
+              style={{ margin: 0 }}
+            >
+              <OpponentNotesComponent
+                notes={opponentNotes}
+                setNotes={setOpponentNotes}
+                isLoading={opponentNotes === null}
+                onSave={onSaveOpponentNotes}
+                isSaving={savingOpponentNotes}
+              />
+            </div>
           </div>
         </PageStylesProvider>
       </AuthWrapper>
