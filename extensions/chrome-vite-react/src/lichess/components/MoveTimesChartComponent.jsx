@@ -65,6 +65,11 @@ export default function MoveTimesChartComponent({ isLoading, userAnalytics }) {
           },
         },
         plugins: {
+          datalabels: {
+            labels: {
+              opacity: 0,
+            },
+          },
           title: {
             display: false,
             text: "Move Times",

@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import * as api from "./api.js";
 import "./LichessApp.css";
 import "chart.js/auto";
+import { Chart } from "chart.js/auto";
+import ChartDataLabels from "chartjs-plugin-datalabels";
 import AuthComponent from "./components/AuthComponent";
 import EloRangeComponent from "./components/EloRangeComponent";
 import StatsChartComponent from "./components/StatsChartComponent";
@@ -14,6 +16,8 @@ import OpponentNotesComponent from "./components/OpponentNotesComponent";
 import Tab from "./components/Tab";
 
 export default function LichessApp({ port, gameInfo: { user, opponent, opponentColour, gameType } }) {
+  Chart.register(ChartDataLabels);
+
   const [currentTab, setCurrentTab] = useState("STATS");
   const [accessToken, setAccessToken] = useState(null);
   const [userAnalytics, setUserAnalytics] = useState(null);
