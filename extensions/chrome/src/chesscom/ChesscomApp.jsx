@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import "./ChesscomApp.css";
 import useChesscomData from "@/chesscom/useChesscomData.js";
-import DebugOutput from "@/chesscom/DebugOutput.jsx";
 import StatsChartComponent from "@/shared/components/StatsChartComponent.jsx";
 import MoveTimesChartComponent from "@/shared/components/MoveTimesChartComponent.jsx";
 import OpeningsChartComponent from "@/shared/components/OpeningsChartComponent.jsx";
 import ChesscomPageStylesWrapper from "@/chesscom/ChesscomPageStylesWrapper.jsx";
 import EloRangeComponent from "@/shared/components/EloRangeComponent.jsx";
+import logo from "@/logo_128x128.png";
 import { DisconnectIcon, PuzzleIcon } from "@/shared/components/Icons.jsx";
 
 export default function ChesscomApp({ port, gameInfo }) {
@@ -40,6 +40,18 @@ export default function ChesscomApp({ port, gameInfo }) {
       <div style={{ margin: "20px 0" }}>
         <ChesscomPageStylesWrapper>
           <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                gap: "20px",
+                marginBottom: "20px",
+              }}
+            >
+              <img src={chrome.runtime.getURL(logo)} style={{ width: "100px" }} />
+              <h1 style={{ color: "var(--color)" }}>Chess Insights</h1>
+            </div>
             <div
               style={{
                 display: "flex",

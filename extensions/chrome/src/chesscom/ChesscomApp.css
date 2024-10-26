@@ -40,7 +40,7 @@
 .ca_win_streak_value {
   border-radius: 4px;
   padding: 0 2px;
-  color: var(--color-gray-900);
+  color: var(--color);
 }
 
 .ca_win_streak_value.ca_negative {

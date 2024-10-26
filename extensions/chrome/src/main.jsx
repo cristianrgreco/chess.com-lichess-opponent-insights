@@ -37,7 +37,9 @@ function getLichessGameInfoFromPage() {
 function renderChesscomApp() {
   const port = chrome.runtime.connect({ name: "ca-port" });
   const rootDiv = document.createElement("div");
-  document.querySelector(".skyscraper-ad-component").insertAdjacentElement("beforebegin", rootDiv);
+  const containerEl = document.querySelector("#sidebar-ad");
+  containerEl.innerHTML = "";
+  containerEl.appendChild(rootDiv);
 
   ReactDOM.createRoot(rootDiv).render(
     <React.StrictMode>
