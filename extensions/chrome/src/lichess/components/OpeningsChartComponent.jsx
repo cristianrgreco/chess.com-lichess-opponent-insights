@@ -2,14 +2,13 @@ import { useContext } from "react";
 import { Bar } from "react-chartjs-2";
 import ChartDataLabels from "chartjs-plugin-datalabels";
 import PageStylesContext from "../PageStylesContext.js";
+import ChartPlaceholderComponent from "./ChartPlaceholderComponent.jsx";
 
 export default function OpeningsChartComponent({ isLoading, userAnalytics }) {
   const height = 200;
 
   if (isLoading) {
-    return (
-      <Bar className="ca_placeholder ca_placeholder_enabled" height={height} data={{ labels: [], datasets: [] }} />
-    );
+    return <ChartPlaceholderComponent height={height} />;
   }
 
   const { fontColour, successColour, errorColour } = useContext(PageStylesContext);

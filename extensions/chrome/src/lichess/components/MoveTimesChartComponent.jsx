@@ -1,14 +1,13 @@
 import { useContext } from "react";
 import { Scatter } from "react-chartjs-2";
 import PageStylesContext from "../PageStylesContext.js";
+import ChartPlaceholderComponent from "./ChartPlaceholderComponent.jsx";
 
 export default function MoveTimesChartComponent({ isLoading, userAnalytics }) {
   const height = 110;
 
   if (isLoading) {
-    return (
-      <Scatter className="ca_placeholder ca_placeholder_enabled" height={height} data={{ labels: [], datasets: [] }} />
-    );
+    return <ChartPlaceholderComponent height={height} />;
   }
 
   const { fontColour } = useContext(PageStylesContext);
