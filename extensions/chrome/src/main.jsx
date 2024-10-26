@@ -1,9 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import LichessApp from "./lichess/LichessApp";
 import "./index.css";
-import ChesscomApp from "@/chesscom/ChesscomApp.jsx";
-import { GAME_TYPES } from "@/constants.js";
+import LichessApp from "./lichess/LichessApp";
+import ChesscomPageWrapper from "./chesscom/ChesscomPageWrapper";
 
 if (document.location.hostname === "lichess.org" && document.title.includes("Play ")) {
   renderLichessApp();
@@ -35,37 +34,14 @@ function getLichessGameInfoFromPage() {
   return { user, opponent, opponentColour, gameType };
 }
 
-async function renderChesscomApp() {
+function renderChesscomApp() {
   const port = chrome.runtime.connect({ name: "ca-port" });
   const rootDiv = document.createElement("div");
   document.querySelector(".skyscraper-ad-component").insertAdjacentElement("beforebegin", rootDiv);
 
   ReactDOM.createRoot(rootDiv).render(
     <React.StrictMode>
-      <ChesscomApp port={port} gameInfo={await getChesscomGameInfoFromPage()} />
+      <ChesscomPageWrapper port={port} />
     </React.StrictMode>,
   );
-}
-
-async function getChesscomGameInfoFromPage() {
-  const waitForPageData = new Promise((resolve) => {
-    setInterval(() => {
-      const opponent = document.querySelector(".player-top [data-test-element='user-tagline-username']").textContent;
-      if (opponent !== "Opponent") {
-        clearInterval(waitForPageData);
-        resolve();
-      }
-    }, 15);
-  });
-  await waitForPageData;
-
-  const opponent = document.querySelector(".player-top [data-test-element='user-tagline-username']").textContent;
-  const user = document.querySelector(".player-bottom [data-test-element='user-tagline-username']").textContent;
-  const opponentColour = document.querySelector(".player-top .clock-top").classList.contains("clock-white")
-    ? "white"
-    : "black";
-  const gameType = Array.from(document.querySelector("[data-tab='game'] .icon-font-chess").classList).find((aClass) =>
-    GAME_TYPES.has(aClass),
-  );
-  return { user, opponent, opponentColour, gameType };
 }
