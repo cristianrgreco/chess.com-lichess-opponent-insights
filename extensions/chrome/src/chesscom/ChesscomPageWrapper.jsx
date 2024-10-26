@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { GAME_TYPES } from "@/constants.js";
+import { GAME_TYPES } from "@/shared/constants.js";
 import ChesscomApp from "@/chesscom/ChesscomApp.jsx";
 
 export default function ChesscomPageWrapper({ port }) {
@@ -10,7 +10,7 @@ export default function ChesscomPageWrapper({ port }) {
     function listener(message) {
       switch (message.action) {
         case "TAB_UPDATED":
-          console.log("Detected URL change");
+          console.log("Detected tab update");
           setUrlPath(document.location.pathname);
           break;
       }

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import "./ChesscomApp.css";
-import * as api from "@/api.js";
+import * as api from "@/shared/api.js";
 import StatsChartComponent from "@/shared/components/StatsChartComponent.jsx";
 import MoveTimesChartComponent from "@/shared/components/MoveTimesChartComponent.jsx";
 import OpeningsChartComponent from "@/shared/components/OpeningsChartComponent.jsx";
-import PageStylesContext from "@/PageStylesContext.js";
+import PageStylesContext from "@/shared/PageStylesContext.js";
 
 export default function ChesscomApp({ port, gameInfo }) {
   const [userAnalytics, setUserAnalytics] = useState(null);

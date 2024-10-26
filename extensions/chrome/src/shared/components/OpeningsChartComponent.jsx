@@ -1,7 +1,7 @@
 import { useContext, useMemo } from "react";
 import { Bar } from "react-chartjs-2";
 import ChartDataLabels from "chartjs-plugin-datalabels";
-import PageStylesContext from "../../PageStylesContext.js";
+import PageStylesContext from "../PageStylesContext.js";
 import ChartPlaceholderComponent from "./ChartPlaceholderComponent.jsx";
 
 export default function OpeningsChartComponent({ isLoading, userAnalytics, height = 200 }) {

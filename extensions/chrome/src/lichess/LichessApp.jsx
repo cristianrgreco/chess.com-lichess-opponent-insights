@@ -1,18 +1,18 @@
 import { useEffect, useState } from "react";
-import * as api from "../api.js";
+import * as api from "@/shared/api.js";
 import "./LichessApp.css";
 import "chart.js/auto";
-import PageStylesContext from "../PageStylesContext.js";
+import PageStylesContext from "@/shared/PageStylesContext.js";
 import EloRangeComponent from "./components/EloRangeComponent";
-import StatsChartComponent from "../shared/components/StatsChartComponent";
-import OpeningsChartComponent from "../shared/components/OpeningsChartComponent";
-import MoveTimesChartComponent from "../shared/components/MoveTimesChartComponent";
-import { DisconnectIcon, NotesIcon, PuzzleIcon } from "../Icons";
+import StatsChartComponent from "@/shared/components/StatsChartComponent";
+import OpeningsChartComponent from "@/shared/components/OpeningsChartComponent";
+import MoveTimesChartComponent from "@/shared/components/MoveTimesChartComponent";
+import { DisconnectIcon, NotesIcon, PuzzleIcon } from "@/shared/components/Icons";
 import ErrorComponent from "./components/ErrorComponent";
 import OpponentNotesComponent from "./components/OpponentNotesComponent";
 import Tab from "./components/Tab";
 import AuthWrapper from "./components/AuthWrapper.jsx";
-import { GAME_TYPES } from "@/constants.js";
+import { GAME_TYPES } from "@/shared/constants.js";
 
 export default function LichessApp({ port, gameInfo: { user, opponent, opponentColour, gameType } }) {
   const [currentTab, setCurrentTab] = useState("STATS");

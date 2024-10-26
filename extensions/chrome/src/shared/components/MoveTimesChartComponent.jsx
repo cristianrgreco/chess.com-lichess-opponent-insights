@@ -1,6 +1,6 @@
 import { useContext, useMemo } from "react";
 import { Scatter } from "react-chartjs-2";
-import PageStylesContext from "../../PageStylesContext.js";
+import PageStylesContext from "../PageStylesContext.js";
 import ChartPlaceholderComponent from "./ChartPlaceholderComponent.jsx";
 
 export default function MoveTimesChartComponent({ isLoading, userAnalytics, height = 110 }) {
