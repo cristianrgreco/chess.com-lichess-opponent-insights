@@ -3,7 +3,7 @@ import * as api from "@/shared/api.js";
 import "./LichessApp.css";
 import "chart.js/auto";
 import PageStylesContext from "@/shared/PageStylesContext.js";
-import EloRangeComponent from "./components/EloRangeComponent";
+import EloRangeComponent from "@/shared/components/EloRangeComponent";
 import StatsChartComponent from "@/shared/components/StatsChartComponent";
 import OpeningsChartComponent from "@/shared/components/OpeningsChartComponent";
 import MoveTimesChartComponent from "@/shared/components/MoveTimesChartComponent";
