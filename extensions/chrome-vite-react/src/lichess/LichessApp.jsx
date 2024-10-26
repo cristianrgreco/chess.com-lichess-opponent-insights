@@ -35,8 +35,10 @@ export default function LichessApp({ port, gameInfo: { user, opponent, opponentC
       switch (message.action) {
         case "GET_LICHESS_ACCESS_TOKEN":
           if (message.payload) {
+            console.log("Found access token");
             setAccessToken(message.payload.value);
           } else {
+            console.log("Access token not found");
             setAccessToken(undefined);
           }
           break;
@@ -65,7 +67,6 @@ export default function LichessApp({ port, gameInfo: { user, opponent, opponentC
 
   useEffect(() => {
     if (accessToken) {
-      console.log("Found access token");
       console.log("Fetching preferences");
       port.postMessage({ action: "GET_PREFERENCES" });
       fetchUserAnalytics();
