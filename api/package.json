@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "test": "vitest run",
-    "format": "prettier --write src tests ../extensions/chrome/{manifest.json,*.js,*.html,*.css}"
+    "format": "prettier --write src tests serverless.yml vitest.workspace.ts vite.config.ts README.md"
   },
   "author": "",
   "license": "ISC",
