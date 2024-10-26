@@ -1,11 +1,14 @@
 const API = "https://rlabb3msg0.execute-api.eu-west-2.amazonaws.com/prod";
 
-export function fetchUserAnalytics(opponent, opponentColour, gameType, accessToken) {
+export function fetchUserAnalytics(platform, opponent, opponentColour, gameType, accessToken) {
+  const options = {};
+  if (accessToken) {
+    options.headers = { Authorization: `Bearer ${accessToken}` };
+  }
+
   return fetch(
-    `${API}/user-analytics?platform=lichess&username=${opponent}&gameType=${gameType}&colour=${opponentColour}`,
-    {
-      headers: { Authorization: `Bearer ${accessToken}` },
-    },
+    `${API}/user-analytics?platform=${platform}&username=${opponent}&gameType=${gameType}&colour=${opponentColour}`,
+    options,
   ).then(toJsonOrReject);
 }
 

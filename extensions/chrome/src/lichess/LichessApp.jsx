@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import * as api from "./api.js";
+import * as api from "../api.js";
 import "./LichessApp.css";
 import "chart.js/auto";
 import { PageStylesProvider } from "./PageStylesContext.js";
@@ -98,7 +98,7 @@ export default function LichessApp({ port, gameInfo: { user, opponent, opponentC
   function fetchUserAnalytics() {
     console.log("Fetching user analytics");
     api
-      .fetchUserAnalytics(opponent, opponentColour, gameType, accessToken)
+      .fetchUserAnalytics("lichess", opponent, opponentColour, gameType, accessToken)
       .then((response) => {
         console.log("Fetched user analytics");
         setUserAnalytics(response);

@@ -1,11 +1,11 @@
-import { render, screen, fireEvent, waitFor, act } from "@testing-library/react";
+import { render, screen, waitFor, act } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import LichessApp from "@/lichess/LichessApp";
-import * as api from "@/lichess/api";
+import * as api from "@/api";
 import { vi } from "vitest";
 
 // Mock the API functions
-vi.mock("@/lichess/api", () => ({
+vi.mock("@/api", () => ({
   fetchUserAnalytics: vi.fn(),
   fetchOpponentNotes: vi.fn(),
   saveOpponentNotes: vi.fn(),
