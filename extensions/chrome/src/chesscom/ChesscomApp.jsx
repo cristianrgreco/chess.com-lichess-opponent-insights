@@ -37,7 +37,6 @@ export default function ChesscomApp({ port, gameInfo }) {
 
   return (
     <div className="chesscom">
-      <DebugOutput gameInfo={gameInfo} userAnalytics={userAnalytics} />
       <div style={{ margin: "20px 0" }}>
         <ChesscomPageStylesWrapper>
           <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
@@ -68,7 +67,7 @@ export default function ChesscomApp({ port, gameInfo }) {
             </div>
             <StatsChartComponent isLoading={userAnalytics === null} userAnalytics={userAnalytics} />
             <OpeningsChartComponent isLoading={userAnalytics === null} userAnalytics={userAnalytics} />
-            <MoveTimesChartComponent isLoading={userAnalytics === null} userAnalytics={userAnalytics} />
+            <MoveTimesChartComponent isLoading={userAnalytics === null} userAnalytics={userAnalytics} height={200} />
           </div>
         </ChesscomPageStylesWrapper>
       </div>
