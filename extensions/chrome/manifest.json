@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
-  "name": "Lichess Opponent Information",
-  "version": "1.4.0",
+  "name": "Chess Opponent Insights",
+  "version": "1.5.0",
   "description": "Professional chess players spend a lot of time researching their opponents before a match, so why is it any different online?",
   "icons": {
     "16": "icons/logo_16x16.png",
@@ -12,7 +12,10 @@
   "content_scripts": [
     {
       "js": ["src/main.jsx"],
-      "matches": ["https://lichess.org/*"]
+      "matches": [
+        "https://lichess.org/*",
+        "https://www.chess.com/*"
+      ]
     }
   ],
   "background": {

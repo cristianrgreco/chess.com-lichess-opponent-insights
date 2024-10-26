@@ -12,6 +12,7 @@ import ErrorComponent from "./components/ErrorComponent";
 import OpponentNotesComponent from "./components/OpponentNotesComponent";
 import Tab from "./components/Tab";
 import AuthWrapper from "./components/AuthWrapper.jsx";
+import { GAME_TYPES } from "@/constants.js";
 
 export default function LichessApp({ port, gameInfo: { user, opponent, opponentColour, gameType } }) {
   const [currentTab, setCurrentTab] = useState("STATS");
@@ -130,7 +131,7 @@ export default function LichessApp({ port, gameInfo: { user, opponent, opponentC
       .finally(() => setSavingOpponentNotes(false));
   }
 
-  if (!["bullet", "blitz", "rapid", "classical"].includes(gameType)) {
+  if (!GAME_TYPES.has(gameType)) {
     console.log(`Skipping unsupported game type ${gameType}`);
     return null;
   }
