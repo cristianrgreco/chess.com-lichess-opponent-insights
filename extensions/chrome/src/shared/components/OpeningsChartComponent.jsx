@@ -1,19 +1,17 @@
 import { useContext, useMemo } from "react";
 import { Bar } from "react-chartjs-2";
 import ChartDataLabels from "chartjs-plugin-datalabels";
-import PageStylesContext from "../PageStylesContext.js";
+import PageStylesContext from "../../PageStylesContext.js";
 import ChartPlaceholderComponent from "./ChartPlaceholderComponent.jsx";
 
-export default function OpeningsChartComponent({ isLoading, userAnalytics }) {
-  const height = 200;
-
+export default function OpeningsChartComponent({ isLoading, userAnalytics, height = 200 }) {
   if (isLoading) {
     return <ChartPlaceholderComponent height={height} />;
   }
 
   const pageStyles = useContext(PageStylesContext);
   const { data, options } = useMemo(
-    () => calculateGraphData(userAnalytics.games.openings, pageStyles, [userAnalytics]),
+    () => calculateGraphData(userAnalytics.games.openings, pageStyles),
     [userAnalytics],
   );
 
@@ -21,7 +19,7 @@ export default function OpeningsChartComponent({ isLoading, userAnalytics }) {
 }
 
 function calculateGraphData(openings, { successColour, errorColour, fontColour }) {
-  const openingNameTruncateLength = 20;
+  const openingNameTruncateLength = 25;
 
   const commonOpenings = openings.filter((game) => game.insights.numberOfGames > 2);
   const labels = commonOpenings.map((game) => game.name);
@@ -76,7 +74,18 @@ function calculateGraphData(openings, { successColour, errorColour, fontColour }
         ticks: {
           autoSkip: false,
           color: fontColour,
-          callback: (value) => `${labels[value].substring(0, openingNameTruncateLength)}...`,
+          font: {
+            size: 10,
+          },
+          callback: (value) => {
+            const label = labels[value];
+            if (label.length <= openingNameTruncateLength) {
+              return label;
+            }
+            const firstHalf = label.substring(0, Math.floor(openingNameTruncateLength / 2));
+            const secondHalf = label.substring(label.length - Math.floor(openingNameTruncateLength / 2), label.length);
+            return `${firstHalf.trim()}...${secondHalf.trim()}`;
+          },
         },
       },
     },

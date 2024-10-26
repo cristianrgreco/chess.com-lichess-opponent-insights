@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 import * as api from "../api.js";
 import "./LichessApp.css";
 import "chart.js/auto";
-import { PageStylesProvider } from "./PageStylesContext.js";
+import PageStylesContext from "../PageStylesContext.js";
 import EloRangeComponent from "./components/EloRangeComponent";
-import StatsChartComponent from "./components/StatsChartComponent";
-import OpeningsChartComponent from "./components/OpeningsChartComponent";
-import MoveTimesChartComponent from "./components/MoveTimesChartComponent";
+import StatsChartComponent from "../shared/components/StatsChartComponent";
+import OpeningsChartComponent from "../shared/components/OpeningsChartComponent";
+import MoveTimesChartComponent from "../shared/components/MoveTimesChartComponent";
 import { DisconnectIcon, NotesIcon, PuzzleIcon } from "../Icons";
 import ErrorComponent from "./components/ErrorComponent";
 import OpponentNotesComponent from "./components/OpponentNotesComponent";
@@ -160,7 +160,7 @@ export default function LichessApp({ port, gameInfo: { user, opponent, opponentC
     <div className="ca_container_root">
       {error ? <ErrorComponent error={error} /> : null}
       <AuthWrapper accessToken={accessToken} onClickAuthorise={onClickAuthorise}>
-        <PageStylesProvider value={{ fontColour, successColour, errorColour }}>
+        <PageStylesContext.Provider value={{ fontColour, successColour, errorColour }}>
           <div className="ca_container">
             <div className="ca_section ca_opponent_info">
               <EloRangeComponent isLoading={!userAnalytics} userAnalytics={userAnalytics} />
@@ -223,7 +223,7 @@ export default function LichessApp({ port, gameInfo: { user, opponent, opponentC
               />
             </div>
           </div>
-        </PageStylesProvider>
+        </PageStylesContext.Provider>
       </AuthWrapper>
     </div>
   );

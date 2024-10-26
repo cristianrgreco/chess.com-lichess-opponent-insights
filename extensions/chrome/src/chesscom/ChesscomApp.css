@@ -1,0 +1,17 @@
+:root {
+  --placeholder-color: hsla(0,0%,100%,.1);
+}
+
+.ca_placeholder {
+}
+
+.ca_placeholder.ca_placeholder_enabled {
+  color: transparent !important;
+  background-color: var(--placeholder-color) !important;
+  animation:
+      fadeIn linear 0.5s,
+      flickerAnimation linear 1s infinite 0.5s;
+  pointer-events: none;
+  border-radius: 3px;
+  overflow: hidden;
+}
