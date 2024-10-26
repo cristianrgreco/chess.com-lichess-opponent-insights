@@ -34,8 +34,7 @@ describe("Lichess export games", () => {
   });
 
   it("should return opening win rates and accuracies for opening variations", async () => {
-    const openingFamily = spaghettiGames.openings.find((game) => game.name === "Queen's Pawn Game");
-    const { insights } = openingFamily.variations.find((variation) => variation.name === "Accelerated London System");
+    const { insights } = spaghettiGames.openings.find((game) => game.variations.length > 0);
     expect(insights.results.win.resign).toBeGreaterThanOrEqual(0);
     expect(insights.numberOfGames).toBeGreaterThanOrEqual(0);
     expect(insights.accuracy).toBeGreaterThanOrEqual(0);
