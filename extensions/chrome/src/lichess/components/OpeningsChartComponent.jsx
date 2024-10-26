@@ -15,7 +15,13 @@ export default function OpeningsChartComponent({ isLoading, userAnalytics }) {
   const { fontColour, successColour, errorColour } = useContext(PageStylesContext);
 
   const data = userAnalytics.games.openings.filter((game) => game.insights.numberOfGames > 2);
-  const labels = data.map((game) => game.name);
+  const labels = data.map((game) => {
+    if (game.name.length > 20) {
+      return `${game.name.substring(0, 20).trim()}...`;
+    } else {
+      return game.name;
+    }
+  });
   const totalWins = data.map((game) => game.insights.totals.win);
   const totalDraws = data.map((game) => game.insights.totals.draw);
   const totalLosses = data.map((game) => game.insights.totals.lose);

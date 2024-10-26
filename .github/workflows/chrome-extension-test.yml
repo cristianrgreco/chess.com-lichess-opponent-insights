@@ -1,11 +1,11 @@
-name: Chrome extension test
+name: Chrome extension
 
 on:
   pull_request:
     branches:
       - main
     paths:
-      - "extensions/chrome-vite-react/**"
+      - "extensions/chrome/**"
 
 jobs:
   test:
@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-22.04
     defaults:
       run:
-        working-directory: extensions/chrome-vite-react
+        working-directory: extensions/chrome
     steps:
       - name: Code checkout
         uses: actions/checkout@v3
