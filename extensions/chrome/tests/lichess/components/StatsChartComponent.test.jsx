@@ -12,15 +12,10 @@ vi.mock("react-chartjs-2", () => ({
 test("renders a placeholder chart when isLoading is true", () => {
   render(<StatsChartComponent isLoading={true} userAnalytics={null} />);
 
-  // Check that the Bar component is called with the placeholder data
-  expect(Bar).toHaveBeenCalledWith(
-    expect.objectContaining({
-      className: "ca_placeholder ca_placeholder_enabled",
-      height: 90,
-      data: { labels: [], datasets: [] },
-    }),
-    {},
-  );
+  const placeholderChart = screen.getByTestId("chart-placeholder");
+  expect(placeholderChart).toBeInTheDocument();
+  expect(placeholderChart).toHaveClass("ca_placeholder ca_placeholder_enabled");
+  expect(placeholderChart).toHaveStyle("height: 90px");
 });
 
 test("renders the chart with correct data when not loading", () => {
