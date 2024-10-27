@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import ErrorBar from "@/shared/components/ErrorBar.jsx";
+import { ErrorBar } from "@/shared";
 
 test("renders the error message when error prop is provided", () => {
   render(<ErrorBar error="Something went wrong" />);

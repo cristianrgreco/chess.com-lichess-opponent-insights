@@ -1,9 +1,8 @@
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import MoveTimesChart from "@/shared/components/MoveTimesChart.jsx";
-import PageStylesContext from "@/shared/PageStylesContext";
 import { vi } from "vitest";
 import { Scatter } from "react-chartjs-2";
+import { MoveTimesChart, PageStylesContext } from "@/shared";
 
 vi.mock("react-chartjs-2", () => ({
   Scatter: vi.fn(() => <div data-testid="scatter-chart" />),

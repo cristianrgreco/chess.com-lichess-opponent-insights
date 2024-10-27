@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import EloRange from "@/shared/components/EloRange.jsx";
+import { EloRange } from "@/shared";
 
 const mockAnalytics = {
   performance: {

@@ -1,7 +1,7 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import AuthWrapper from "@/lichess/components/AuthWrapper";
 import { vi } from "vitest";
+import AuthWrapper from "@/lichess/components/presentational/AuthWrapper.jsx";
 
 // Mock the chrome.runtime.getURL function for the logo
 global.chrome = {

@@ -1,9 +1,8 @@
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import StatsChart from "@/shared/components/StatsChart.jsx";
-import PageStylesContext from "@/shared/PageStylesContext";
 import { vi } from "vitest";
 import { Bar } from "react-chartjs-2";
+import { StatsChart, PageStylesContext } from "@/shared";
 
 vi.mock("react-chartjs-2", () => ({
   Bar: vi.fn(() => <div data-testid="chart" />),
