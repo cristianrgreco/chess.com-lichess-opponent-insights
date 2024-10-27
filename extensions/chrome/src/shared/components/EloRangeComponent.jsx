@@ -1,4 +1,5 @@
 import "./EloRangeComponent.css";
+import { useMemo } from "react";
 
 export default function EloRangeComponent({ isLoading, userAnalytics }) {
   const placeholder = "????";
@@ -18,10 +19,12 @@ export default function EloRangeComponent({ isLoading, userAnalytics }) {
   const highestTitle = isLoading ? "" : new Date(highestRatingDateTime).toLocaleDateString();
   const currentText = isLoading ? placeholder : Math.floor(currentRating);
 
-  const range = highestRating - lowestRating;
-  const diff = currentRating - lowestRating;
-  const percentage = range ? (diff / range) * 100 : undefined;
-  const percentageIncrease = percentage !== undefined ? Math.max(0, Math.min(100, percentage)) : 50;
+  const percentageIncrease = useMemo(() => {
+    const range = highestRating - lowestRating;
+    const diff = currentRating - lowestRating;
+    const percentage = range ? (diff / range) * 100 : undefined;
+    return percentage !== undefined ? Math.max(0, Math.min(100, percentage)) : 50;
+  }, [userAnalytics]);
 
   return (
     <div className="ca_elo_range">
