@@ -1,4 +1,4 @@
-export default function OpponentNotesComponent({ isLoading, notes, setNotes, onSave, isSaving }) {
+export default function OpponentNotes({ isLoading, notes, setNotes, onSave, isSaving }) {
   const placeholderClass = isLoading ? "ca_placeholder_enabled" : "";
 
   return (

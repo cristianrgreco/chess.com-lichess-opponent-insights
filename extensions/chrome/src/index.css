@@ -3,8 +3,8 @@
   --title-font-size: 20px;
   --background-color: var(--c-bg-box);
   --color: var(--c-font, var(--nodeColor));
-  --success: var(--c-secondary-dim, var(--color-bg-win));
-  --success-dark: var(--c-secondary-dimmer, var(--color-bg-win));
+  --success: var(--c-secondary-dim, var(--color-green-400));
+  --success-dark: var(--c-secondary-dimmer, var(--color-green-500));
   --error: #ab615e;
   --error-dark: var(--m-bad_bg--mix-25, var(--color-classification-miss));
   --tab-background-color: var(--c-bg-page);
@@ -180,7 +180,7 @@
 }
 
 .ca_btn-win:hover {
-  background-color: var(--success-dark);
+  background-color: var(--success);
 }
 
 .ca_btn-win[disabled] {

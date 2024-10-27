@@ -8,10 +8,10 @@ import StatsChartComponent from "@/shared/components/StatsChartComponent";
 import OpeningsChartComponent from "@/shared/components/OpeningsChartComponent";
 import MoveTimesChartComponent from "@/shared/components/MoveTimesChartComponent";
 import { DisconnectIcon, NotesIcon, PuzzleIcon } from "@/shared/components/Icons";
-import ErrorComponent from "./components/ErrorComponent";
-import OpponentNotesComponent from "./components/OpponentNotesComponent";
-import Tab from "./components/Tab";
-import AuthWrapper from "./components/AuthWrapper.jsx";
+import ErrorComponent from "@/lichess/components/ErrorComponent";
+import OpponentNotesComponent from "@/shared/components/OpponentNotesComponent";
+import Tab from "@/lichess/components/Tab";
+import AuthWrapper from "@/lichess/components/AuthWrapper.jsx";
 import { GAME_TYPES } from "@/shared/constants.js";
 
 export default function LichessApp({ port, gameInfo: { user, opponent, opponentColour, gameType } }) {
@@ -19,7 +19,6 @@ export default function LichessApp({ port, gameInfo: { user, opponent, opponentC
   const [accessToken, setAccessToken] = useState(null);
   const [userAnalytics, setUserAnalytics] = useState(null);
   const [opponentNotes, setOpponentNotes] = useState(null);
-  const [savingOpponentNotes, setSavingOpponentNotes] = useState(false);
   const [error, setError] = useState(null);
 
   const style = getComputedStyle(document.body);
@@ -67,17 +66,11 @@ export default function LichessApp({ port, gameInfo: { user, opponent, opponentC
       console.log("Fetching preferences");
       port.postMessage({ action: "GET_PREFERENCES" });
       fetchUserAnalytics();
-      fetchOpponentNotes();
     }
   }, [accessToken]);
 
   function onClickAuthorise() {
     port.postMessage({ action: "AUTH_LICHESS", payload: { user } });
-  }
-
-  function onSaveOpponentNotes(e) {
-    e.preventDefault();
-    saveOpponentNotes();
   }
 
   function onPreferences(preferences) {
@@ -104,31 +97,6 @@ export default function LichessApp({ port, gameInfo: { user, opponent, opponentC
         setUserAnalytics(response);
       })
       .catch((response) => setError("Failed to fetch user analytics."));
-  }
-
-  function fetchOpponentNotes() {
-    console.log("Fetching opponent notes");
-    api
-      .fetchOpponentNotes(user, opponent)
-      .then((responseJson) => {
-        console.log("Fetched opponent notes");
-        if (responseJson.notes) {
-          setOpponentNotes(responseJson.notes);
-        } else {
-          setOpponentNotes(undefined);
-        }
-      })
-      .catch((response) => setError("Failed to fetch opponent notes."));
-  }
-
-  function saveOpponentNotes() {
-    console.log("Saving opponent notes");
-    setSavingOpponentNotes(true);
-    api
-      .saveOpponentNotes(user, opponent, opponentNotes)
-      .then(() => console.log("Saved opponent notes"))
-      .catch((response) => setError("Failed to save opponent notes."))
-      .finally(() => setSavingOpponentNotes(false));
   }
 
   if (!GAME_TYPES.has(gameType)) {
@@ -215,11 +183,12 @@ export default function LichessApp({ port, gameInfo: { user, opponent, opponentC
               style={{ margin: 0 }}
             >
               <OpponentNotesComponent
-                notes={opponentNotes}
-                setNotes={setOpponentNotes}
-                isLoading={opponentNotes === null}
-                onSave={onSaveOpponentNotes}
-                isSaving={savingOpponentNotes}
+                shouldInit={accessToken !== undefined && accessToken !== null}
+                user={user}
+                opponent={opponent}
+                setError={setError}
+                opponentNotes={opponentNotes}
+                setOpponentNotes={setOpponentNotes}
               />
             </div>
           </div>

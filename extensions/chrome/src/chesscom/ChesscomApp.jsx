@@ -1,17 +1,18 @@
 import React, { useState } from "react";
 import "./ChesscomApp.css";
+import logo from "@/logo_128x128.png";
 import useChesscomData from "@/chesscom/useChesscomData.js";
 import StatsChartComponent from "@/shared/components/StatsChartComponent.jsx";
 import MoveTimesChartComponent from "@/shared/components/MoveTimesChartComponent.jsx";
 import OpeningsChartComponent from "@/shared/components/OpeningsChartComponent.jsx";
 import ChesscomPageStylesWrapper from "@/chesscom/ChesscomPageStylesWrapper.jsx";
 import EloRangeComponent from "@/shared/components/EloRangeComponent.jsx";
-import logo from "@/logo_128x128.png";
 import { DisconnectIcon, PuzzleIcon } from "@/shared/components/Icons.jsx";
-import OpponentNotesComponent from "@/lichess/components/OpponentNotesComponent.jsx";
+import OpponentNotesComponent from "@/shared/components/OpponentNotesComponent.jsx";
 
 export default function ChesscomApp({ port, gameInfo }) {
   const [userAnalytics, setUserAnalytics] = useState(null);
+  const [opponentNotes, setOpponentNotes] = useState(null);
   const [error, setError] = useState(null);
 
   useChesscomData({ gameInfo, setUserAnalytics, setError });
@@ -82,11 +83,12 @@ export default function ChesscomApp({ port, gameInfo }) {
             <OpeningsChartComponent isLoading={userAnalytics === null} userAnalytics={userAnalytics} />
             <MoveTimesChartComponent isLoading={userAnalytics === null} userAnalytics={userAnalytics} height={100} />
             <OpponentNotesComponent
-              isLoading={userAnalytics === null}
-              notes={"some notes"}
-              setNotes={() => {}}
-              onSave={() => {}}
-              isSaving={false}
+              shouldInit={true}
+              user={gameInfo.user}
+              opponent={gameInfo.opponent}
+              setError={setError}
+              opponentNotes={opponentNotes}
+              setOpponentNotes={setOpponentNotes}
             />
           </div>
         </ChesscomPageStylesWrapper>
