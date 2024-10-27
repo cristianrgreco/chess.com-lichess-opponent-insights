@@ -51,8 +51,7 @@ export default function ChesscomApp({ port, gameInfo }) {
           <div className="ca_chesscom__opponent-notes">
             <OpponentNotesComponent
               shouldInit={true}
-              user={gameInfo.user}
-              opponent={gameInfo.opponent}
+              gameInfo={gameInfo}
               setError={setError}
               opponentNotes={opponentNotes}
               setOpponentNotes={setOpponentNotes}

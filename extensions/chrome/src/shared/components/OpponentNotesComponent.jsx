@@ -2,26 +2,19 @@ import { useEffect, useState } from "react";
 import * as api from "@/shared/api.js";
 import OpponentNotes from "@/shared/components/OpponentNotes.jsx";
 
-export default function OpponentNotesComponent({
-  shouldInit,
-  user,
-  opponent,
-  setError,
-  opponentNotes,
-  setOpponentNotes,
-}) {
+export default function OpponentNotesComponent({ shouldInit, gameInfo, setError, opponentNotes, setOpponentNotes }) {
   const [savingOpponentNotes, setSavingOpponentNotes] = useState(false);
 
   useEffect(() => {
     if (shouldInit) {
       fetchOpponentNotes();
     }
-  }, [shouldInit]);
+  }, [shouldInit, gameInfo]);
 
   function fetchOpponentNotes() {
     console.log("Fetching opponent notes");
     api
-      .fetchOpponentNotes(user, opponent)
+      .fetchOpponentNotes(gameInfo.user, gameInfo.opponent)
       .then((responseJson) => {
         console.log("Fetched opponent notes");
         if (responseJson.notes) {
@@ -42,7 +35,7 @@ export default function OpponentNotesComponent({
     console.log("Saving opponent notes");
     setSavingOpponentNotes(true);
     api
-      .saveOpponentNotes(user, opponent, opponentNotes)
+      .saveOpponentNotes(gameInfo.user, gameInfo.opponent, opponentNotes)
       .then(() => console.log("Saved opponent notes"))
       .catch((response) => setError("Failed to save opponent notes."))
       .finally(() => setSavingOpponentNotes(false));

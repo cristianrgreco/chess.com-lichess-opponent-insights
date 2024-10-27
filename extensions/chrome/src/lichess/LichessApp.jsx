@@ -17,7 +17,7 @@ import PuzzleRating from "@/shared/components/PuzzleRating.jsx";
 import Streak from "@/shared/components/Streak.jsx";
 import Disconnects from "@/shared/components/Disconnects.jsx";
 
-export default function LichessApp({ port, gameInfo: { user, opponent, opponentColour, gameType } }) {
+export default function LichessApp({ port, gameInfo }) {
   const [currentTab, setCurrentTab] = useState("STATS");
   const [accessToken, setAccessToken] = useState(null);
   const [userAnalytics, setUserAnalytics] = useState(null);
@@ -73,7 +73,7 @@ export default function LichessApp({ port, gameInfo: { user, opponent, opponentC
   }, [accessToken]);
 
   function onClickAuthorise() {
-    port.postMessage({ action: "AUTH_LICHESS", payload: { user } });
+    port.postMessage({ action: "AUTH_LICHESS", payload: { user: gameInfo.user } });
   }
 
   function onPreferences(preferences) {
@@ -94,16 +94,16 @@ export default function LichessApp({ port, gameInfo: { user, opponent, opponentC
   function fetchUserAnalytics() {
     console.log("Fetching user analytics");
     api
-      .fetchUserAnalytics("lichess", opponent, opponentColour, gameType, accessToken)
+      .fetchUserAnalytics("lichess", gameInfo.opponent, gameInfo.opponentColour, gameInfo.gameType, accessToken)
       .then((response) => {
         console.log("Fetched user analytics");
         setUserAnalytics(response);
       })
-      .catch((response) => setError("Failed to fetch user analytics."));
+      .catch(() => setError("Failed to fetch user analytics."));
   }
 
-  if (!GAME_TYPES.has(gameType)) {
-    console.log(`Skipping unsupported game type ${gameType}`);
+  if (!GAME_TYPES.has(gameInfo.gameType)) {
+    console.log(`Skipping unsupported game type ${gameInfo.gameType}`);
     return null;
   }
 
@@ -165,8 +165,7 @@ export default function LichessApp({ port, gameInfo: { user, opponent, opponentC
             >
               <OpponentNotesComponent
                 shouldInit={accessToken !== undefined && accessToken !== null}
-                user={user}
-                opponent={opponent}
+                gameInfo={gameInfo}
                 setError={setError}
                 opponentNotes={opponentNotes}
                 setOpponentNotes={setOpponentNotes}
