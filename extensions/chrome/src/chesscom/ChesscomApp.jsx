@@ -26,11 +26,11 @@ export default function ChesscomApp({ port, gameInfo }) {
       {error ? <ErrorComponent error={error} /> : null}
       <div className="ca_chesscom">
         <ChesscomPageStylesWrapper>
-          <div className="ca_chesscom_header">
+          <div className="ca_chesscom__header">
             <img alt="Logo" src={chrome.runtime.getURL(logo)} />
             <h1 style={{ color: "var(--color)" }}>Chess Insights</h1>
           </div>
-          <div className="ca_chesscom_opponent_info_wrapper">
+          <div className="ca_chesscom__summary">
             <EloRangeComponent isLoading={!userAnalytics} userAnalytics={userAnalytics} />
             <div className="ca_opponent_info_section" title="Puzzle Rating">
               <PuzzleIcon width="16" height="16" />
@@ -48,14 +48,16 @@ export default function ChesscomApp({ port, gameInfo }) {
           <StatsChartComponent isLoading={userAnalytics === null} userAnalytics={userAnalytics} height={100} />
           <OpeningsChartComponent isLoading={userAnalytics === null} userAnalytics={userAnalytics} />
           <MoveTimesChartComponent isLoading={userAnalytics === null} userAnalytics={userAnalytics} height={100} />
-          <OpponentNotesComponent
-            shouldInit={true}
-            user={gameInfo.user}
-            opponent={gameInfo.opponent}
-            setError={setError}
-            opponentNotes={opponentNotes}
-            setOpponentNotes={setOpponentNotes}
-          />
+          <div className="ca_chesscom__opponent-notes">
+            <OpponentNotesComponent
+              shouldInit={true}
+              user={gameInfo.user}
+              opponent={gameInfo.opponent}
+              setError={setError}
+              opponentNotes={opponentNotes}
+              setOpponentNotes={setOpponentNotes}
+            />
+          </div>
         </ChesscomPageStylesWrapper>
       </div>
     </React.Fragment>

@@ -5,7 +5,7 @@
   margin: 20px 0;
 }
 
-.ca_chesscom_header {
+.ca_chesscom__header {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -13,10 +13,14 @@
   margin-bottom: 20px;
 }
 
-.ca_chesscom_opponent_info_wrapper {
+.ca_chesscom__summary {
   display: flex;
   justify-content: center;
   align-items: center;
   font-size: 10px;
   color: var(--color);
+}
+
+.ca_chesscom__opponent-notes {
+  height: 110px;
 }

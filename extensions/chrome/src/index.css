@@ -6,7 +6,7 @@
   --success: var(--c-secondary-dim, var(--color-green-400));
   --success-dark: var(--c-secondary-dimmer, var(--color-green-500));
   --error: #ab615e;
-  --error-dark: var(--m-bad_bg--mix-25, var(--color-classification-miss));
+  --error-dark: var(--m-bad_bg--mix-25, #ab615e);
   --tab-background-color: var(--c-bg-page);
   --tab-active-background-color: var(--c-bg-box);
   --tab-hover-background-color: var(--m-accent_bg--mix-15);
@@ -180,7 +180,7 @@
 }
 
 .ca_btn-win:hover {
-  background-color: var(--success);
+  background-color: var(--success-dark);
 }
 
 .ca_btn-win[disabled] {
@@ -198,7 +198,6 @@
 
 .ca_textarea {
   width: 100%;
-  height: 165px;
   padding: 4px;
   color: var(--color);
   font-size: var(--font-size);
@@ -211,6 +210,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  height: 200px;
 }
 
 #ca_save_opponent_notes_form {

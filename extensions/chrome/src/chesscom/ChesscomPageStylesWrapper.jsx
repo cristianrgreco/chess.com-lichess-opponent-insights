@@ -2,9 +2,9 @@ import PageStylesContext from "@/shared/PageStylesContext.js";
 
 export default function ChesscomPageStylesWrapper({ children }) {
   const style = getComputedStyle(document.body);
-  const fontColour = style.getPropertyValue("--nodeColor");
-  const successColour = style.getPropertyValue("--color-bg-win");
-  const errorColour = style.getPropertyValue("--color-classification-miss");
+  const fontColour = style.getPropertyValue("--color");
+  const successColour = style.getPropertyValue("--success");
+  const errorColour = style.getPropertyValue("--error-dark");
 
   return (
     <PageStylesContext.Provider value={{ fontColour, successColour, errorColour }}>
