@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
-import * as api from "@/shared/api.js";
-import OpponentNotes from "@/shared/components/OpponentNotes.jsx";
+import { api, OpponentNotes } from "@/shared";
 
-export default function OpponentNotesComponent({ shouldInit, gameInfo, setError, opponentNotes, setOpponentNotes }) {
+export default function OpponentNotesContainer({ shouldInit, gameInfo, setError, opponentNotes, setOpponentNotes }) {
   const [savingOpponentNotes, setSavingOpponentNotes] = useState(false);
 
   useEffect(() => {

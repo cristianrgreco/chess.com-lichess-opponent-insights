@@ -1,4 +1,4 @@
-export default function ChartPlaceholderComponent({ height }) {
+export default function ChartPlaceholder({ height }) {
   return (
     <div
       className="ca_placeholder ca_placeholder_enabled"

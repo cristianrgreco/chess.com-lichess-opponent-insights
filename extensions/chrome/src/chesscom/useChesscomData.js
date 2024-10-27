@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import * as api from "@/shared/api.js";
+import { api } from "@/shared";
 
 export default function useChesscomData({ gameInfo, setUserAnalytics, setError }) {
   useEffect(() => {

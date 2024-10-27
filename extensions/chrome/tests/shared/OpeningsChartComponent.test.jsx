@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import OpeningsChartComponent from "@/shared/components/OpeningsChartComponent";
+import OpeningsChart from "@/shared/components/OpeningsChart.jsx";
 import PageStylesContext from "@/shared/PageStylesContext";
 import { vi } from "vitest";
 import { Bar } from "react-chartjs-2";
@@ -10,7 +10,7 @@ vi.mock("react-chartjs-2", () => ({
 }));
 
 test("renders a placeholder chart when isLoading is true", () => {
-  render(<OpeningsChartComponent isLoading={true} userAnalytics={null} />);
+  render(<OpeningsChart isLoading={true} userAnalytics={null} />);
 
   const placeholderChart = screen.getByTestId("chart-placeholder");
   expect(placeholderChart).toBeInTheDocument();
@@ -67,7 +67,7 @@ test("renders the chart with correct data when not loading", () => {
 
   render(
     <PageStylesContext.Provider value={mockContextValue}>
-      <OpeningsChartComponent isLoading={false} userAnalytics={mockAnalytics} />
+      <OpeningsChart isLoading={false} userAnalytics={mockAnalytics} />
     </PageStylesContext.Provider>,
   );
 
@@ -165,7 +165,7 @@ test("filters out games with numberOfGames <= 2", () => {
 
   render(
     <PageStylesContext.Provider value={mockContextValue}>
-      <OpeningsChartComponent isLoading={false} userAnalytics={mockAnalytics} />
+      <OpeningsChart isLoading={false} userAnalytics={mockAnalytics} />
     </PageStylesContext.Provider>,
   );
 
@@ -224,7 +224,7 @@ test("applies correct styles from PageStylesContext", () => {
 
   render(
     <PageStylesContext.Provider value={mockContextValue}>
-      <OpeningsChartComponent isLoading={false} userAnalytics={mockAnalytics} />
+      <OpeningsChart isLoading={false} userAnalytics={mockAnalytics} />
     </PageStylesContext.Provider>,
   );
 

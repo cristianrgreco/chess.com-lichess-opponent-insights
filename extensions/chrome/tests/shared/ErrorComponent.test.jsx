@@ -1,9 +1,9 @@
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import ErrorComponent from "@/shared/components/ErrorComponent";
+import ErrorBar from "@/shared/components/ErrorBar.jsx";
 
 test("renders the error message when error prop is provided", () => {
-  render(<ErrorComponent error="Something went wrong" />);
+  render(<ErrorBar error="Something went wrong" />);
 
   // Check that the error message is displayed using data-testid
   const errorMessage = screen.getByTestId("error-message");
@@ -13,7 +13,7 @@ test("renders the error message when error prop is provided", () => {
 });
 
 test("renders empty error message when error prop is not provided", () => {
-  render(<ErrorComponent error={null} />);
+  render(<ErrorBar error={null} />);
 
   // Use data-testid to find the element and check that it is empty
   const errorMessage = screen.getByTestId("error-message");
@@ -23,7 +23,7 @@ test("renders empty error message when error prop is not provided", () => {
 });
 
 test("applies correct CSS classes to the error container and message", () => {
-  render(<ErrorComponent error="Critical error occurred" />);
+  render(<ErrorBar error="Critical error occurred" />);
 
   // Check that the container has the correct class
   const errorContainer = screen.getByTestId("error-message").parentElement;

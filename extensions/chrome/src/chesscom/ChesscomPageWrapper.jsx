@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { GAME_TYPES } from "@/shared/constants.js";
 import ChesscomApp from "@/chesscom/ChesscomApp.jsx";
+import { GAME_TYPES } from "@/shared";
 
 export default function ChesscomPageWrapper({ port }) {
   const [urlPath, setUrlPath] = useState(document.location.pathname);

@@ -1,4 +1,4 @@
-import PageStylesContext from "@/shared/PageStylesContext.js";
+import { PageStylesContext } from "@/shared";
 
 export default function ChesscomPageStylesWrapper({ children }) {
   const style = getComputedStyle(document.body);

@@ -1,7 +1,7 @@
-import "./EloRangeComponent.css";
 import { useMemo } from "react";
+import "./EloRange.css";
 
-export default function EloRangeComponent({ isLoading, userAnalytics }) {
+export default function EloRange({ isLoading, userAnalytics }) {
   const placeholder = "????";
   const placeholderClass = isLoading ? "ca_placeholder_enabled" : "";
 
