@@ -21,7 +21,7 @@ export default function EloRangeComponent({ isLoading, userAnalytics }) {
   const range = highestRating - lowestRating;
   const diff = currentRating - lowestRating;
   const percentage = range ? (diff / range) * 100 : undefined;
-  const percentageIncrease = Math.max(0, Math.min(100, percentage));
+  const percentageIncrease = percentage !== undefined ? Math.max(0, Math.min(100, percentage)) : 50;
 
   return (
     <div className="ca_elo_range">

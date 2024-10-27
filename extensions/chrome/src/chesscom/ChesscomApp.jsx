@@ -8,6 +8,7 @@ import ChesscomPageStylesWrapper from "@/chesscom/ChesscomPageStylesWrapper.jsx"
 import EloRangeComponent from "@/shared/components/EloRangeComponent.jsx";
 import logo from "@/logo_128x128.png";
 import { DisconnectIcon, PuzzleIcon } from "@/shared/components/Icons.jsx";
+import OpponentNotesComponent from "@/lichess/components/OpponentNotesComponent.jsx";
 
 export default function ChesscomApp({ port, gameInfo }) {
   const [userAnalytics, setUserAnalytics] = useState(null);
@@ -77,9 +78,16 @@ export default function ChesscomApp({ port, gameInfo }) {
                 </span>
               </div>
             </div>
-            <StatsChartComponent isLoading={userAnalytics === null} userAnalytics={userAnalytics} />
+            <StatsChartComponent isLoading={userAnalytics === null} userAnalytics={userAnalytics} height={100} />
             <OpeningsChartComponent isLoading={userAnalytics === null} userAnalytics={userAnalytics} />
-            <MoveTimesChartComponent isLoading={userAnalytics === null} userAnalytics={userAnalytics} height={200} />
+            <MoveTimesChartComponent isLoading={userAnalytics === null} userAnalytics={userAnalytics} height={100} />
+            <OpponentNotesComponent
+              isLoading={userAnalytics === null}
+              notes={"some notes"}
+              setNotes={() => {}}
+              onSave={() => {}}
+              isSaving={false}
+            />
           </div>
         </ChesscomPageStylesWrapper>
       </div>

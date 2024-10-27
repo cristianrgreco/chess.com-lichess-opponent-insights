@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import MoveTimesChartComponent from "@/lichess/components/MoveTimesChartComponent";
-import PageStylesContext from "@/lichess/PageStylesContext";
+import MoveTimesChartComponent from "@/shared/components/MoveTimesChartComponent";
+import PageStylesContext from "@/shared/PageStylesContext";
 import { vi } from "vitest";
 import { Scatter } from "react-chartjs-2";
 

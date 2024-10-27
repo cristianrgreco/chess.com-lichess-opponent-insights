@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import EloRangeComponent from "@/lichess/components/EloRangeComponent";
+import EloRangeComponent from "@/shared/components/EloRangeComponent";
 
 const mockAnalytics = {
   performance: {

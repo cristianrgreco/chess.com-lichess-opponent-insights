@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import OpeningsChartComponent from "@/lichess/components/OpeningsChartComponent";
-import PageStylesContext from "@/lichess/PageStylesContext";
+import OpeningsChartComponent from "@/shared/components/OpeningsChartComponent";
+import PageStylesContext from "@/shared/PageStylesContext";
 import { vi } from "vitest";
 import { Bar } from "react-chartjs-2";
 
