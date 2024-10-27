@@ -1,0 +1,26 @@
+.ca_chesscom {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin: 20px 0;
+}
+
+.ca_chesscom_header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.ca_chesscom_header .ca_chesscom_header_logo {
+  width: 100px;
+}
+
+.ca_chesscom_opponent_info_wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 10px;
+  color: var(--color);
+}

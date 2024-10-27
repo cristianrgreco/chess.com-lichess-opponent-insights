@@ -21,59 +21,39 @@ export default function ChesscomApp({ port, gameInfo }) {
   useChesscomData({ gameInfo, setUserAnalytics, setError });
 
   return (
-    <div className="chesscom">
-      <div style={{ margin: "20px 0" }}>
-        <ChesscomPageStylesWrapper>
-          <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                gap: "20px",
-                marginBottom: "20px",
-              }}
-            >
-              <img src={chrome.runtime.getURL(logo)} style={{ width: "100px" }} />
-              <h1 style={{ color: "var(--color)" }}>Chess Insights</h1>
-            </div>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                fontSize: "10px",
-                color: "var(--color)",
-              }}
-            >
-              <EloRangeComponent isLoading={!userAnalytics} userAnalytics={userAnalytics} />
-              <div className="ca_opponent_info_section" title="Puzzle Rating">
-                <PuzzleIcon width="16" height="16" />
-                <PuzzleRating userAnalytics={userAnalytics} />
-              </div>
-              <div className="ca_opponent_info_section" title="Disconnects">
-                <DisconnectIcon width="16" height="16" />
-                <Disconnects userAnalytics={userAnalytics} />
-              </div>
-              <div className="ca_opponent_info_section" title="Streak">
-                <span className={`icon-font-chess ${gameInfo.gameType} tabs-icon`} style={{ fontSize: "16px" }}></span>
-                <Streak userAnalytics={userAnalytics} />
-              </div>
-            </div>
-            <StatsChartComponent isLoading={userAnalytics === null} userAnalytics={userAnalytics} height={100} />
-            <OpeningsChartComponent isLoading={userAnalytics === null} userAnalytics={userAnalytics} />
-            <MoveTimesChartComponent isLoading={userAnalytics === null} userAnalytics={userAnalytics} height={100} />
-            <OpponentNotesComponent
-              shouldInit={true}
-              user={gameInfo.user}
-              opponent={gameInfo.opponent}
-              setError={setError}
-              opponentNotes={opponentNotes}
-              setOpponentNotes={setOpponentNotes}
-            />
+    <div className="ca_chesscom">
+      <ChesscomPageStylesWrapper>
+        <div className="ca_chesscom_header">
+          <img className="ca_chesscom_header_logo" alt="Logo" src={chrome.runtime.getURL(logo)} />
+          <h1 style={{ color: "var(--color)" }}>Chess Insights</h1>
+        </div>
+        <div className="ca_chesscom_opponent_info_wrapper">
+          <EloRangeComponent isLoading={!userAnalytics} userAnalytics={userAnalytics} />
+          <div className="ca_opponent_info_section" title="Puzzle Rating">
+            <PuzzleIcon width="16" height="16" />
+            <PuzzleRating userAnalytics={userAnalytics} />
           </div>
-        </ChesscomPageStylesWrapper>
-      </div>
+          <div className="ca_opponent_info_section" title="Disconnects">
+            <DisconnectIcon width="16" height="16" />
+            <Disconnects userAnalytics={userAnalytics} />
+          </div>
+          <div className="ca_opponent_info_section" title="Streak">
+            <span className={`icon-font-chess ${gameInfo.gameType} tabs-icon`} style={{ fontSize: "16px" }}></span>
+            <Streak userAnalytics={userAnalytics} />
+          </div>
+        </div>
+        <StatsChartComponent isLoading={userAnalytics === null} userAnalytics={userAnalytics} height={100} />
+        <OpeningsChartComponent isLoading={userAnalytics === null} userAnalytics={userAnalytics} />
+        <MoveTimesChartComponent isLoading={userAnalytics === null} userAnalytics={userAnalytics} height={100} />
+        <OpponentNotesComponent
+          shouldInit={true}
+          user={gameInfo.user}
+          opponent={gameInfo.opponent}
+          setError={setError}
+          opponentNotes={opponentNotes}
+          setOpponentNotes={setOpponentNotes}
+        />
+      </ChesscomPageStylesWrapper>
     </div>
   );
 }
