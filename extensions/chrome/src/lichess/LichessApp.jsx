@@ -13,6 +13,9 @@ import OpponentNotesComponent from "@/shared/components/OpponentNotesComponent";
 import Tab from "@/lichess/components/Tab";
 import AuthWrapper from "@/lichess/components/AuthWrapper.jsx";
 import { GAME_TYPES } from "@/shared/constants.js";
+import PuzzleRating from "@/shared/components/PuzzleRating.jsx";
+import Streak from "@/shared/components/Streak.jsx";
+import Disconnects from "@/shared/components/Disconnects.jsx";
 
 export default function LichessApp({ port, gameInfo: { user, opponent, opponentColour, gameType } }) {
   const [currentTab, setCurrentTab] = useState("STATS");
@@ -104,26 +107,6 @@ export default function LichessApp({ port, gameInfo: { user, opponent, opponentC
     return null;
   }
 
-  const placeholderClass = userAnalytics ? "" : "ca_placeholder_enabled";
-  const puzzleRatingText = userAnalytics ? (userAnalytics.latestPuzzleRating?.value ?? "NA") : "????";
-  const disconnectsText = userAnalytics
-    ? `${((userAnalytics.performance.totalNumberOfDisconnects / userAnalytics.performance.totalNumberOfGames) * 100).toFixed(1)}%`
-    : "????";
-  const streakClass = userAnalytics
-    ? userAnalytics.performance.currentLosingStreak > 0
-      ? "ca_negative"
-      : userAnalytics.performance.currentWinningStreak > 0
-        ? "ca_positive"
-        : ""
-    : "";
-  const streakText = userAnalytics
-    ? userAnalytics.performance.currentLosingStreak > 0
-      ? `-${userAnalytics.performance.currentLosingStreak}`
-      : userAnalytics.performance.currentWinningStreak > 0
-        ? `+${userAnalytics.performance.currentWinningStreak}`
-        : "0"
-    : "???";
-
   return (
     <div className="ca_container_root">
       {error ? <ErrorComponent error={error} /> : null}
@@ -135,17 +118,15 @@ export default function LichessApp({ port, gameInfo: { user, opponent, opponentC
               <div className="ca_opponent_info_sections">
                 <div className="ca_opponent_info_section" title="Puzzle Rating">
                   <PuzzleIcon width="16" height="16" />
-                  <span className={`ca_puzzle_rating ca_placeholder ${placeholderClass}`}>{puzzleRatingText}</span>
+                  <PuzzleRating userAnalytics={userAnalytics} />
                 </div>
                 <div className="ca_opponent_info_section" title="Disconnects">
                   <DisconnectIcon width="16" height="16" />
-                  <span className={`ca_disconnects ca_placeholder ${placeholderClass}`}>{disconnectsText}</span>
+                  <Disconnects userAnalytics={userAnalytics} />
                 </div>
                 <div className="ca_opponent_info_section" title="Streak">
                   <span data-icon=""></span>
-                  <span className={`${streakClass} ca_win_streak_value ca_placeholder ${placeholderClass}`}>
-                    {streakText}
-                  </span>
+                  <Streak userAnalytics={userAnalytics} />
                 </div>
               </div>
             </div>

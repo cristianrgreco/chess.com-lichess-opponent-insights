@@ -9,6 +9,9 @@ import ChesscomPageStylesWrapper from "@/chesscom/ChesscomPageStylesWrapper.jsx"
 import EloRangeComponent from "@/shared/components/EloRangeComponent.jsx";
 import { DisconnectIcon, PuzzleIcon } from "@/shared/components/Icons.jsx";
 import OpponentNotesComponent from "@/shared/components/OpponentNotesComponent.jsx";
+import PuzzleRating from "@/shared/components/PuzzleRating.jsx";
+import Disconnects from "@/shared/components/Disconnects.jsx";
+import Streak from "@/shared/components/Streak.jsx";
 
 export default function ChesscomApp({ port, gameInfo }) {
   const [userAnalytics, setUserAnalytics] = useState(null);
@@ -16,26 +19,6 @@ export default function ChesscomApp({ port, gameInfo }) {
   const [error, setError] = useState(null);
 
   useChesscomData({ gameInfo, setUserAnalytics, setError });
-
-  const placeholderClass = userAnalytics ? "" : "ca_placeholder_enabled";
-  const puzzleRatingText = userAnalytics ? (userAnalytics.latestPuzzleRating?.value ?? "NA") : "????";
-  const disconnectsText = userAnalytics
-    ? `${((userAnalytics.performance.totalNumberOfDisconnects / userAnalytics.performance.totalNumberOfGames) * 100).toFixed(1)}%`
-    : "????";
-  const streakClass = userAnalytics
-    ? userAnalytics.performance.currentLosingStreak > 0
-      ? "ca_negative"
-      : userAnalytics.performance.currentWinningStreak > 0
-        ? "ca_positive"
-        : ""
-    : "";
-  const streakText = userAnalytics
-    ? userAnalytics.performance.currentLosingStreak > 0
-      ? `-${userAnalytics.performance.currentLosingStreak}`
-      : userAnalytics.performance.currentWinningStreak > 0
-        ? `+${userAnalytics.performance.currentWinningStreak}`
-        : "0"
-    : "???";
 
   return (
     <div className="chesscom">
@@ -66,17 +49,15 @@ export default function ChesscomApp({ port, gameInfo }) {
               <EloRangeComponent isLoading={!userAnalytics} userAnalytics={userAnalytics} />
               <div className="ca_opponent_info_section" title="Puzzle Rating">
                 <PuzzleIcon width="16" height="16" />
-                <span className={`ca_puzzle_rating ca_placeholder ${placeholderClass}`}>{puzzleRatingText}</span>
+                <PuzzleRating userAnalytics={userAnalytics} />
               </div>
               <div className="ca_opponent_info_section" title="Disconnects">
                 <DisconnectIcon width="16" height="16" />
-                <span className={`ca_disconnects ca_placeholder ${placeholderClass}`}>{disconnectsText}</span>
+                <Disconnects userAnalytics={userAnalytics} />
               </div>
               <div className="ca_opponent_info_section" title="Streak">
                 <span className={`icon-font-chess ${gameInfo.gameType} tabs-icon`} style={{ fontSize: "16px" }}></span>
-                <span className={`${streakClass} ca_win_streak_value ca_placeholder ${placeholderClass}`}>
-                  {streakText}
-                </span>
+                <Streak userAnalytics={userAnalytics} />
               </div>
             </div>
             <StatsChartComponent isLoading={userAnalytics === null} userAnalytics={userAnalytics} height={100} />
