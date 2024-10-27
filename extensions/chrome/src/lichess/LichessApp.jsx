@@ -8,7 +8,7 @@ import StatsChartComponent from "@/shared/components/StatsChartComponent";
 import OpeningsChartComponent from "@/shared/components/OpeningsChartComponent";
 import MoveTimesChartComponent from "@/shared/components/MoveTimesChartComponent";
 import { DisconnectIcon, NotesIcon, PuzzleIcon } from "@/shared/components/Icons";
-import ErrorComponent from "@/lichess/components/ErrorComponent";
+import ErrorComponent from "@/shared/components/ErrorComponent";
 import OpponentNotesComponent from "@/shared/components/OpponentNotesComponent";
 import Tab from "@/lichess/components/Tab";
 import AuthWrapper from "@/lichess/components/AuthWrapper.jsx";

@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import ErrorComponent from "@/lichess/components/ErrorComponent";
+import ErrorComponent from "@/shared/components/ErrorComponent";
 
 test("renders the error message when error prop is provided", () => {
   render(<ErrorComponent error="Something went wrong" />);

@@ -13,10 +13,6 @@
   margin-bottom: 20px;
 }
 
-.ca_chesscom_header .ca_chesscom_header_logo {
-  width: 100px;
-}
-
 .ca_chesscom_opponent_info_wrapper {
   display: flex;
   justify-content: center;
