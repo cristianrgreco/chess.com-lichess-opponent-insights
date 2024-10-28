@@ -18,11 +18,10 @@ import {
 } from "@/shared";
 
 export default function ChesscomApp({ port, gameInfo }) {
-  const [userAnalytics, setUserAnalytics] = useState(null);
   const [opponentNotes, setOpponentNotes] = useState(null);
   const [error, setError] = useState(null);
 
-  useChesscomData({ gameInfo, setUserAnalytics, setError });
+  const userAnalytics = useChesscomData({ gameInfo, setError });
 
   return (
     <React.Fragment>
