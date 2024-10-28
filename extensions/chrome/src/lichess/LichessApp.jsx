@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import "chart.js/auto";
 import "./LichessApp.css";
 import Tab from "@/lichess/components/presentational/Tab";
+import TabContent from "@/lichess/components/presentational/TabContent.jsx";
 import AuthWrapper from "@/lichess/components/presentational/AuthWrapper.jsx";
 import useLichessAccessToken from "@/lichess/hooks/useLichessAccessToken.js";
 import {
@@ -100,23 +101,14 @@ export default function LichessApp({ port, gameInfo }) {
                 <NotesIcon width="16" height="16" />
               </Tab>
             </div>
-            <div
-              className={`ca_section ca_tab_section ca_stats ${currentTab !== "STATS" ? "ca_hidden" : ""}`}
-              style={{ margin: 0 }}
-            >
+            <TabContent label="STATS" currentTab={currentTab}>
               <StatsChart isLoading={!userAnalytics} userAnalytics={userAnalytics} />
               <MoveTimesChart isLoading={!userAnalytics} userAnalytics={userAnalytics} />
-            </div>
-            <div
-              className={`ca_section ca_tab_section ca_openings ${currentTab !== "OPENINGS" ? "ca_hidden" : ""}`}
-              style={{ margin: 0 }}
-            >
+            </TabContent>
+            <TabContent label="OPENINGS" currentTab={currentTab}>
               <OpeningsChart isLoading={!userAnalytics} userAnalytics={userAnalytics} />
-            </div>
-            <div
-              className={`ca_section ca_tab_section ca_notes ${currentTab !== "NOTES" ? "ca_hidden" : ""}`}
-              style={{ margin: 0 }}
-            >
+            </TabContent>
+            <TabContent label="NOTES" currentTab={currentTab}>
               <OpponentNotesContainer
                 shouldInit={accessToken !== undefined && accessToken !== null}
                 gameInfo={gameInfo}
@@ -124,7 +116,7 @@ export default function LichessApp({ port, gameInfo }) {
                 opponentNotes={opponentNotes}
                 setOpponentNotes={setOpponentNotes}
               />
-            </div>
+            </TabContent>
           </div>
         </PageStylesContext.Provider>
       </AuthWrapper>
