@@ -1,0 +1,11 @@
+#ca_save_opponent_notes_form {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+#ca_save_opponent_notes_form > textarea {
+  flex-grow: 1;
+}

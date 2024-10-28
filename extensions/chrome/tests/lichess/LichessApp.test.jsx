@@ -1,11 +1,11 @@
-import { render, screen, fireEvent, waitFor, act } from "@testing-library/react";
+import { render, screen, waitFor, act } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import LichessApp from "@/lichess/LichessApp";
-import * as api from "@/lichess/api";
 import { vi } from "vitest";
+import LichessApp from "@/lichess/LichessApp";
+import { api } from "@/shared";
 
 // Mock the API functions
-vi.mock("@/lichess/api", () => ({
+vi.mock("@/shared/api", () => ({
   fetchUserAnalytics: vi.fn(),
   fetchOpponentNotes: vi.fn(),
   saveOpponentNotes: vi.fn(),
@@ -98,7 +98,7 @@ test("renders AuthWrapper when accessToken is undefined", async () => {
   render(<LichessApp port={mockPort} gameInfo={mockGameInfo} />);
 
   // Simulate receiving a message that sets accessToken to undefined
-  const listener = mockPort.onMessage.addListener.mock.calls[0][0];
+  const listener = mockPort.onMessage.addListener.mock.calls[1][0];
 
   await act(async () => {
     listener({ action: "GET_LICHESS_ACCESS_TOKEN", payload: undefined });
@@ -120,7 +120,7 @@ test("renders user analytics when accessToken is provided", async () => {
 
   render(<LichessApp port={mockPort} gameInfo={mockGameInfo} />);
 
-  const listener = mockPort.onMessage.addListener.mock.calls[0][0];
+  const listener = mockPort.onMessage.addListener.mock.calls[1][0];
 
   await act(async () => {
     listener({ action: "GET_LICHESS_ACCESS_TOKEN", payload: { value: "mock-token" } });

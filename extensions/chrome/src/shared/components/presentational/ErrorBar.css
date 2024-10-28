@@ -4,4 +4,5 @@
   padding: 12px;
   background-color: var(--error);
   color: white;
+  font-size: var(--font-size);
 }

@@ -1,16 +1,15 @@
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import StatsChartComponent from "@/lichess/components/StatsChartComponent";
-import PageStylesContext from "@/lichess/PageStylesContext";
 import { vi } from "vitest";
 import { Bar } from "react-chartjs-2";
+import { StatsChart, PageStylesContext } from "@/shared";
 
 vi.mock("react-chartjs-2", () => ({
   Bar: vi.fn(() => <div data-testid="chart" />),
 }));
 
 test("renders a placeholder chart when isLoading is true", () => {
-  render(<StatsChartComponent isLoading={true} userAnalytics={null} />);
+  render(<StatsChart isLoading={true} userAnalytics={null} />);
 
   const placeholderChart = screen.getByTestId("chart-placeholder");
   expect(placeholderChart).toBeInTheDocument();
@@ -44,7 +43,7 @@ test("renders the chart with correct data when not loading", () => {
 
   render(
     <PageStylesContext.Provider value={mockContextValue}>
-      <StatsChartComponent isLoading={false} userAnalytics={mockAnalytics} />
+      <StatsChart isLoading={false} userAnalytics={mockAnalytics} />
     </PageStylesContext.Provider>,
   );
 

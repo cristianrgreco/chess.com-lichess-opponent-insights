@@ -1,16 +1,15 @@
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import MoveTimesChartComponent from "@/lichess/components/MoveTimesChartComponent";
-import PageStylesContext from "@/lichess/PageStylesContext";
 import { vi } from "vitest";
 import { Scatter } from "react-chartjs-2";
+import { MoveTimesChart, PageStylesContext } from "@/shared";
 
 vi.mock("react-chartjs-2", () => ({
   Scatter: vi.fn(() => <div data-testid="scatter-chart" />),
 }));
 
 test("renders a placeholder chart when isLoading is true", () => {
-  render(<MoveTimesChartComponent isLoading={true} userAnalytics={null} />);
+  render(<MoveTimesChart isLoading={true} userAnalytics={null} />);
 
   const placeholderChart = screen.getByTestId("chart-placeholder");
   expect(placeholderChart).toBeInTheDocument();
@@ -40,7 +39,7 @@ test("renders the chart with correct data when not loading", () => {
 
   render(
     <PageStylesContext.Provider value={mockContextValue}>
-      <MoveTimesChartComponent isLoading={false} userAnalytics={mockAnalytics} />
+      <MoveTimesChart isLoading={false} userAnalytics={mockAnalytics} />
     </PageStylesContext.Provider>,
   );
 
@@ -114,7 +113,7 @@ test("calculates maxMoveTimeLabel and maxMoveTimeValue correctly", () => {
 
   render(
     <PageStylesContext.Provider value={mockContextValue}>
-      <MoveTimesChartComponent isLoading={false} userAnalytics={mockAnalytics} />
+      <MoveTimesChart isLoading={false} userAnalytics={mockAnalytics} />
     </PageStylesContext.Provider>,
   );
 
@@ -158,7 +157,7 @@ test("applies correct styles from PageStylesContext", () => {
 
   render(
     <PageStylesContext.Provider value={mockContextValue}>
-      <MoveTimesChartComponent isLoading={false} userAnalytics={mockAnalytics} />
+      <MoveTimesChart isLoading={false} userAnalytics={mockAnalytics} />
     </PageStylesContext.Provider>,
   );
 

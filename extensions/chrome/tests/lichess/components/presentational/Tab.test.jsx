@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import Tab from "@/lichess/components/Tab";
+import Tab from "@/lichess/components/presentational/Tab";
 
 test("renders with correct active class when it is the current tab", () => {
   const mockSetCurrentTab = vi.fn();

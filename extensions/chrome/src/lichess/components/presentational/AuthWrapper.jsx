@@ -1,7 +1,7 @@
 import React from "react";
 import "./AuthWrapper.css";
 import logo from "@/logo_128x128.png";
-import { OpenInNewWindowIcon } from "../../Icons.jsx";
+import { OpenInNewWindowIcon } from "@/shared";
 
 export default function AuthWrapper({ accessToken, onClickAuthorise, children }) {
   if (accessToken === undefined) {
