@@ -15,6 +15,9 @@ export default function usePreferences({ port }) {
     console.log("Adding preferences listener to port");
     port.onMessage.addListener(listener);
 
+    console.log("Fetching preferences");
+    port.postMessage({ action: "GET_PREFERENCES" });
+
     return () => {
       console.log("Removing preferences listener from port");
       port.onMessage.removeListener(listener);
