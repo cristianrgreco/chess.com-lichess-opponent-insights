@@ -1,10 +1,15 @@
 import { useEffect, useState } from "react";
 import { api } from "@/shared";
 
-export default function useChesscomData({ gameInfo, setError }) {
+export default function useUserAnalyticsData({ platform, gameInfo, setError, accessToken }) {
   const [userAnalytics, setUserAnalytics] = useState(null);
 
   useEffect(() => {
+    if (platform === "lichess" && !accessToken) {
+      console.log("Not fetching user analytics");
+      return;
+    }
+
     const abortController = new AbortController();
 
     function fetchUserAnalytics() {
@@ -12,11 +17,11 @@ export default function useChesscomData({ gameInfo, setError }) {
       setUserAnalytics(null);
       api
         .fetchUserAnalytics(
-          "chesscom",
+          platform,
           gameInfo.opponent,
           gameInfo.opponentColour,
           gameInfo.gameType,
-          null,
+          accessToken,
           abortController.signal,
         )
         .then((response) => {
@@ -36,7 +41,7 @@ export default function useChesscomData({ gameInfo, setError }) {
       console.log("Aborting fetching user analytics");
       abortController.abort();
     };
-  }, [gameInfo]);
+  }, [platform, gameInfo, accessToken]);
 
   return userAnalytics;
 }

@@ -5,6 +5,11 @@ export default function OpponentNotesContainer({ shouldInit, gameInfo, setError,
   const [savingOpponentNotes, setSavingOpponentNotes] = useState(false);
 
   useEffect(() => {
+    if (!shouldInit) {
+      console.log("Not fetching opponent notes");
+      return;
+    }
+
     const abortController = new AbortController();
 
     function fetchOpponentNotes() {
@@ -26,9 +31,7 @@ export default function OpponentNotesContainer({ shouldInit, gameInfo, setError,
         });
     }
 
-    if (shouldInit) {
-      fetchOpponentNotes();
-    }
+    fetchOpponentNotes();
 
     return () => {
       console.log("Aborting fetching opponent notes");

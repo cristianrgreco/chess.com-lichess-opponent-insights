@@ -12,6 +12,7 @@ export { default as PuzzleRating } from "@/shared/components/presentational/Puzz
 export { default as StatsChart } from "@/shared/components/presentational/StatsChart.jsx";
 export { default as Streak } from "@/shared/components/presentational/Streak.jsx";
 
+export { default as useUserAnalyticsData } from "@/shared/hooks/useUserAnalyticsData.js";
 export { default as usePreferences } from "@/shared/hooks/usePreferences.js";
 
 export { default as PageStylesContext } from "@/shared/PageStylesContext.js";

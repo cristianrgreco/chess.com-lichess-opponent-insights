@@ -98,7 +98,7 @@ test("renders AuthWrapper when accessToken is undefined", async () => {
   render(<LichessApp port={mockPort} gameInfo={mockGameInfo} />);
 
   // Simulate receiving a message that sets accessToken to undefined
-  const listener = mockPort.onMessage.addListener.mock.calls[0][0];
+  const listener = mockPort.onMessage.addListener.mock.calls[1][0];
 
   await act(async () => {
     listener({ action: "GET_LICHESS_ACCESS_TOKEN", payload: undefined });
@@ -120,7 +120,7 @@ test("renders user analytics when accessToken is provided", async () => {
 
   render(<LichessApp port={mockPort} gameInfo={mockGameInfo} />);
 
-  const listener = mockPort.onMessage.addListener.mock.calls[0][0];
+  const listener = mockPort.onMessage.addListener.mock.calls[1][0];
 
   await act(async () => {
     listener({ action: "GET_LICHESS_ACCESS_TOKEN", payload: { value: "mock-token" } });

@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import "./ChesscomApp.css";
 import logo from "@/logo_128x128.png";
-import useChesscomData from "@/chesscom/useChesscomData.js";
 import ChesscomPageStylesWrapper from "@/chesscom/ChesscomPageStylesWrapper.jsx";
 import {
+  useUserAnalyticsData,
   StatsChart,
   MoveTimesChart,
   OpeningsChart,
@@ -21,7 +21,7 @@ export default function ChesscomApp({ port, gameInfo }) {
   const [opponentNotes, setOpponentNotes] = useState(null);
   const [error, setError] = useState(null);
 
-  const userAnalytics = useChesscomData({ gameInfo, setError });
+  const userAnalytics = useUserAnalyticsData({ platform: "chesscom", gameInfo, setError });
 
   return (
     <React.Fragment>

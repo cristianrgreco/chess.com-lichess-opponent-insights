@@ -5,7 +5,6 @@ import Tab from "@/lichess/components/presentational/Tab";
 import AuthWrapper from "@/lichess/components/presentational/AuthWrapper.jsx";
 import useLichessAccessToken from "@/lichess/hooks/useLichessAccessToken.js";
 import {
-  api,
   DisconnectIcon,
   Disconnects,
   EloRange,
@@ -21,58 +20,22 @@ import {
   StatsChart,
   Streak,
   usePreferences,
+  useUserAnalyticsData,
 } from "@/shared";
 
 export default function LichessApp({ port, gameInfo }) {
   const [currentTab, setCurrentTab] = useState("STATS");
-  const [userAnalytics, setUserAnalytics] = useState(null);
   const [opponentNotes, setOpponentNotes] = useState(null);
   const [error, setError] = useState(null);
 
   const { preferences, savePreferences } = usePreferences({ port });
   const accessToken = useLichessAccessToken({ port });
+  const userAnalytics = useUserAnalyticsData({ platform: "lichess", gameInfo, accessToken, setError });
 
   const style = getComputedStyle(document.body);
   const fontColour = style.getPropertyValue("--color");
   const successColour = style.getPropertyValue("--success");
   const errorColour = style.getPropertyValue("--error");
-
-  useEffect(() => {
-    const abortController = new AbortController();
-
-    function fetchUserAnalytics() {
-      console.log("Fetching user analytics");
-      api
-        .fetchUserAnalytics(
-          "lichess",
-          gameInfo.opponent,
-          gameInfo.opponentColour,
-          gameInfo.gameType,
-          accessToken,
-          abortController.signal,
-        )
-        .then((response) => {
-          console.log("Fetched user analytics");
-          setUserAnalytics(response);
-        })
-        .catch(() => {
-          if (!abortController.signal.aborted) {
-            setError("Failed to fetch user analytics.");
-          }
-        });
-    }
-
-    if (accessToken) {
-      console.log("Fetching preferences");
-      port.postMessage({ action: "GET_PREFERENCES" });
-      fetchUserAnalytics();
-    }
-
-    return () => {
-      console.log("Aborting fetching user analytics");
-      abortController.abort();
-    };
-  }, [accessToken]);
 
   useEffect(() => {
     if (preferences) {
