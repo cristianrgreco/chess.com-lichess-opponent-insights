@@ -7,8 +7,7 @@ export function parsePerformance(statsResponse, games, gameType, colour) {
   return {
     lowestRating: performance.last.rating - performance.last.rd, // rd = rating deviation
     lowestRatingDateTime: null, // missing from response
-    highestRating: performance.best.rating,
-    highestRatingDateTime: chesscomDateToString(performance.best.date),
+    ...calculateHighestRating(performance),
     currentRating: performance.last.rating,
     totalNumberOfGames: performance.record.win + performance.record.loss + performance.record.draw,
     totalNumberOfDisconnects: games.filter((game) => game[colour].result === "abandoned").length,
@@ -16,6 +15,20 @@ export function parsePerformance(statsResponse, games, gameType, colour) {
     currentWinningStreak: currentStreak > 0 ? currentStreak : 0,
     tilt: currentStreak <= -3,
   };
+}
+
+function calculateHighestRating(performance) {
+  if (performance.best) {
+    return {
+      highestRating: performance.best.rating,
+      highestRatingDateTime: chesscomDateToString(performance.best.date),
+    };
+  } else {
+    return {
+      highestRating: performance.last.rating + performance.last.rd,
+      highestRatingDateTime: chesscomDateToString(performance.last.date),
+    };
+  }
 }
 
 function calculateStreak(games, colour) {

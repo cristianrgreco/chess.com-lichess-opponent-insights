@@ -1,42 +1,73 @@
 import { parsePerformance } from "@/core/chesscom/parse-performance.js";
 import { createGame, TEST_TIMESTAMP } from "./test-utils.js";
 
-test("should parse stats performance", () => {
-  const statsResponse = {
-    chess_blitz: {
-      last: {
-        rating: 1284,
-        date: 1726599068,
-        rd: 98,
+describe("ratings", () => {
+  test("should parse ratings", () => {
+    const statsResponse = {
+      chess_blitz: {
+        last: {
+          rating: 1284,
+          date: 1726599068,
+          rd: 98,
+        },
+        best: {
+          rating: 1346,
+          date: 1726171613,
+          game: "https://www.chess.com/game/live/84229755459",
+        },
+        record: {
+          win: 99,
+          loss: 45,
+          draw: 2,
+        },
       },
-      best: {
-        rating: 1346,
-        date: 1726171613,
-        game: "https://www.chess.com/game/live/84229755459",
-      },
-      record: {
-        win: 99,
-        loss: 45,
-        draw: 2,
-      },
-    },
-  };
-  const games = [createGame("abandoned", "blitz", "white"), createGame("win", "blitz", "white")];
+    };
+    const games = [createGame("abandoned", "blitz", "white"), createGame("win", "blitz", "white")];
 
-  const performance = parsePerformance(statsResponse, games, "blitz", "white");
+    const performance = parsePerformance(statsResponse, games, "blitz", "white");
 
-  expect(performance).toEqual(
-    expect.objectContaining({
-      lowestRating: 1186,
-      lowestRatingDateTime: null,
-      highestRating: 1346,
-      highestRatingDateTime: "2024-09-12T20:06:53.000Z",
-      currentRating: 1284,
-      totalNumberOfGames: 146,
-    }),
-  );
+    expect(performance).toEqual(
+      expect.objectContaining({
+        lowestRating: 1186,
+        lowestRatingDateTime: null,
+        highestRating: 1346,
+        highestRatingDateTime: "2024-09-12T20:06:53.000Z",
+        currentRating: 1284,
+        totalNumberOfGames: 146,
+      }),
+    );
+  });
+
+  test("should set highest rating to current rating + rating deviation if doesn't exist", () => {
+    const statsResponse = {
+      chess_blitz: {
+        last: {
+          rating: 1284,
+          date: 1726599068,
+          rd: 98,
+        },
+        record: {
+          win: 99,
+          loss: 45,
+          draw: 2,
+        },
+      },
+    };
+
+    const performance = parsePerformance(statsResponse, [], "blitz", "white");
+
+    expect(performance).toEqual(
+      expect.objectContaining({
+        lowestRating: 1186,
+        lowestRatingDateTime: null,
+        highestRating: 1382,
+        highestRatingDateTime: "2024-09-17T18:51:08.000Z",
+        currentRating: 1284,
+        totalNumberOfGames: 146,
+      }),
+    );
+  });
 });
-
 describe("streaks", () => {
   const statsResponse = {
     chess_blitz: {
