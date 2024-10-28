@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./ChesscomApp.css";
 import logo from "@/logo_128x128.png";
 import useChesscomData from "@/chesscom/useChesscomData.js";

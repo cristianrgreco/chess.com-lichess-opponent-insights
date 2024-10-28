@@ -1,7 +1,7 @@
 const API = "https://rlabb3msg0.execute-api.eu-west-2.amazonaws.com/prod";
 
-export function fetchUserAnalytics(platform, opponent, opponentColour, gameType, accessToken) {
-  const options = {};
+export function fetchUserAnalytics(platform, opponent, opponentColour, gameType, accessToken, signal) {
+  const options = { signal };
   if (accessToken) {
     options.headers = { Authorization: `Bearer ${accessToken}` };
   }
@@ -12,8 +12,8 @@ export function fetchUserAnalytics(platform, opponent, opponentColour, gameType,
   ).then(toJsonOrReject);
 }
 
-export function fetchOpponentNotes(user, opponent) {
-  return fetch(`${API}/opponent-notes?username=${user}&opponentName=${opponent}`).then(toJsonOrReject);
+export function fetchOpponentNotes(user, opponent, signal) {
+  return fetch(`${API}/opponent-notes?username=${user}&opponentName=${opponent}`, { signal }).then(toJsonOrReject);
 }
 
 export function saveOpponentNotes(user, opponent, notes) {

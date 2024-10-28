@@ -69,11 +69,40 @@ export default function LichessApp({ port, gameInfo }) {
   }, []);
 
   useEffect(() => {
+    const abortController = new AbortController();
+
+    function fetchUserAnalytics() {
+      console.log("Fetching user analytics");
+      api
+        .fetchUserAnalytics(
+          "lichess",
+          gameInfo.opponent,
+          gameInfo.opponentColour,
+          gameInfo.gameType,
+          accessToken,
+          abortController.signal,
+        )
+        .then((response) => {
+          console.log("Fetched user analytics");
+          setUserAnalytics(response);
+        })
+        .catch(() => {
+          if (!abortController.signal.aborted) {
+            setError("Failed to fetch user analytics.");
+          }
+        });
+    }
+
     if (accessToken) {
       console.log("Fetching preferences");
       port.postMessage({ action: "GET_PREFERENCES" });
       fetchUserAnalytics();
     }
+
+    return () => {
+      console.log("Aborting fetching user analytics");
+      abortController.abort();
+    };
   }, [accessToken]);
 
   function onClickAuthorise() {
@@ -93,17 +122,6 @@ export default function LichessApp({ port, gameInfo }) {
     setCurrentTab(currentTab);
     console.log("Saving preferences");
     port.postMessage({ action: "SAVE_PREFERENCES", payload: { currentTab } });
-  }
-
-  function fetchUserAnalytics() {
-    console.log("Fetching user analytics");
-    api
-      .fetchUserAnalytics("lichess", gameInfo.opponent, gameInfo.opponentColour, gameInfo.gameType, accessToken)
-      .then((response) => {
-        console.log("Fetched user analytics");
-        setUserAnalytics(response);
-      })
-      .catch(() => setError("Failed to fetch user analytics."));
   }
 
   if (!GAME_TYPES.has(gameInfo.gameType)) {

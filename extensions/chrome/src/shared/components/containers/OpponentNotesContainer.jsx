@@ -5,25 +5,36 @@ export default function OpponentNotesContainer({ shouldInit, gameInfo, setError,
   const [savingOpponentNotes, setSavingOpponentNotes] = useState(false);
 
   useEffect(() => {
+    const abortController = new AbortController();
+
+    function fetchOpponentNotes() {
+      console.log("Fetching opponent notes");
+      api
+        .fetchOpponentNotes(gameInfo.user, gameInfo.opponent, abortController.signal)
+        .then((responseJson) => {
+          console.log("Fetched opponent notes");
+          if (responseJson.notes) {
+            setOpponentNotes(responseJson.notes);
+          } else {
+            setOpponentNotes(undefined);
+          }
+        })
+        .catch(() => {
+          if (!abortController.signal.aborted) {
+            setError("Failed to fetch opponent notes.");
+          }
+        });
+    }
+
     if (shouldInit) {
       fetchOpponentNotes();
     }
-  }, [shouldInit, gameInfo]);
 
-  function fetchOpponentNotes() {
-    console.log("Fetching opponent notes");
-    api
-      .fetchOpponentNotes(gameInfo.user, gameInfo.opponent)
-      .then((responseJson) => {
-        console.log("Fetched opponent notes");
-        if (responseJson.notes) {
-          setOpponentNotes(responseJson.notes);
-        } else {
-          setOpponentNotes(undefined);
-        }
-      })
-      .catch(() => setError("Failed to fetch opponent notes."));
-  }
+    return () => {
+      console.log("Aborting fetching opponent notes");
+      abortController.abort();
+    };
+  }, [shouldInit, gameInfo]);
 
   function onSaveOpponentNotes(e) {
     e.preventDefault();

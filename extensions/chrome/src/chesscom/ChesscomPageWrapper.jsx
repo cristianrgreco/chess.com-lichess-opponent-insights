@@ -27,7 +27,7 @@ export default function ChesscomPageWrapper({ port }) {
 
   useEffect(() => {
     console.log("Waiting for page ready");
-    const { interval, promise: pageReadyPromise } = waitForPageReady();
+    const { promise: pageReadyPromise, abort: pageReadyAbort } = waitForPageReady();
     pageReadyPromise.then(() => {
       console.log("Page ready");
       const gameInfo = getGameInfoFromPage();
@@ -35,7 +35,7 @@ export default function ChesscomPageWrapper({ port }) {
     });
 
     return () => {
-      clearInterval(interval);
+      pageReadyAbort();
     };
   }, [urlPath]);
 
@@ -59,7 +59,7 @@ function waitForPageReady() {
     }, 15);
   });
 
-  return { interval, promise };
+  return { promise, abort: () => clearInterval(interval) };
 }
 
 function getGameInfoFromPage() {
