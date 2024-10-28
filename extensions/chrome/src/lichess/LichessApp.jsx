@@ -6,20 +6,21 @@ import AuthWrapper from "@/lichess/components/presentational/AuthWrapper.jsx";
 import useLichessAccessToken from "@/lichess/hooks/useLichessAccessToken.js";
 import {
   api,
-  PageStylesContext,
-  GAME_TYPES,
-  EloRange,
-  StatsChart,
-  OpeningsChart,
-  MoveTimesChart,
   DisconnectIcon,
-  NotesIcon,
-  PuzzleIcon,
-  ErrorBar,
-  OpponentNotesContainer,
-  PuzzleRating,
-  Streak,
   Disconnects,
+  EloRange,
+  ErrorBar,
+  GAME_TYPES,
+  MoveTimesChart,
+  NotesIcon,
+  OpeningsChart,
+  OpponentNotesContainer,
+  PageStylesContext,
+  PuzzleIcon,
+  PuzzleRating,
+  StatsChart,
+  Streak,
+  usePreferences,
 } from "@/shared";
 
 export default function LichessApp({ port, gameInfo }) {
@@ -28,32 +29,13 @@ export default function LichessApp({ port, gameInfo }) {
   const [opponentNotes, setOpponentNotes] = useState(null);
   const [error, setError] = useState(null);
 
+  const { preferences, savePreferences } = usePreferences({ port });
   const accessToken = useLichessAccessToken({ port });
 
   const style = getComputedStyle(document.body);
   const fontColour = style.getPropertyValue("--color");
   const successColour = style.getPropertyValue("--success");
   const errorColour = style.getPropertyValue("--error");
-
-  useEffect(() => {
-    function listener(message) {
-      switch (message.action) {
-        case "GET_PREFERENCES":
-          onPreferences(message.payload);
-          break;
-        default:
-          console.log(`Unhandled message received: ${message.action}`);
-      }
-    }
-
-    console.log("Adding listener to port");
-    port.onMessage.addListener(listener);
-
-    return () => {
-      console.log("Removing listener from port");
-      port.onMessage.removeListener(listener);
-    };
-  }, []);
 
   useEffect(() => {
     const abortController = new AbortController();
@@ -92,23 +74,23 @@ export default function LichessApp({ port, gameInfo }) {
     };
   }, [accessToken]);
 
-  function onClickAuthorise() {
-    port.postMessage({ action: "AUTH_LICHESS", payload: { user: gameInfo.user } });
-  }
-
-  function onPreferences(preferences) {
+  useEffect(() => {
     if (preferences) {
       console.log(`Setting current tab from preferences: ${preferences.currentTab}`);
       setCurrentTab(preferences.currentTab);
     } else {
       console.log("Preferences not found");
     }
+  }, [preferences]);
+
+  function onClickAuthorise() {
+    port.postMessage({ action: "AUTH_LICHESS", payload: { user: gameInfo.user } });
   }
 
   function setAndSaveCurrentTab(currentTab) {
     setCurrentTab(currentTab);
     console.log("Saving preferences");
-    port.postMessage({ action: "SAVE_PREFERENCES", payload: { currentTab } });
+    savePreferences({ currentTab });
   }
 
   if (!GAME_TYPES.has(gameInfo.gameType)) {
