@@ -13,6 +13,11 @@
   margin-bottom: 20px;
 }
 
+.ca_chesscom__header-title {
+  color: var(--color);
+  text-align: center;
+}
+
 .ca_chesscom__summary {
   display: flex;
   justify-content: center;

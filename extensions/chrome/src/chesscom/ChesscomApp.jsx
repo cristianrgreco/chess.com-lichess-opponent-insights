@@ -30,7 +30,7 @@ export default function ChesscomApp({ port, gameInfo }) {
         <ChesscomPageStylesWrapper>
           <div className="ca_chesscom__header">
             <img alt="Logo" src={chrome.runtime.getURL(logo)} />
-            <h1 style={{ color: "var(--color)" }}>Chess Insights</h1>
+            <h1 className="ca_chesscom__header-title">Chess Insights</h1>
           </div>
           <div className="ca_chesscom__summary">
             <EloRange isLoading={!userAnalytics} userAnalytics={userAnalytics} />
