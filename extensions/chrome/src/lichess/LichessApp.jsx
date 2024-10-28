@@ -3,10 +3,11 @@ import "chart.js/auto";
 import "./LichessApp.css";
 import Tab from "@/lichess/components/presentational/Tab";
 import AuthWrapper from "@/lichess/components/presentational/AuthWrapper.jsx";
-import { GAME_TYPES } from "@/shared/constants.js";
+import useLichessAccessToken from "@/lichess/hooks/useLichessAccessToken.js";
 import {
   api,
   PageStylesContext,
+  GAME_TYPES,
   EloRange,
   StatsChart,
   OpeningsChart,
@@ -23,10 +24,11 @@ import {
 
 export default function LichessApp({ port, gameInfo }) {
   const [currentTab, setCurrentTab] = useState("STATS");
-  const [accessToken, setAccessToken] = useState(null);
   const [userAnalytics, setUserAnalytics] = useState(null);
   const [opponentNotes, setOpponentNotes] = useState(null);
   const [error, setError] = useState(null);
+
+  const accessToken = useLichessAccessToken({ port });
 
   const style = getComputedStyle(document.body);
   const fontColour = style.getPropertyValue("--color");
@@ -36,18 +38,6 @@ export default function LichessApp({ port, gameInfo }) {
   useEffect(() => {
     function listener(message) {
       switch (message.action) {
-        case "GET_LICHESS_ACCESS_TOKEN":
-          if (message.payload) {
-            console.log("Found access token");
-            setAccessToken(message.payload.value);
-          } else {
-            console.log("Access token not found");
-            setAccessToken(undefined);
-          }
-          break;
-        case "AUTH_LICHESS":
-          setAccessToken(message.payload.value);
-          break;
         case "GET_PREFERENCES":
           onPreferences(message.payload);
           break;
@@ -58,9 +48,6 @@ export default function LichessApp({ port, gameInfo }) {
 
     console.log("Adding listener to port");
     port.onMessage.addListener(listener);
-
-    console.log("Fetching access token");
-    port.postMessage({ action: "GET_LICHESS_ACCESS_TOKEN" });
 
     return () => {
       console.log("Removing listener from port");
