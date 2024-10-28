@@ -7,7 +7,7 @@ export default function OpponentNotes({ isLoading, notes, setNotes, onSave, isSa
     <form action="" id="ca_save_opponent_notes_form" onSubmit={onSave}>
       <textarea
         id="ca_opponent_notes"
-        placeholder="Enter some notes about your opponent"
+        placeholder="Opponent notes..."
         className={`ca_textarea ca_placeholder ${placeholderClass}`}
         value={notes ? notes : ""}
         onChange={(e) => setNotes(e.target.value)}
