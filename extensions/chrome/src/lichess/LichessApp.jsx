@@ -6,6 +6,7 @@ import TabContent from "@/lichess/components/presentational/TabContent.jsx";
 import AuthWrapper from "@/lichess/components/presentational/AuthWrapper.jsx";
 import useLichessAuth from "@/lichess/hooks/useLichessAuth.js";
 import {
+  PageStylesWrapper,
   DisconnectIcon,
   Disconnects,
   EloRange,
@@ -15,7 +16,6 @@ import {
   NotesIcon,
   OpeningsChart,
   OpponentNotesContainer,
-  PageStylesContext,
   PuzzleIcon,
   PuzzleRating,
   StatsChart,
@@ -32,11 +32,6 @@ export default function LichessApp({ port, gameInfo }) {
   const { preferences, savePreferences } = usePreferences({ port });
   const { accessToken, startAuthFlow } = useLichessAuth({ port, user: gameInfo.user });
   const userAnalytics = useUserAnalyticsData({ platform: "lichess", gameInfo, accessToken, setError });
-
-  const style = getComputedStyle(document.body);
-  const fontColour = style.getPropertyValue("--color");
-  const successColour = style.getPropertyValue("--success");
-  const errorColour = style.getPropertyValue("--error");
 
   useEffect(() => {
     if (preferences) {
@@ -63,10 +58,10 @@ export default function LichessApp({ port, gameInfo }) {
   }
 
   return (
-    <div className="ca_container_root">
-      {error ? <ErrorBar error={error} /> : null}
-      <AuthWrapper accessToken={accessToken} onClickAuthorise={onClickAuthorise}>
-        <PageStylesContext.Provider value={{ fontColour, successColour, errorColour }}>
+    <PageStylesWrapper>
+      <div className="ca_container_root">
+        {error ? <ErrorBar error={error} /> : null}
+        <AuthWrapper accessToken={accessToken} onClickAuthorise={onClickAuthorise}>
           <div className="ca_container">
             <div className="ca_section ca_opponent_info">
               <EloRange isLoading={!userAnalytics} userAnalytics={userAnalytics} />
@@ -118,8 +113,8 @@ export default function LichessApp({ port, gameInfo }) {
               />
             </TabContent>
           </div>
-        </PageStylesContext.Provider>
-      </AuthWrapper>
-    </div>
+        </AuthWrapper>
+      </div>
+    </PageStylesWrapper>
   );
 }

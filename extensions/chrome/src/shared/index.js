@@ -1,5 +1,6 @@
 export { default as OpponentNotesContainer } from "@/shared/components/containers/OpponentNotesContainer.jsx";
 
+export { default as PageStylesWrapper } from "@/shared/components/presentational/PageStylesWrapper.jsx";
 export { default as ChartPlaceholder } from "@/shared/components/presentational/ChartPlaceholder.jsx";
 export { default as Disconnects } from "@/shared/components/presentational/Disconnects.jsx";
 export { default as EloRange } from "@/shared/components/presentational/EloRange.jsx";
