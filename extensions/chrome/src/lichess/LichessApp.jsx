@@ -4,7 +4,7 @@ import "./LichessApp.css";
 import Tab from "@/lichess/components/presentational/Tab";
 import TabContent from "@/lichess/components/presentational/TabContent.jsx";
 import AuthWrapper from "@/lichess/components/presentational/AuthWrapper.jsx";
-import useLichessAccessToken from "@/lichess/hooks/useLichessAccessToken.js";
+import useLichessAuth from "@/lichess/hooks/useLichessAuth.js";
 import {
   DisconnectIcon,
   Disconnects,
@@ -30,7 +30,7 @@ export default function LichessApp({ port, gameInfo }) {
   const [error, setError] = useState(null);
 
   const { preferences, savePreferences } = usePreferences({ port });
-  const accessToken = useLichessAccessToken({ port });
+  const { accessToken, startAuthFlow } = useLichessAuth({ port, user: gameInfo.user });
   const userAnalytics = useUserAnalyticsData({ platform: "lichess", gameInfo, accessToken, setError });
 
   const style = getComputedStyle(document.body);
@@ -48,7 +48,7 @@ export default function LichessApp({ port, gameInfo }) {
   }, [preferences]);
 
   function onClickAuthorise() {
-    port.postMessage({ action: "AUTH_LICHESS", payload: { user: gameInfo.user } });
+    startAuthFlow();
   }
 
   function setAndSaveCurrentTab(currentTab) {

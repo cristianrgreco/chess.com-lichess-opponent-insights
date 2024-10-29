@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-export default function useLichessAccessToken({ port }) {
+export default function useLichessAuth({ port, user }) {
   const [accessToken, setAccessToken] = useState(null);
 
   useEffect(() => {
@@ -33,5 +33,9 @@ export default function useLichessAccessToken({ port }) {
     };
   }, []);
 
-  return accessToken;
+  function startAuthFlow() {
+    port.postMessage({ action: "AUTH_LICHESS", payload: { user } });
+  }
+
+  return { accessToken, startAuthFlow };
 }
