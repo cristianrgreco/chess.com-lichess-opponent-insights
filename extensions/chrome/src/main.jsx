@@ -37,24 +37,22 @@ function getLichessGameInfoFromPage() {
 function renderChesscomApp() {
   const port = chrome.runtime.connect({ name: "ca-port" });
   const rootDiv = document.createElement("div");
-  var containerEl = document.querySelector("#sidebar-ad");
 
-  if (!containerEl) {
-    const boardlayoutdiv = document.createElement("div");
-    boardlayoutdiv.id = "board-layout-ad";
-    boardlayoutdiv.classList.add("board-layout-ad");
-    containerEl = document.createElement("div");
-    containerEl.id = "sidebar-ad";
-    boardlayoutdiv.appendChild(containerEl);
-    document.body.classList.add("with-und")
-    document.querySelector("#share-menu").insertAdjacentElement("beforebegin", boardlayoutdiv);
-
+  let sidebarEl = document.querySelector("#sidebar-ad");
+  if (!sidebarEl) {
+    const containerEl = document.createElement("div");
+    containerEl.id = "board-layout-ad";
+    containerEl.classList.add("board-layout-ad");
+    sidebarEl = document.createElement("div");
+    sidebarEl.id = "sidebar-ad";
+    containerEl.appendChild(sidebarEl);
+    document.body.classList.add("with-und");
+    document.querySelector("#share-menu").insertAdjacentElement("beforebegin", containerEl);
   } else {
-    // remove all content if it's the original sidebar-ad
-    containerEl.innerHTML = "";
+    sidebarEl.innerHTML = "";
   }
-  
-  containerEl.appendChild(rootDiv);
+
+  sidebarEl.appendChild(rootDiv);
 
   ReactDOM.createRoot(rootDiv).render(
     <React.StrictMode>
