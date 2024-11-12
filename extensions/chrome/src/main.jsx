@@ -35,28 +35,56 @@ function getLichessGameInfoFromPage() {
 }
 
 function renderChesscomApp() {
-  const port = chrome.runtime.connect({ name: "ca-port" });
-  const rootDiv = document.createElement("div");
+  waitForElementOrTimeout(".skyscraper-ad-component", 2000).then(() => {
+    const port = chrome.runtime.connect({ name: "ca-port" });
+    const rootDiv = document.createElement("div");
+    let sidebarEl = document.querySelector("#sidebar-ad");
+    if (!sidebarEl) {
+      const containerEl = document.createElement("div");
+      containerEl.id = "board-layout-ad";
+      containerEl.classList.add("board-layout-ad");
+      sidebarEl = document.createElement("div");
+      sidebarEl.id = "sidebar-ad";
+      containerEl.appendChild(sidebarEl);
+      document.body.classList.add("with-und");
+      document.querySelector("#share-menu").insertAdjacentElement("beforebegin", containerEl);
+    } else {
+      sidebarEl.innerHTML = "";
+    }
 
-  let sidebarEl = document.querySelector("#sidebar-ad");
-  if (!sidebarEl) {
-    const containerEl = document.createElement("div");
-    containerEl.id = "board-layout-ad";
-    containerEl.classList.add("board-layout-ad");
-    sidebarEl = document.createElement("div");
-    sidebarEl.id = "sidebar-ad";
-    containerEl.appendChild(sidebarEl);
-    document.body.classList.add("with-und");
-    document.querySelector("#share-menu").insertAdjacentElement("beforebegin", containerEl);
-  } else {
-    sidebarEl.innerHTML = "";
-  }
+    sidebarEl.appendChild(rootDiv);
 
-  sidebarEl.appendChild(rootDiv);
+    ReactDOM.createRoot(rootDiv).render(
+      <React.StrictMode>
+        <ChesscomPageWrapper port={port} />
+      </React.StrictMode>,
+    );
+  });
+}
 
-  ReactDOM.createRoot(rootDiv).render(
-    <React.StrictMode>
-      <ChesscomPageWrapper port={port} />
-    </React.StrictMode>,
-  );
+function waitForElementOrTimeout(querySelector, timeoutMs) {
+  let interval;
+  const waitForElementPromise = new Promise((resolve) => {
+    interval = setInterval(() => {
+      const element = document.querySelector(querySelector);
+      if (element) {
+        console.log("Found sidebar element");
+        clearInterval(interval);
+        resolve();
+      }
+    }, 15);
+  });
+
+  const timeoutPromise = new Promise((resolve) => {
+    setTimeout(() => {
+      console.log("Did not find sidebar element");
+      resolve();
+    }, timeoutMs);
+  });
+
+  return Promise.race([waitForElementPromise, timeoutPromise]).then(() => {
+    if (interval) {
+      clearInterval(interval);
+    }
+  });
 }
