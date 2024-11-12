@@ -18,7 +18,7 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 5px;
+  column-gap: 5px;
 }
 
 .ca_chesscom__header-title-opponent-name {
