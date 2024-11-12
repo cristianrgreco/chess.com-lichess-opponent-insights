@@ -29,7 +29,10 @@ export default function ChesscomApp({ port, gameInfo }) {
       <div className="ca_chesscom">
         <div className="ca_chesscom__header">
           <img alt="Logo" src={chrome.runtime.getURL(logo)} />
-          <h1 className="ca_chesscom__header-title">Chess Insights</h1>
+          <h1 className="ca_chesscom__header-title">
+            <span className="ca_chesscom__header-title-opponent-name">{gameInfo.opponent}</span>
+            <span>Insights</span>
+          </h1>
         </div>
         <div className="ca_chesscom__summary">
           <EloRange isLoading={!userAnalytics} userAnalytics={userAnalytics} />
