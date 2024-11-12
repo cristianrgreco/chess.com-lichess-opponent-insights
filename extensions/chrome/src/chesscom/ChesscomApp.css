@@ -15,7 +15,18 @@
 
 .ca_chesscom__header-title {
   color: var(--color);
-  text-align: center;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 5px;
+}
+
+.ca_chesscom__header-title-opponent-name {
+  color: var(--success);
+  max-width: 200px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 
 .ca_chesscom__summary {

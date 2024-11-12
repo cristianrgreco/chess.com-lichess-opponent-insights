@@ -37,9 +37,22 @@ function getLichessGameInfoFromPage() {
 function renderChesscomApp() {
   const port = chrome.runtime.connect({ name: "ca-port" });
   const rootDiv = document.createElement("div");
-  const containerEl = document.querySelector("#sidebar-ad");
-  containerEl.innerHTML = "";
-  containerEl.appendChild(rootDiv);
+
+  let sidebarEl = document.querySelector("#sidebar-ad");
+  if (!sidebarEl) {
+    const containerEl = document.createElement("div");
+    containerEl.id = "board-layout-ad";
+    containerEl.classList.add("board-layout-ad");
+    sidebarEl = document.createElement("div");
+    sidebarEl.id = "sidebar-ad";
+    containerEl.appendChild(sidebarEl);
+    document.body.classList.add("with-und");
+    document.querySelector("#share-menu").insertAdjacentElement("beforebegin", containerEl);
+  } else {
+    sidebarEl.innerHTML = "";
+  }
+
+  sidebarEl.appendChild(rootDiv);
 
   ReactDOM.createRoot(rootDiv).render(
     <React.StrictMode>
