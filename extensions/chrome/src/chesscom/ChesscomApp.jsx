@@ -49,9 +49,11 @@ export default function ChesscomApp({ port, gameInfo }) {
             <Streak userAnalytics={userAnalytics} />
           </div>
         </div>
-        <StatsChart isLoading={userAnalytics === null} userAnalytics={userAnalytics} height={100} />
-        <OpeningsChart isLoading={userAnalytics === null} userAnalytics={userAnalytics} />
-        <MoveTimesChart isLoading={userAnalytics === null} userAnalytics={userAnalytics} height={100} />
+        <div className="ca_charts_container">
+          <StatsChart isLoading={userAnalytics === null} userAnalytics={userAnalytics} height={100} />
+          <OpeningsChart isLoading={userAnalytics === null} userAnalytics={userAnalytics} />
+          <MoveTimesChart isLoading={userAnalytics === null} userAnalytics={userAnalytics} height={100} />
+        </div>
         <div className="ca_chesscom__opponent-notes">
           <OpponentNotesContainer
             shouldInit={true}
