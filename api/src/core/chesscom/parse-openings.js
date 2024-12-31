@@ -22,6 +22,10 @@ export function parseOpenings(games, colour) {
 }
 
 function parseOpeningName(game) {
+  // game can be abandoned before move made
+  if (!game.eco) {
+    return "";
+  }
   return game.eco.split("/").pop().replace(/-/g, " ");
 }
 
