@@ -36,25 +36,15 @@ function getLichessGameInfoFromPage() {
 
 function renderChesscomApp() {
   waitForElementOrTimeout(".skyscraper-ad-component", 2000).then(() => {
+    const container = document.querySelector("#board-layout-ad");
+    container.style.width = "350px";
+    container.style.marginLeft = "0";
+    container.style.padding = "0 20px";
+    const root = document.createElement("div");
+    container.innerHTML = "";
+    container.insertAdjacentElement("afterbegin", root);
     const port = chrome.runtime.connect({ name: "ca-port" });
-    const rootDiv = document.createElement("div");
-    let sidebarEl = document.querySelector("#sidebar-ad");
-    if (!sidebarEl) {
-      const containerEl = document.createElement("div");
-      containerEl.id = "board-layout-ad";
-      containerEl.classList.add("board-layout-ad");
-      sidebarEl = document.createElement("div");
-      sidebarEl.id = "sidebar-ad";
-      containerEl.appendChild(sidebarEl);
-      document.body.classList.add("with-und");
-      document.querySelector("#share-menu").insertAdjacentElement("beforebegin", containerEl);
-    } else {
-      sidebarEl.innerHTML = "";
-    }
-
-    sidebarEl.appendChild(rootDiv);
-
-    ReactDOM.createRoot(rootDiv).render(
+    ReactDOM.createRoot(root).render(
       <React.StrictMode>
         <ChesscomPageWrapper port={port} />
       </React.StrictMode>,
@@ -68,23 +58,22 @@ function waitForElementOrTimeout(querySelector, timeoutMs) {
     interval = setInterval(() => {
       const element = document.querySelector(querySelector);
       if (element) {
-        console.log("Found sidebar element");
         clearInterval(interval);
-        resolve();
+        resolve(true);
       }
     }, 15);
   });
 
   const timeoutPromise = new Promise((resolve) => {
     setTimeout(() => {
-      console.log("Did not find sidebar element");
-      resolve();
+      resolve(false);
     }, timeoutMs);
   });
 
-  return Promise.race([waitForElementPromise, timeoutPromise]).then(() => {
+  return Promise.race([waitForElementPromise, timeoutPromise]).then((value) => {
     if (interval) {
       clearInterval(interval);
     }
+    return value;
   });
 }

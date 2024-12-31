@@ -3,63 +3,34 @@ import ChesscomApp from "@/chesscom/ChesscomApp.jsx";
 import { GAME_TYPES } from "@/shared";
 
 export default function ChesscomPageWrapper({ port }) {
-  const [urlPath, setUrlPath] = useState(document.location.pathname);
   const [gameInfo, setGameInfo] = useState(null);
 
   useEffect(() => {
-    function listener(message) {
-      switch (message.action) {
-        case "TAB_UPDATED":
-          console.log("Detected tab update");
-          setUrlPath(document.location.pathname);
-          break;
-      }
-    }
+    const opponentEl = document.querySelector(".player-top [data-test-element='user-tagline-username']");
+    const config = { characterData: false, attributes: false, childList: true, subtree: false };
 
-    console.log("Adding listener to port");
-    port.onMessage.addListener(listener);
-
-    return () => {
-      console.log("Removing listener from port");
-      port.onMessage.removeListener(listener);
-    };
-  }, []);
-
-  useEffect(() => {
-    console.log("Waiting for page ready");
-    const { promise: pageReadyPromise, abort: pageReadyAbort } = waitForPageReady();
-    pageReadyPromise.then(() => {
-      console.log("Page ready");
+    const callback = (mutationList) => {
+      const mutation = mutationList[0];
+      console.log(`Opponent name has changed: ${mutation.target.textContent}`);
       const gameInfo = getGameInfoFromPage();
       setGameInfo(gameInfo);
-    });
+    };
+
+    console.log("Starting mutation observer");
+    const observer = new MutationObserver(callback);
+    observer.observe(opponentEl, config);
 
     return () => {
-      pageReadyAbort();
+      console.log("Removing mutation observer");
+      observer.disconnect();
     };
-  }, [urlPath]);
+  }, []);
 
   if (gameInfo === null) {
     return null;
   } else {
     return <ChesscomApp port={port} gameInfo={gameInfo} />;
   }
-}
-
-function waitForPageReady() {
-  let interval;
-
-  const promise = new Promise((resolve) => {
-    interval = setInterval(() => {
-      const opponent = document.querySelector(".player-top [data-test-element='user-tagline-username']").textContent;
-      if (opponent !== "Opponent") {
-        clearInterval(interval);
-        resolve();
-      }
-    }, 15);
-  });
-
-  return { promise, abort: () => clearInterval(interval) };
 }
 
 function getGameInfoFromPage() {
