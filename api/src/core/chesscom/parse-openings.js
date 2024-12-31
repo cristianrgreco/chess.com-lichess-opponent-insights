@@ -22,11 +22,16 @@ export function parseOpenings(games, colour) {
 }
 
 function parseOpeningName(game) {
-  // game can be abandoned before move made
-  if (!game.eco) {
-    return "";
+  const parseUrl = (url) => url.split("/").pop().replace(/-/g, " ");
+
+  if (game.eco) {
+    return parseUrl(game.eco);
+  } else {
+    const ecoUrl = game.pgn.split("\n").find((line) => line.includes("ECOUrl"));
+    const regex = /\[ECOUrl "(.*?)"]/g;
+    const matches = regex.exec(ecoUrl);
+    return !matches ? "" : parseUrl(matches[1]);
   }
-  return game.eco.split("/").pop().replace(/-/g, " ");
 }
 
 function newOpening(openingName, game, colour) {
