@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Chess.com/Lichess Opponent Insights",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "description": "Get insights about your opponent's openings, move times, and more on Chess.com and Lichess.org",
   "icons": {
     "16": "icons/logo_16x16.png",
