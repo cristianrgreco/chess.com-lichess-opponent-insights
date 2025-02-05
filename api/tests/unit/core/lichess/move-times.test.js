@@ -22,6 +22,15 @@ describe("extract opponent move times", () => {
 
     expect(opponentClocks).toEqual([2, 4]);
   });
+
+  it("should return empty list when clocks are empty", () => {
+    const clocks = undefined;
+    const opponentColour = "black";
+
+    const opponentClocks = extractOpponentMoveTimes(clocks, opponentColour);
+
+    expect(opponentClocks).toEqual([]);
+  });
 });
 
 it("should convert move times from centiseconds to seconds", () => {

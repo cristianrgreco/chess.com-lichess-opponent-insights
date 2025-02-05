@@ -5,10 +5,10 @@ export function parsePerformance(statsResponse, games, gameType, colour) {
   const currentStreak = calculateStreak(games, colour);
 
   return {
-    lowestRating: performance.last.rating - performance.last.rd, // rd = rating deviation
+    lowestRating: performance.last ? performance.last.rating - performance.last.rd : null, // rd = rating deviation
     lowestRatingDateTime: null, // missing from response
     ...calculateHighestRating(performance),
-    currentRating: performance.last.rating,
+    currentRating: performance.last ? performance.last.rating : null,
     totalNumberOfGames: performance.record.win + performance.record.loss + performance.record.draw,
     totalNumberOfDisconnects: games.filter((game) => game[colour].result === "abandoned").length,
     currentLosingStreak: currentStreak < 0 ? -currentStreak : 0,
@@ -25,8 +25,8 @@ function calculateHighestRating(performance) {
     };
   } else {
     return {
-      highestRating: performance.last.rating + performance.last.rd,
-      highestRatingDateTime: chesscomDateToString(performance.last.date),
+      highestRating: performance.last ? performance.last.rating + performance.last.rd : null,
+      highestRatingDateTime: performance.last ? chesscomDateToString(performance.last.date) : null,
     };
   }
 }

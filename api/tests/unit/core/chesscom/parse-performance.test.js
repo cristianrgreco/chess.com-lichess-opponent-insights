@@ -67,7 +67,32 @@ describe("ratings", () => {
       }),
     );
   });
+
+  test("should handle where there is no last performance", () => {
+    const statsResponse = {
+      chess_blitz: {
+        record: {
+          win: 99,
+          loss: 45,
+          draw: 2,
+        },
+      },
+    };
+
+    const performance = parsePerformance(statsResponse, [], "blitz", "white");
+
+    expect(performance).toEqual(
+      expect.objectContaining({
+        lowestRating: null,
+        lowestRatingDateTime: null,
+        highestRating: null,
+        highestRatingDateTime: null,
+        currentRating: null,
+      }),
+    );
+  });
 });
+
 describe("streaks", () => {
   const statsResponse = {
     chess_blitz: {
