@@ -116,3 +116,15 @@ test("should return games by colour", async () => {
 
   expect(games).toEqual(expectedGames);
 });
+
+test("should handle when games is undefined", async () => {
+  const expectedGames = [];
+  scope.get("/pub/player/opponent/games/archives").reply(200, {
+    archives: ["https://api.chess.com/pub/player/opponent/games/2024/10"],
+  });
+  scope.get("/pub/player/opponent/games/2024/10").reply(200, { games: undefined });
+
+  const games = await fetchGames(3, "opponent", "blitz", "white");
+
+  expect(games).toEqual(expectedGames);
+});

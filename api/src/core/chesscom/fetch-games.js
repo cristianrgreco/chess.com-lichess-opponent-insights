@@ -12,7 +12,7 @@ export async function fetchGames(numberOfGames, username, gameType, colour) {
 
     const remainingGames = numberOfGames - games.length;
 
-    const gamesToAdd = gamesResponseJson.games
+    const gamesToAdd = (gamesResponseJson.games ?? [])
       .filter((aGame) => {
         const opponentColour = aGame["white"]["username"].toLowerCase() === username.toLowerCase() ? "white" : "black";
         return aGame["time_class"] === gameType && opponentColour === colour;
