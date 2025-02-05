@@ -1,8 +1,14 @@
 export function extractOpponentMoveTimes(clocks, opponentColour) {
   const opponentMoveTimes = [];
+
+  if (!clocks) {
+    return opponentMoveTimes;
+  }
+
   for (let i = opponentColour === "white" ? 0 : 1; i < clocks.length; i += 2) {
     opponentMoveTimes.push(clocks[i]);
   }
+
   return opponentMoveTimes;
 }
 
