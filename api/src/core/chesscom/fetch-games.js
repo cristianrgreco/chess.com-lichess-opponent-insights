@@ -6,6 +6,10 @@ export async function fetchGames(numberOfGames, username, gameType, colour) {
 
   const games = [];
 
+  if (!gameArchivesResponseJson.archives) {
+    return games;
+  }
+
   for (let i = gameArchivesResponseJson.archives.length - 1; i >= 0 && games.length < numberOfGames; i--) {
     const gamesResponse = await fetch(gameArchivesResponseJson.archives[i]);
     const gamesResponseJson = await gamesResponse.json();
