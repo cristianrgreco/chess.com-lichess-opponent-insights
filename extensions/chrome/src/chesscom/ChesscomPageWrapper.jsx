@@ -7,7 +7,7 @@ export default function ChesscomPageWrapper({ port }) {
 
   useEffect(() => {
     const opponentEl = document.querySelector(".player-top [data-test-element='user-tagline-username']");
-    const config = { characterData: false, attributes: false, childList: true, subtree: false };
+    const config = { characterData: true, childList: false, subtree: true };
 
     const callback = (mutationList) => {
       const mutation = mutationList[0];
