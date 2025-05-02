@@ -1,17 +1,26 @@
 .ca_chesscom {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  width: 350px;
+  --width: 400px;
+  --collapse-width: 24px;
+
+  width: var(--width);
   height: 100vh;
   position: fixed;
   right: 0;
   top: 0;
   background-color: var(--color-gray-800);
+  z-index: 999;
 
   &.ca_chesscom_invisible {
-    right: -330px;
+    right: calc((var(--width) * -1) + var(--collapse-width));
   }
+}
+
+.ca_chesscom__content {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  margin-left: var(--collapse-width);
+  padding: 40px 20px;
 }
 
 .ca_chesscom__collapse {
@@ -19,8 +28,9 @@
   left: 0;
   top: 0;
   height: 100%;
-  width: 20px;
+  width: var(--collapse-width);
   background-color: var(--color-gray-700);
+  box-shadow: -5px 0 5px rgba(0, 0, 0, 0.25);
 
   &:hover {
     background-color: var(--color-gray-600);
@@ -51,7 +61,6 @@
   flex-direction: column;
   align-items: center;
   gap: 20px;
-  margin-bottom: 20px;
 }
 
 .ca_chesscom__header-title {
