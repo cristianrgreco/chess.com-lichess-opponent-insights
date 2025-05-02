@@ -18,6 +18,7 @@ import {
 } from "@/shared";
 
 export default function ChesscomApp({ port, gameInfo }) {
+  const [visible, setVisible] = useState(true);
   const [opponentNotes, setOpponentNotes] = useState(null);
   const [error, setError] = useState(null);
 
@@ -26,7 +27,11 @@ export default function ChesscomApp({ port, gameInfo }) {
   return (
     <PageStylesWrapper>
       {error ? <ErrorBar error={error} /> : null}
-      <div className="ca_chesscom">
+      <div className={`ca_chesscom ${visible ? "" : "ca_chesscom_invisible"}`}>
+        <div
+          onClick={() => setVisible(!visible)}
+          className={`ca_chesscom__collapse ${visible ? "ca_chesscom__collapse-visible" : "ca_chesscom__collapse-invisible"}`}
+        ></div>
         <div className="ca_chesscom__header">
           <img alt="Logo" src={chrome.runtime.getURL(logo)} />
           <h1 className="ca_chesscom__header-title">

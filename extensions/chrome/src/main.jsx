@@ -35,45 +35,14 @@ function getLichessGameInfoFromPage() {
 }
 
 function renderChesscomApp() {
-  waitForElementOrTimeout(".skyscraper-ad-component", 2000).then(() => {
-    const container = document.querySelector("#board-layout-ad");
-    container.style.width = "350px";
-    container.style.marginLeft = "0";
-    container.style.padding = "0 20px";
-    const root = document.createElement("div");
-    container.innerHTML = "";
-    container.insertAdjacentElement("afterbegin", root);
-    const port = chrome.runtime.connect({ name: "ca-port" });
-    ReactDOM.createRoot(root).render(
-      <React.StrictMode>
-        <ChesscomPageWrapper port={port} />
-      </React.StrictMode>,
-    );
-  });
-}
+  const rootDiv = document.createElement("div");
+  document.body.appendChild(rootDiv);
 
-function waitForElementOrTimeout(querySelector, timeoutMs) {
-  let interval;
-  const waitForElementPromise = new Promise((resolve) => {
-    interval = setInterval(() => {
-      const element = document.querySelector(querySelector);
-      if (element) {
-        clearInterval(interval);
-        resolve(true);
-      }
-    }, 15);
-  });
+  const port = chrome.runtime.connect({ name: "ca-port" });
 
-  const timeoutPromise = new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(false);
-    }, timeoutMs);
-  });
-
-  return Promise.race([waitForElementPromise, timeoutPromise]).then((value) => {
-    if (interval) {
-      clearInterval(interval);
-    }
-    return value;
-  });
+  ReactDOM.createRoot(rootDiv).render(
+    <React.StrictMode>
+      <ChesscomPageWrapper port={port} />
+    </React.StrictMode>,
+  );
 }
