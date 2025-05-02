@@ -1,6 +1,6 @@
 .ca_chesscom {
   --width: 400px;
-  --collapse-width: 24px;
+  --collapse-width: 20px;
 
   width: var(--width);
   height: 100vh;
@@ -46,6 +46,8 @@
   }
 
   &::after {
+    font-size: 20px;
+    font-weight: bold;
     left: 0;
     height: 100%;
     width: 20px;
