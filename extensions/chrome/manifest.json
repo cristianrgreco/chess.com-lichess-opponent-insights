@@ -14,7 +14,7 @@
       "js": ["src/main.jsx"],
       "matches": [
         "https://lichess.org/*",
-        "https://www.chess.com/game/*"
+        "https://www.chess.com/*"
       ]
     }
   ],
