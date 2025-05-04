@@ -7,7 +7,12 @@ import ChesscomPageWrapper from "./chesscom/ChesscomPageWrapper";
 if (document.location.hostname === "lichess.org" && document.title.includes("Play ")) {
   renderLichessApp();
 } else if (document.location.hostname === "www.chess.com") {
-  renderChesscomApp();
+  const interval = setInterval(() => {
+    if (document.location.pathname.startsWith("/game/")) {
+      clearInterval(interval);
+      renderChesscomApp();
+    }
+  }, 1000);
 }
 
 function renderLichessApp() {

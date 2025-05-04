@@ -1,7 +1,21 @@
-.ca_chesscom {
+:root {
   --width: 400px;
   --collapse-width: 20px;
+  --right-bounce-duration: 1s;
+  --right-invisible: calc(((var(--width) * -1) + var(--collapse-width)));
+  --right-bounce-1: calc(var(--right-invisible) * 0.5);
+  --right-bounce-2: calc(var(--right-invisible) * 0.85);
+}
 
+@keyframes bounce-right-back {
+  0%   { right: var(--right-invisible); }
+  25%  { right: var(--right-bounce-1); }
+  45%  { right: var(--right-invisible); }
+  65%  { right: var(--right-bounce-2); }
+  100% { right: var(--right-invisible); }
+}
+
+.ca_chesscom {
   width: var(--width);
   height: 100vh;
   position: fixed;
@@ -12,7 +26,11 @@
   transition: right 0.5s cubic-bezier(0.15, 0.85, 0.35, 1);
 
   &.ca_chesscom_invisible {
-    right: calc((var(--width) * -1) + var(--collapse-width));
+    right: var(--right-invisible);
+  }
+
+  &.ca_chesscom_bounce {
+    animation: bounce-right-back var(--right-bounce-duration) cubic-bezier(0.25,0.46,0.45,1.4) both;
   }
 }
 

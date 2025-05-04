@@ -7,7 +7,11 @@ export default function ChesscomPageWrapper({ port }) {
 
   useEffect(() => {
     const opponentEl = document.querySelector(".player-top [data-test-element='user-tagline-username']");
-    const config = { characterData: true, childList: false, subtree: true };
+
+    if (opponentEl.textContent !== "Opponent") {
+      const gameInfo = getGameInfoFromPage();
+      setGameInfo(gameInfo);
+    }
 
     const callback = (mutationList) => {
       const mutation = mutationList[0];
@@ -18,7 +22,7 @@ export default function ChesscomPageWrapper({ port }) {
 
     console.log("Starting mutation observer");
     const observer = new MutationObserver(callback);
-    observer.observe(opponentEl, config);
+    observer.observe(opponentEl, { characterData: true, childList: false, subtree: true });
 
     return () => {
       console.log("Removing mutation observer");
