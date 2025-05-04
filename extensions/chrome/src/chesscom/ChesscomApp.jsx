@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./ChesscomApp.css";
 import logo from "@/logo_128x128.png";
 import {
@@ -18,20 +18,34 @@ import {
 } from "@/shared";
 
 export default function ChesscomApp({ port, gameInfo }) {
-  const [visible, setVisible] = useState(true);
+  const [visible, setVisible] = useState(false);
   const [opponentNotes, setOpponentNotes] = useState(null);
   const [error, setError] = useState(null);
 
   const userAnalytics = useUserAnalyticsData({ platform: "chesscom", gameInfo, setError });
 
+  useEffect(() => {
+    if (userAnalytics) {
+      setVisible(true);
+    }
+  }, [userAnalytics]);
+
+  useEffect(() => {
+    if (!visible) return;
+    const timer = setTimeout(() => {
+      setVisible(false);
+    }, 10000);
+    return () => clearTimeout(timer);
+  }, [visible]);
+
   return (
     <PageStylesWrapper>
-      {error ? <ErrorBar error={error} /> : null}
+      {error && <ErrorBar error={error} />}
       <div className={`ca_chesscom ${visible ? "" : "ca_chesscom_invisible"}`}>
         <div
           onClick={() => setVisible(!visible)}
           className={`ca_chesscom__collapse ${visible ? "ca_chesscom__collapse-visible" : "ca_chesscom__collapse-invisible"}`}
-        ></div>
+        />
         <div className="ca_chesscom__content">
           <div className="ca_chesscom__header">
             <img className="ca_chesscom__collapse-logo" alt="Logo" src={chrome.runtime.getURL(logo)} />
