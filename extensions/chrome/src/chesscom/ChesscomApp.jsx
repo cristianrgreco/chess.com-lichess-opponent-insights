@@ -18,33 +18,49 @@ import {
 } from "@/shared";
 
 export default function ChesscomApp({ port, gameInfo }) {
-  const [visible, setVisible] = useState(false);
+  const [visible, setVisible] = useState(false); // panel state
+  const [userOpen, setUserOpen] = useState(false); // ← NEW: manual override
   const [opponentNotes, setOpponentNotes] = useState(null);
   const [error, setError] = useState(null);
 
-  const userAnalytics = useUserAnalyticsData({ platform: "chesscom", gameInfo, setError });
+  const userAnalytics = useUserAnalyticsData({
+    platform: "chesscom",
+    gameInfo,
+    setError,
+  });
 
+  // show panel automatically when analytics arrive
   useEffect(() => {
-    if (userAnalytics) {
-      setVisible(true);
-    }
+    if (userAnalytics) setVisible(true);
   }, [userAnalytics]);
 
+  // cancel manual override when a new game starts
   useEffect(() => {
-    if (!visible) return;
-    const timer = setTimeout(() => {
-      setVisible(false);
-    }, 10000);
-    return () => clearTimeout(timer);
-  }, [visible]);
+    setUserOpen(false);
+  }, [gameInfo]);
+
+  // auto‑hide 10s after becoming visible, but ONLY if it wasn’t a manual open
+  useEffect(() => {
+    if (!visible || userOpen || !userAnalytics) return;
+    const t = setTimeout(() => setVisible(false), 10_000);
+    return () => clearTimeout(t);
+  }, [visible, userOpen, userAnalytics]);
+
+  const togglePanel = () => {
+    const newVisibility = !visible;
+    setVisible(newVisibility);
+    setUserOpen(newVisibility);
+  };
 
   return (
     <PageStylesWrapper>
-      {error && <ErrorBar error={error} />}
       <div className={`ca_chesscom ${visible ? "" : "ca_chesscom_invisible"}`}>
+        {error && <ErrorBar error={error} />}
         <div
-          onClick={() => setVisible(!visible)}
-          className={`ca_chesscom__collapse ${visible ? "ca_chesscom__collapse-visible" : "ca_chesscom__collapse-invisible"}`}
+          onClick={togglePanel}
+          className={`ca_chesscom__collapse ${
+            visible ? "ca_chesscom__collapse-visible" : "ca_chesscom__collapse-invisible"
+          }`}
         />
         <div className="ca_chesscom__content">
           <div className="ca_chesscom__header">

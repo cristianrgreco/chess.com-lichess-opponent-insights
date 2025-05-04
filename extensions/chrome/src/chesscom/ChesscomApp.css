@@ -9,7 +9,7 @@
   top: 0;
   background-color: var(--color-gray-800);
   z-index: 999;
-  transition: right 0.5s ease-in-out;
+  transition: right 0.5s cubic-bezier(0.15, 0.85, 0.35, 1);
 
   &.ca_chesscom_invisible {
     right: calc((var(--width) * -1) + var(--collapse-width));
