@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import "./ChesscomApp.css";
 import logo from "@/logo_128x128.png";
 import {
@@ -18,12 +18,10 @@ import {
 } from "@/shared";
 
 export default function ChesscomApp({ port, gameInfo }) {
-  const [visible, setVisible] = useState(true);
-  const [bounce, setBounce] = useState(false);
+  const [visible, setVisible] = useState(false); // panel state
+  const [userOpen, setUserOpen] = useState(false); // ← NEW: manual override
   const [opponentNotes, setOpponentNotes] = useState(null);
   const [error, setError] = useState(null);
-
-  const prevAnalyticsRef = useRef(null);
 
   const userAnalytics = useUserAnalyticsData({
     platform: "chesscom",
@@ -31,36 +29,32 @@ export default function ChesscomApp({ port, gameInfo }) {
     setError,
   });
 
+  // show panel automatically when analytics arrive
   useEffect(() => {
-    const analyticsArrived = prevAnalyticsRef.current === null && userAnalytics !== null;
+    if (userAnalytics) setVisible(true);
+  }, [userAnalytics]);
 
-    if (!visible && analyticsArrived) {
-      setBounce(true); // fire the animation
-      const id = setTimeout(() => setBounce(false), 2000); // ← duration = 2 s
-      return () => clearTimeout(id); // cleanup if component unmounts
-    }
-
-    prevAnalyticsRef.current = userAnalytics;
-  }, [userAnalytics, visible]);
-
+  // cancel manual override when a new game starts
   useEffect(() => {
-    setError(null);
+    setUserOpen(false);
   }, [gameInfo]);
+
+  // auto‑hide 10s after becoming visible, but ONLY if it wasn’t a manual open
+  useEffect(() => {
+    if (!visible || userOpen || !userAnalytics) return;
+    const t = setTimeout(() => setVisible(false), 10_000);
+    return () => clearTimeout(t);
+  }, [visible, userOpen, userAnalytics]);
 
   const togglePanel = () => {
     const newVisibility = !visible;
     setVisible(newVisibility);
+    setUserOpen(newVisibility);
   };
 
   return (
     <PageStylesWrapper>
-      <div
-        className={`
-          ca_chesscom
-          ${visible ? "" : "ca_chesscom_invisible"}
-          ${bounce ? "ca_chesscom_bounce" : ""}
-        `}
-      >
+      <div className={`ca_chesscom ${visible ? "" : "ca_chesscom_invisible"}`}>
         {error && <ErrorBar error={error} />}
         <div
           onClick={togglePanel}
