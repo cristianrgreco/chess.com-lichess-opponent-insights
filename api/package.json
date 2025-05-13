@@ -21,6 +21,6 @@
     "@aws-sdk/client-dynamodb": "^3.808.0",
     "@aws-sdk/lib-dynamodb": "^3.808.0",
     "ndjson": "^2.0.0",
-    "node-fetch": "^2.7.0"
+    "node-fetch": "^3.3.2"
   }
 }
