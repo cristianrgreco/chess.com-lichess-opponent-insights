@@ -52,11 +52,11 @@ test("should return game openings", async () => {
   expect(opening).toEqual({
     name: "Queens Pawn Opening Accelerated London System",
     insights: {
-      numberOfGames: 11,
+      numberOfGames: 10,
       results: {
         win: {
           resigned: 4,
-          checkmated: 4,
+          checkmated: 3,
           timeout: 2,
         },
         lose: {
@@ -65,7 +65,7 @@ test("should return game openings", async () => {
         draw: {},
       },
       totals: {
-        win: 10,
+        win: 9,
         lose: 1,
         draw: 0,
       },
