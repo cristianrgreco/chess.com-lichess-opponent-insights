@@ -47,57 +47,38 @@ test("renders the chart with correct data when not loading", () => {
     </PageStylesContext.Provider>,
   );
 
-  // Check that the chart is rendered with the correct labels and datasets
-  expect(Bar).toHaveBeenCalledWith(
-    expect.objectContaining({
-      data: {
-        labels: ["Wins", "Losses"],
-        datasets: [
-          {
-            label: "Mate",
-            data: [0.5, 0.4],
-            backgroundColor: "green",
-          },
-          {
-            label: "Resign",
-            data: [0.3, 0.2],
-            backgroundColor: "red",
-          },
-          {
-            label: "Flag",
-            data: [0.1, 0.2],
-            backgroundColor: "grey",
-          },
-          {
-            label: "Other",
-            data: [expect.closeTo(0.1), expect.closeTo(0.2)],
-            backgroundColor: "#5e62ab",
-          },
-        ],
+  expect(Bar).toHaveBeenCalled();
+  const propsPassed = Bar.mock.calls[0][0];
+
+  expect(propsPassed.data).toEqual({
+    labels: ["Wins", "Losses"],
+    datasets: [
+      {
+        label: "Mate",
+        data: [0.5, 0.4],
+        backgroundColor: "green",
       },
-      height: 90,
-      options: expect.objectContaining({
-        scales: {
-          x: expect.objectContaining({
-            ticks: expect.objectContaining({
-              color: "black", // fontColour from context
-            }),
-          }),
-          y: expect.objectContaining({
-            ticks: expect.objectContaining({
-              color: "black", // fontColour from context
-            }),
-          }),
-        },
-        plugins: expect.objectContaining({
-          legend: expect.objectContaining({
-            labels: expect.objectContaining({
-              color: "black", // fontColour from context
-            }),
-          }),
-        }),
-      }),
-    }),
-    {},
-  );
+      {
+        label: "Resign",
+        data: [0.3, 0.2],
+        backgroundColor: "red",
+      },
+      {
+        label: "Flag",
+        data: [0.1, 0.2],
+        backgroundColor: "grey",
+      },
+      {
+        label: "Other",
+        data: [expect.closeTo(0.1), expect.closeTo(0.2)],
+        backgroundColor: "#5e62ab",
+      },
+    ],
+  });
+
+  expect(propsPassed.height).toBe(90);
+
+  expect(propsPassed.options.scales.x.ticks.color).toBe("black");
+  expect(propsPassed.options.scales.y.ticks.color).toBe("black");
+  expect(propsPassed.options.plugins.legend.labels.color).toBe("black");
 });

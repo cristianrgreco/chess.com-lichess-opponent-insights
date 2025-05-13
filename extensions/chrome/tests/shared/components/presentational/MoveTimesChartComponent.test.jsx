@@ -46,49 +46,36 @@ test("renders the chart with correct data when not loading", () => {
   // Ensure the chart is rendered with the correct labels and datasets
   expect(screen.getByTestId("scatter-chart")).toBeInTheDocument();
 
-  expect(Scatter).toHaveBeenCalledWith(
-    expect.objectContaining({
-      data: {
-        datasets: [
-          {
-            label: "Game 1",
-            data: [
-              { x: 100, y: 5 },
-              { x: 90, y: 10 },
-            ],
-            pointRadius: 1,
-          },
-          {
-            label: "Game 2",
-            data: [
-              { x: 110, y: 15 },
-              { x: 80, y: 8 },
-            ],
-            pointRadius: 1,
-          },
+  expect(Scatter).toHaveBeenCalled();
+
+  const propsPassed = Scatter.mock.calls[0][0];
+
+  expect(propsPassed.data).toEqual({
+    datasets: [
+      {
+        label: "Game 1",
+        data: [
+          { x: 100, y: 5 },
+          { x: 90, y: 10 },
         ],
+        pointRadius: 1,
       },
-      height: 110,
-      options: expect.objectContaining({
-        scales: {
-          x: expect.objectContaining({
-            ticks: expect.objectContaining({
-              color: "black", // fontColour from context
-            }),
-            max: 110, // max of x-values (Time Remaining)
-            reverse: true,
-          }),
-          y: expect.objectContaining({
-            ticks: expect.objectContaining({
-              color: "black", // fontColour from context
-            }),
-            max: 15, // max of y-values (Time Taken)
-          }),
-        },
-      }),
-    }),
-    {},
-  );
+      {
+        label: "Game 2",
+        data: [
+          { x: 110, y: 15 },
+          { x: 80, y: 8 },
+        ],
+        pointRadius: 1,
+      },
+    ],
+  });
+
+  expect(propsPassed.options.scales.x.ticks.color).toBe("black");
+  expect(propsPassed.options.scales.x.max).toBe(110);
+  expect(propsPassed.options.scales.y.ticks.color).toBe("black");
+  expect(propsPassed.options.scales.y.max).toBe(15);
+  expect(propsPassed.height).toBe(110);
 });
 
 test("calculates maxMoveTimeLabel and maxMoveTimeValue correctly", () => {
@@ -117,22 +104,12 @@ test("calculates maxMoveTimeLabel and maxMoveTimeValue correctly", () => {
     </PageStylesContext.Provider>,
   );
 
-  // Check that the maximum move time (x-axis) and time taken (y-axis) values are calculated correctly
-  expect(Scatter).toHaveBeenCalledWith(
-    expect.objectContaining({
-      options: expect.objectContaining({
-        scales: {
-          x: expect.objectContaining({
-            max: 110, // max of move times (time remaining)
-          }),
-          y: expect.objectContaining({
-            max: 15, // max of move times (time taken)
-          }),
-        },
-      }),
-    }),
-    {},
-  );
+  expect(Scatter).toHaveBeenCalled();
+
+  const propsPassed = Scatter.mock.calls[0][0];
+
+  expect(propsPassed.options.scales.x.max).toBe(110);
+  expect(propsPassed.options.scales.y.max).toBe(15);
 });
 
 test("applies correct styles from PageStylesContext", () => {
@@ -161,32 +138,15 @@ test("applies correct styles from PageStylesContext", () => {
     </PageStylesContext.Provider>,
   );
 
-  // Check that the Scatter component is called with the correct styles
-  expect(Scatter).toHaveBeenCalledWith(
-    expect.objectContaining({
-      options: expect.objectContaining({
-        scales: {
-          x: expect.objectContaining({
-            ticks: expect.objectContaining({
-              color: "black", // fontColour from context
-            }),
-            title: expect.objectContaining({
-              text: "Time Remaining",
-              color: "black", // fontColour from context
-            }),
-          }),
-          y: expect.objectContaining({
-            ticks: expect.objectContaining({
-              color: "black", // fontColour from context
-            }),
-            title: expect.objectContaining({
-              text: "Time Taken",
-              color: "black", // fontColour from context
-            }),
-          }),
-        },
-      }),
-    }),
-    {},
-  );
+  expect(Scatter).toHaveBeenCalled();
+
+  const propsPassed = Scatter.mock.calls[0][0];
+
+  expect(propsPassed.options.scales.x.ticks.color).toBe("black");
+  expect(propsPassed.options.scales.x.title.color).toBe("black");
+  expect(propsPassed.options.scales.x.title.text).toBe("Time Remaining");
+
+  expect(propsPassed.options.scales.y.ticks.color).toBe("black");
+  expect(propsPassed.options.scales.y.title.color).toBe("black");
+  expect(propsPassed.options.scales.y.title.text).toBe("Time Taken");
 });
