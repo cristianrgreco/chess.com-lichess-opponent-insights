@@ -11,15 +11,15 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@testcontainers/localstack": "^10.4.0",
-    "nock": "^14.0.0-beta.15",
-    "prettier": "^3.3.3",
+    "@testcontainers/localstack": "^10.25.0",
+    "nock": "^14.0.4",
+    "prettier": "^3.5.3",
     "vitest": "^1.1.0",
-    "yaml": "^2.3.4"
+    "yaml": "^2.7.1"
   },
   "dependencies": {
-    "@aws-sdk/client-dynamodb": "^3.465.0",
-    "@aws-sdk/lib-dynamodb": "^3.465.0",
+    "@aws-sdk/client-dynamodb": "^3.808.0",
+    "@aws-sdk/lib-dynamodb": "^3.808.0",
     "ndjson": "^2.0.0",
     "node-fetch": "^2.7.0"
   }
