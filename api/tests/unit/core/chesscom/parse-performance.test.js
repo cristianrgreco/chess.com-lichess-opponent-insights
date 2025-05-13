@@ -91,6 +91,25 @@ describe("ratings", () => {
       }),
     );
   });
+
+  test("should handle where there is no performance", () => {
+    const statsResponse = {};
+
+    const performance = parsePerformance(statsResponse, [], "blitz", "white");
+
+    expect(performance).toEqual({
+      currentLosingStreak: 0,
+      currentRating: null,
+      currentWinningStreak: 0,
+      highestRating: null,
+      highestRatingDateTime: null,
+      lowestRating: null,
+      lowestRatingDateTime: null,
+      tilt: false,
+      totalNumberOfDisconnects: 0,
+      totalNumberOfGames: 0,
+    });
+  });
 });
 
 describe("streaks", () => {
