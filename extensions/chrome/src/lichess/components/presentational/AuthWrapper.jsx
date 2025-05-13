@@ -4,7 +4,7 @@ import logo from "@/logo_128x128.png";
 import { OpenInNewWindowIcon } from "@/shared";
 
 export default function AuthWrapper({ accessToken, onClickAuthorise, children }) {
-  if (accessToken === undefined) {
+  if (!accessToken) {
     return (
       <div className="ca_auth_container">
         <div className="ca_auth_container_title">Lichess Opponent Information</div>
