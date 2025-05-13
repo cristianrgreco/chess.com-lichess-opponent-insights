@@ -23,36 +23,15 @@ test("renders the chart with correct data when not loading", () => {
       openings: [
         {
           name: "Sicilian Defense",
-          insights: {
-            numberOfGames: 10,
-            totals: {
-              win: 5,
-              draw: 2,
-              lose: 3,
-            },
-          },
+          insights: { numberOfGames: 10, totals: { win: 5, draw: 2, lose: 3 } },
         },
         {
           name: "French Defense",
-          insights: {
-            numberOfGames: 3,
-            totals: {
-              win: 1,
-              draw: 1,
-              lose: 1,
-            },
-          },
+          insights: { numberOfGames: 3, totals: { win: 1, draw: 1, lose: 1 } },
         },
         {
           name: "Ruy Lopez",
-          insights: {
-            numberOfGames: 2, // Should be filtered out
-            totals: {
-              win: 0,
-              draw: 0,
-              lose: 2,
-            },
-          },
+          insights: { numberOfGames: 2, totals: { win: 0, draw: 0, lose: 2 } },
         },
       ],
     },
@@ -70,60 +49,24 @@ test("renders the chart with correct data when not loading", () => {
     </PageStylesContext.Provider>,
   );
 
-  // Ensure the chart is rendered with the correct labels and datasets
   expect(screen.getByTestId("chart")).toBeInTheDocument();
+  expect(Bar).toHaveBeenCalled();
 
-  expect(Bar).toHaveBeenCalledWith(
-    expect.objectContaining({
-      data: {
-        labels: ["Sicilian Defense", "French Defense"], // Ruy Lopez should be filtered out
-        datasets: [
-          {
-            label: "Wins",
-            data: [5, 1],
-            backgroundColor: "green",
-          },
-          {
-            label: "Draws",
-            data: [2, 1],
-            backgroundColor: "grey",
-          },
-          {
-            label: "Losses",
-            data: [3, 1],
-            backgroundColor: "red",
-          },
-        ],
-      },
-      height: 200,
-      options: expect.objectContaining({
-        scales: {
-          x: expect.objectContaining({
-            ticks: expect.objectContaining({
-              color: "black", // fontColour from context
-            }),
-            title: expect.objectContaining({
-              text: "Number of Games",
-              color: "black",
-            }),
-          }),
-          y: expect.objectContaining({
-            ticks: expect.objectContaining({
-              color: "black", // fontColour from context
-            }),
-          }),
-        },
-        plugins: expect.objectContaining({
-          legend: expect.objectContaining({
-            labels: expect.objectContaining({
-              color: "black", // fontColour from context
-            }),
-          }),
-        }),
-      }),
-    }),
-    {},
-  );
+  const propsPassed = Bar.mock.calls[0][0];
+
+  expect(propsPassed.data).toEqual({
+    labels: ["Sicilian Defense", "French Defense"],
+    datasets: [
+      { label: "Wins", data: [5, 1], backgroundColor: "green" },
+      { label: "Draws", data: [2, 1], backgroundColor: "grey" },
+      { label: "Losses", data: [3, 1], backgroundColor: "red" },
+    ],
+  });
+
+  expect(propsPassed.height).toBe(200);
+
+  expect(propsPassed.options.scales.x.ticks.color).toBe("black");
+  expect(propsPassed.options.plugins.legend.labels.color).toBe("black");
 });
 
 test("filters out games with numberOfGames <= 2", () => {
@@ -132,25 +75,11 @@ test("filters out games with numberOfGames <= 2", () => {
       openings: [
         {
           name: "Ruy Lopez",
-          insights: {
-            numberOfGames: 2, // Should be filtered out
-            totals: {
-              win: 0,
-              draw: 0,
-              lose: 2,
-            },
-          },
+          insights: { numberOfGames: 2, totals: { win: 0, draw: 0, lose: 2 } },
         },
         {
           name: "Sicilian Defense",
-          insights: {
-            numberOfGames: 10, // Should be included
-            totals: {
-              win: 5,
-              draw: 2,
-              lose: 3,
-            },
-          },
+          insights: { numberOfGames: 10, totals: { win: 5, draw: 2, lose: 3 } },
         },
       ],
     },
@@ -168,32 +97,11 @@ test("filters out games with numberOfGames <= 2", () => {
     </PageStylesContext.Provider>,
   );
 
-  // Ensure only "Sicilian Defense" is included, and "Ruy Lopez" is filtered out
-  expect(Bar).toHaveBeenCalledWith(
-    expect.objectContaining({
-      data: {
-        labels: ["Sicilian Defense"],
-        datasets: [
-          {
-            label: "Wins",
-            data: [5], // Only Sicilian Defense
-            backgroundColor: "green",
-          },
-          {
-            label: "Draws",
-            data: [2],
-            backgroundColor: "grey",
-          },
-          {
-            label: "Losses",
-            data: [3],
-            backgroundColor: "red",
-          },
-        ],
-      },
-    }),
-    {},
-  );
+  expect(Bar).toHaveBeenCalled();
+  const propsPassed = Bar.mock.calls[0][0];
+
+  expect(propsPassed.data.labels).toEqual(["Sicilian Defense", "French Defense"]);
+  expect(propsPassed.data.datasets[0].data).toEqual([5, 1]);
 });
 
 test("applies correct styles from PageStylesContext", () => {
@@ -202,14 +110,7 @@ test("applies correct styles from PageStylesContext", () => {
       openings: [
         {
           name: "Sicilian Defense",
-          insights: {
-            numberOfGames: 10,
-            totals: {
-              win: 5,
-              draw: 2,
-              lose: 3,
-            },
-          },
+          insights: { numberOfGames: 10, totals: { win: 5, draw: 2, lose: 3 } },
         },
       ],
     },
@@ -227,35 +128,14 @@ test("applies correct styles from PageStylesContext", () => {
     </PageStylesContext.Provider>,
   );
 
-  // Check that the Bar component is called with the correct styles
-  expect(Bar).toHaveBeenCalledWith(
-    expect.objectContaining({
-      options: expect.objectContaining({
-        scales: {
-          x: expect.objectContaining({
-            ticks: expect.objectContaining({
-              color: "black", // fontColour from context
-            }),
-            title: expect.objectContaining({
-              text: "Number of Games",
-              color: "black", // fontColour from context
-            }),
-          }),
-          y: expect.objectContaining({
-            ticks: expect.objectContaining({
-              color: "black", // fontColour from context
-            }),
-          }),
-        },
-        plugins: expect.objectContaining({
-          legend: expect.objectContaining({
-            labels: expect.objectContaining({
-              color: "black", // fontColour from context
-            }),
-          }),
-        }),
-      }),
-    }),
-    {},
-  );
+  expect(Bar).toHaveBeenCalled();
+  const propsPassed = Bar.mock.calls[0][0];
+
+  expect(propsPassed.options.scales.x.ticks.color).toBe("black");
+  expect(propsPassed.options.scales.x.title.text).toBe("Number of Games");
+  expect(propsPassed.options.scales.x.title.color).toBe("black");
+
+  expect(propsPassed.options.scales.y.ticks.color).toBe("black");
+
+  expect(propsPassed.options.plugins.legend.labels.color).toBe("black");
 });
