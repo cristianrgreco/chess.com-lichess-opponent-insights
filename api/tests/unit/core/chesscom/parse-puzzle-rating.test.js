@@ -18,3 +18,7 @@ test("should parse puzzle rating", () => {
     value: 570,
   });
 });
+
+test("should handle empty tactics", () => {
+  expect(parsePuzzleRating({})).toEqual(null);
+});
