@@ -12,7 +12,7 @@ export async function setup() {
   }
 
   console.log("Starting Localstack container...");
-  globalThis.localstackContainer = await new LocalstackContainer().start();
+  globalThis.localstackContainer = await new LocalstackContainer("localstack/localstack:4.4.0").start();
   process.env.LOCALSTACK_URI = globalThis.localstackContainer.getConnectionUri();
 
   console.log("Creating DynamoDB tables...");
